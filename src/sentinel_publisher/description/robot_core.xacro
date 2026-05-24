@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+<robot name="sentinel_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <xacro:include filename="inertial_macros.xacro"/>
 
@@ -20,7 +20,6 @@
     </material>
     <material name="green_tosca">
         <color rgba="0.0 0.7 0.6 1"/>
-        
     </material>
 
     <material name="pink">
@@ -55,16 +54,16 @@
 
     <link name="chassis">
         <visual>
-            <origin xyz="0.0 0.0 0.09" rpy="0.0 0.0 0.0"/>
+            <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <mesh filename="package://sentinel_publisher/meshes/base.stl" scale="0.001 0.001 0.001"/>
+                <box size="0.426 0.30 0.03"/>
             </geometry>
             <material name="white"/>
         </visual>
         <collision>
             <origin xyz="0.0 0.0 0.18" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <box size="0.7 0.7 0.19"/>
+                <box size="0.5 0.5 0.2"/>
             </geometry>
         </collision>
         <xacro:inertial_box mass="0.5" x="0.06" y="0.6" z="0.3">
@@ -78,10 +77,10 @@
     </gazebo>
 
     <!-- LEFT WHEEL -->
-    <!-- <joint name="left_wheel_joint" type="continuous">
+    <joint name="left_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="left_wheel"/>
-        <origin xyz="0.0 0.2125 0.063" rpy="0 0 0"/>
+        <origin xyz="0.0 0.180 0.063" rpy="0 0 0"/>
         <axis xyz="0.0 1.0 0.0"/>
     </joint>
 
@@ -106,25 +105,26 @@
         <material>
             Gazebo/Blue
         </material>
-    </gazebo> -->
+    </gazebo>
 
     <!-- RIGHT WHEEL -->
-    <!-- <joint name="right_wheel_joint" type="continuous">
+    <joint name="right_wheel_joint" type="continuous">
         <parent link="base_link"/>
         <child link="right_wheel"/>
-        <origin xyz="0.0 -0.2325 0.063" rpy="0 0 0"/>
+        <origin xyz="0.0 -0.180 0.063" rpy="0 0 0"/>
         <axis xyz="0.0 1.0 0.0"/>
     </joint>
 
     <link name="right_wheel">
         <visual>
+            <origin rpy="0 0 3.14159"/>
             <geometry>
                 <mesh filename="package://sentinel_publisher/meshes/right_wheel.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="blue"/>
         </visual>
         <collision>
-            <origin xyz="0 0.0125 0" rpy="1.5708 0 0"/>
+            <origin xyz="0 -0.0125 0" rpy="1.5708 0 0"/>
             <geometry>
                 <cylinder radius="0.0635" length="0.024"/>
             </geometry>
@@ -139,11 +139,11 @@
         </material>
     </gazebo>
 
-    <!-- CASTER WHEEL REAR LINK  -->
+    <!-- CASTER WHEEL REAR LINK -->
     <joint name="rear_caster_wheel_joint" type="fixed">
         <parent link="chassis"/>
         <child link="rear_caster_wheel"/>
-        <origin xyz="0.2 0.0 0.052"/>
+        <origin xyz="0.116 0.0 0.052"/>
     </joint>
     <link name="rear_caster_wheel">
         <visual>
@@ -166,13 +166,13 @@
         <material>
             Gazebo/Black
         </material>
-    </gazebo> -->
+    </gazebo>
 
     <!-- CASTER WHEEL BACK LINK  -->
-    <!-- <joint name="back_caster_wheel_joint" type="fixed">
+    <joint name="back_caster_wheel_joint" type="fixed">
         <parent link="chassis"/>
         <child link="back_caster_wheel"/>
-        <origin xyz="-0.2 0.0 0.052" rpy="0 0 3.14"/>
+        <origin xyz="-0.116 0.0 0.052" rpy="0 0 3.14"/>
     </joint>
     <link name="back_caster_wheel">
         <visual>
@@ -197,30 +197,6 @@
         </material>
         <mu1 value="0.001"></mu1>
         <mu2 value="0.001"></mu2>
-    </gazebo> -->
+    </gazebo>
 
-    <!-- COVER --> 
-    <!-- <joint name="cover_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="cover"/>
-        <origin xyz="0.0 0.0 0.0"/>
-    </joint>
-    <link name="cover">
-        <visual name="cover_robot">
-            <origin xyz="0.0 0.0 0.09" rpy="0.0 0.0 1.57"/>
-            <geometry>
-                <mesh filename="package://sentinel_publisher/meshes/body_case.stl" scale="0.001 0.001 0.001"/>
-            </geometry>
-            <material name="pink"/> 
-        </visual>
-        <collision>
-            <origin xyz="0.0 0.0 0.75" rpy="0.0 0.0 0.0"/>
-            <geometry>
-                <box size="0.7 0.7 1.3"/>
-            </geometry>
-        </collision>
-        <xacro:inertial_box mass="20.0" x="0.8" y="0.8" z="1.5">
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-        </xacro:inertial_box>
-    </link> -->
 </robot>
