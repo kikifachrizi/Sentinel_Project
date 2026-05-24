@@ -23,10 +23,25 @@ find_package(rcl_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 
+# Gazebo
+find_package(ros_gz_sim REQUIRED)
+find_package(ros_gz_bridge REQUIRED)
+
 # ===============================
 # Include directories
 # ===============================
 include_directories(include)
+
+# ===============================
+# Executables
+# ===============================
+add_executable(twist_to_stamped src/twist_to_stamped.cpp)
+ament_target_dependencies(twist_to_stamped rclcpp geometry_msgs)
+
+install(TARGETS
+  twist_to_stamped
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 # ===============================
 # Install other resources
@@ -35,6 +50,9 @@ install(
   DIRECTORY
     description
     meshes
+    launch
+    config
+    worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
