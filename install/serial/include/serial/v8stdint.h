@@ -1,1 +1,0 @@
-/home/kiki/sentinel_ws/src/serial/include/serial/v8stdint.h

@@ -1,1 +1,0 @@
-/home/kiki/sentinel_ws/src/diffdrive_arduino/launch/test_robot.launch.py

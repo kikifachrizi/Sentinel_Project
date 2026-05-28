@@ -1,1 +1,0 @@
-/home/kiki/sentinel_ws/src/sentinel_publisher/launch/launch_sim.launch.py
