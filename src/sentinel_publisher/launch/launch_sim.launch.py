@@ -12,13 +12,23 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
-    # --- PERBAIKAN 1: Daftarkan Path Mesh untuk Gazebo ---
-    pkg_share = get_package_share_directory('sentinel_publisher')
-    # Pointing ke folder 'share' agar Gazebo bisa mengenali prefix 'sentinel_publisher/...'
-    os.environ['GZ_SIM_RESOURCE_PATH'] = os.path.join(pkg_share, '..')
 
-    # Launch Arguments
-    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+    pkg_share = get_package_share_directory('sentinel_publisher')
+    os.environ['GZ_SIM_RESOURCE_PATH'] = os.path.join(pkg_share, '..')
+    use_sim_time = LaunchConfiguration('use_sim_time')
+
+    declare_sim_time = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='true',
+        description='If true, use simulated clock'
+    )
+
+    declare_rsp = DeclareLaunchArgument(
+        'description_format',
+        default_value='urdf',
+        description='Robot description format to use, urdf or sdf'
+    )
+
 
     def robot_state_publisher(context):
         performed_description_format = LaunchConfiguration('description_format').perform(context)
@@ -71,17 +81,15 @@ def generate_launch_description():
         ],
     )
 
-    # --- PERBAIKAN 2: Konsolidasi Parameter Bridge ---
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=[
-            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
-            '/imu@sensor_msgs/msg/Imu@gz.msgs.IMU'  # Pastikan topik IMU terdaftar
-        ],
-        parameters=[{
-            "qos_overrides./tf_static.publisher.durability": "transient_local"},
+        parameters=[
+            {'config_file': PathJoinSubstitution([
+                FindPackageShare('sentinel_publisher'),
+                'config',
+                'bridge_gazebo.yaml'
+            ])},
             {'use_sim_time': use_sim_time}
         ],
         output='screen'
@@ -105,62 +113,64 @@ def generate_launch_description():
         output='screen'
     )
 
-    ld = LaunchDescription([
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
+    gz_sim = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare('ros_gz_sim'),
+                'launch',
+                'gz_sim.launch.py'
+            ])
+        ),
+        launch_arguments={
+            'gz_args': [
+                '-r -v 1 ',
                 PathJoinSubstitution([
-                    FindPackageShare('ros_gz_sim'),
-                    'launch',
-                    'gz_sim.launch.py'
+                    FindPackageShare('sentinel_publisher'),
+                    'worlds',
+                    'industrial-warehouse.sdf'
                 ])
-            ),
-            launch_arguments={
-                'gz_args': [
-                    '-r -v 1 ',
-                    PathJoinSubstitution([
-                        FindPackageShare('sentinel_publisher'),
-                        'worlds',
-                        'industrial-warehouse.sdf'
-                    ])
-                ]
-            }.items()
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=gz_spawn_entity,
-                on_exit=[joint_state_broadcaster_spawner],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[diff_drive_base_controller_spawner],
-            )
-        ),
-        
-        # Eksekusi Node yang sudah dirapikan
-        bridge,
-        gz_spawn_entity,
-        lidar_filtered,
+            ]
+        }.items()
+    )
 
-        DeclareLaunchArgument(
-            'use_sim_time',
-            default_value=use_sim_time,
-            description='If true, use simulated clock'),
-        DeclareLaunchArgument(
-            'description_format',
-            default_value='urdf',
-            description='Robot description format to use, urdf or sdf'),
+    on_start_joint_state = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=gz_spawn_entity,
+            on_exit=[joint_state_broadcaster_spawner],
+        )
+    )
+
+    on_start_diffdrive_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[diff_drive_base_controller_spawner],
+        )
+    )
+
+    twist_to_stamped_node = Node(
+        package='sentinel_publisher',
+        executable='twist_to_stamped',
+        remappings=[
+            ('cmd_vel_in', '/cmd_vel_nav'),
+            ('cmd_vel_out', '/diff_drive_base_controller/cmd_vel')
+        ],
+        output='screen'
+    )
+
+    ld = LaunchDescription([
+        declare_sim_time,
+        declare_rsp,
+
+        OpaqueFunction(function=robot_state_publisher),
+        gz_sim,
         
-        Node(
-            package='sentinel_publisher',
-            executable='twist_to_stamped',
-            remappings=[
-                ('cmd_vel_in', '/cmd_vel_nav'),
-                ('cmd_vel_out', '/diff_drive_base_controller/cmd_vel')
-            ],
-            output='screen'
-        ),
+        bridge,
+        lidar_filtered,
+        twist_to_stamped_node,
+        gz_spawn_entity,
+
+        on_start_joint_state,
+        on_start_diffdrive_spawner,
+
     ])
-    ld.add_action(OpaqueFunction(function=robot_state_publisher))
     return ld
