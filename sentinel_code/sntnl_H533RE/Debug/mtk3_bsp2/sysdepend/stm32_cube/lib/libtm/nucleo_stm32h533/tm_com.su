@@ -1,4 +1,0 @@
-D:/Robotic/Sentinel/sentinel_code/sntnl_H533RE/mtk3_bsp2/sysdepend/stm32_cube/halif.h:46:17:halif_get_pclk1	8	static
-../mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32h533/tm_com.c:58:13:tm_snd_dat	24	static
-../mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32h533/tm_com.c:70:13:tm_rcv_dat	16	static
-../mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32h533/tm_com.c:80:13:tm_com_init	16	static

@@ -1,4 +1,0 @@
-Layer Pairs Export File for PCB: E:\Documents\Projets\CAP1G\STM_Le Mans\Projets\MB1814B\BASE\MB1814B\01-Design_Source\Altium_Designer\MB1814.PcbDoc
-LayersSetName=Top_Bot_Plated_Thru_Holes|DrillFile=mb1814b-roundholes-plated.txt|DrillLayers=gtl,g1,g2,gbl
-LayersSetName=Top_Bot_Plated_Slot_Holes|DrillFile=mb1814b-slotholes-plated.txt|DrillLayers=gtl,g1,g2,gbl
-LayersSetName=Top_Bot_NonPlated_Thru_Holes|DrillFile=mb1814b-roundholes-nonplated.txt|DrillLayers=gtl,g1,g2,gbl
