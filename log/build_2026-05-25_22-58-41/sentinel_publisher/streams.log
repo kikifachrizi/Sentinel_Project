@@ -1,0 +1,41 @@
+[0.006s] Invoking command in '/home/kiki/sentinel_ws/build/sentinel_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/sentinel_publisher -- -j20 -l20
+[0.054s] [100%] Built target twist_to_stamped
+[0.064s] Invoked command in '/home/kiki/sentinel_ws/build/sentinel_publisher' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/sentinel_publisher -- -j20 -l20
+[0.072s] Invoking command in '/home/kiki/sentinel_ws/build/sentinel_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/sentinel_publisher
+[0.076s] -- Install configuration: ""
+[0.076s] -- Execute custom install script
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/lib/sentinel_publisher/twist_to_stamped
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/imu.xacro
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/inertial_macros.xacro
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/lidar.xacro
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/robot.urdf.xacro
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/robot_core.xacro
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/ros2_control.xacro
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/back_caster.stl
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/base.stl
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/body_case.stl
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/front_caster.stl
+[0.077s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/left_wheel.stl
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/right_wheel.stl
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/rplidar.stl
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/launch/launch_sim.launch.py
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/config/bridge_gazebo.yaml
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/config/laser_filter.yaml
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/config/my_controllers.yaml
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/industrial-warehouse.sdf
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/ament_index/resource_index/package_run_dependencies/sentinel_publisher
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/ament_index/resource_index/parent_prefix_path/sentinel_publisher
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.sh
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.dsv
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/path.sh
+[0.078s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/path.dsv
+[0.079s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.bash
+[0.079s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.sh
+[0.079s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.zsh
+[0.079s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.dsv
+[0.079s] -- Symlinking: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/package.dsv
+[0.085s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/ament_index/resource_index/packages/sentinel_publisher
+[0.085s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig.cmake
+[0.085s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig-version.cmake
+[0.085s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/package.xml
+[0.086s] Invoked command in '/home/kiki/sentinel_ws/build/sentinel_publisher' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/sentinel_publisher

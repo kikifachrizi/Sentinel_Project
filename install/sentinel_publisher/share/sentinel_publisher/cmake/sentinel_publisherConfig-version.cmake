@@ -1,0 +1,1 @@
+/home/kiki/sentinel_ws/build/sentinel_publisher/ament_cmake_core/sentinel_publisherConfig-version.cmake
