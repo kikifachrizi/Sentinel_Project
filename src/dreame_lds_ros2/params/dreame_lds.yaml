@@ -1,7 +1,0 @@
-dreame_lds:
-  ros__parameters:
-    port: /dev/ttyUSB0
-    baudrate: 115200       # common: 115200 | 230400 — sesuaikan dengan sensor
-    frame_id: laser_frame
-    range_min: 0.05        # meter — jarak minimum valid
-    range_max: 12.0        # meter — jarak maksimum valid
