@@ -1,0 +1,8 @@
+../application/app_main.c:111:12:task_1	3
+../application/app_main.c:130:12:read_enc1	2
+../application/app_main.c:150:12:read_enc2	2
+../application/app_main.c:170:12:motor1	1
+../application/app_main.c:213:12:motor2	1
+../application/app_main.c:240:12:read_mpu6050	1
+../application/app_main.c:277:12:read_ina219	4
+../application/app_main.c:335:12:usermain	1
