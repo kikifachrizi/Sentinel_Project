@@ -1,0 +1,99 @@
+[0.009s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino': AMENT_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy LD_LIBRARY_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial/lib:${LD_LIBRARY_PATH} /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino
+[0.068s] -- The C compiler identification is GNU 13.3.0
+[0.127s] -- The CXX compiler identification is GNU 13.3.0
+[0.144s] -- Detecting C compiler ABI info
+[0.242s] -- Detecting C compiler ABI info - done
+[0.255s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.255s] -- Detecting C compile features
+[0.256s] -- Detecting C compile features - done
+[0.266s] -- Detecting CXX compiler ABI info
+[0.375s] -- Detecting CXX compiler ABI info - done
+[0.385s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.385s] -- Detecting CXX compile features
+[0.385s] -- Detecting CXX compile features - done
+[0.391s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.555s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.634s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.697s] -- Found serial: 1.2.1 (/home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/cmake)
+[0.712s] -- Found hardware_interface: 4.44.0 (/opt/ros/jazzy/share/hardware_interface/cmake)
+[0.791s] -- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.813s] -- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.837s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.864s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.141s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[1.206s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[1.212s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[1.246s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[1.336s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[1.341s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[1.363s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[1.366s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[1.376s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[1.392s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.746s] -- Found controller_manager: 4.44.0 (/opt/ros/jazzy/share/controller_manager/cmake)
+[2.020s] -- Configuring done (2.0s)
+[2.076s] -- Generating done (0.0s)
+[2.084s] -- Build files have been written to: /home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino
+[2.102s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino' returned '0': AMENT_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy LD_LIBRARY_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial/lib:${LD_LIBRARY_PATH} /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino
+[2.103s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino': AMENT_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy LD_LIBRARY_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial/lib:${LD_LIBRARY_PATH} /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino -- -j12 -l12
+[2.170s] [ 28%] [32mBuilding CXX object CMakeFiles/diffdrive_arduino.dir/src/arduino_comms.cpp.o[0m
+[2.170s] [ 28%] [32mBuilding CXX object CMakeFiles/diffdrive_arduino.dir/src/wheel.cpp.o[0m
+[2.171s] [ 57%] [32mBuilding CXX object CMakeFiles/fake_robot.dir/src/wheel.cpp.o[0m
+[2.171s] [ 57%] [32mBuilding CXX object CMakeFiles/fake_robot.dir/src/fake_robot.cpp.o[0m
+[2.171s] [ 71%] [32mBuilding CXX object CMakeFiles/diffdrive_arduino.dir/src/diffdrive_arduino.cpp.o[0m
+[5.165s] [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/src/fake_robot.cpp:[m[K In member function ‘[01m[Kvirtual hardware_interface::CallbackReturn FakeRobot::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’:
+[5.165s] [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/src/fake_robot.cpp:10:51:[m[K [01;35m[Kwarning: [m[K‘[01m[Kvirtual rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn hardware_interface::HardwareComponentInterface::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’ is deprecated: Use on_init(const HardwareComponentInterfaceParams & params) instead. [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wdeprecated-declarations-Wdeprecated-declarations]8;;[m[K]
+[5.165s]    10 |   if ([01;35m[Khardware_interface::SystemInterface::on_init(info)[m[K != CallbackReturn::SUCCESS) {
+[5.165s]       |       [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~[m[K
+[5.165s] In file included from [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/system_interface.hpp:18[m[K,
+[5.165s]                  from [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/include/diffdrive_arduino/fake_robot.h:7[m[K,
+[5.165s]                  from [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/src/fake_robot.cpp:1[m[K:
+[5.166s] [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/hardware_component_interface.hpp:140:26:[m[K [01;36m[Knote: [m[Kdeclared here
+[5.166s]   140 |   virtual CallbackReturn [01;36m[Kon_init[m[K(const HardwareInfo & hardware_info);
+[5.166s]       |                          [01;36m[K^~~~~~~[m[K
+[5.333s] [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/src/diffdrive_arduino.cpp:[m[K In member function ‘[01m[Kvirtual hardware_interface::CallbackReturn DiffDriveArduino::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’:
+[5.333s] [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/src/diffdrive_arduino.cpp:10:51:[m[K [01;35m[Kwarning: [m[K‘[01m[Kvirtual rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn hardware_interface::HardwareComponentInterface::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’ is deprecated: Use on_init(const HardwareComponentInterfaceParams & params) instead. [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wdeprecated-declarations-Wdeprecated-declarations]8;;[m[K]
+[5.333s]    10 |   if ([01;35m[Khardware_interface::SystemInterface::on_init(info)[m[K != CallbackReturn::SUCCESS) {
+[5.333s]       |       [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~[m[K
+[5.333s] In file included from [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/system_interface.hpp:18[m[K,
+[5.333s]                  from [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/include/diffdrive_arduino/diffdrive_arduino.h:8[m[K,
+[5.333s]                  from [01m[K/home/aiserver-kiki/Sentinel_Project/src/diffdrive_arduino/src/diffdrive_arduino.cpp:1[m[K:
+[5.333s] [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/hardware_component_interface.hpp:140:26:[m[K [01;36m[Knote: [m[Kdeclared here
+[5.334s]   140 |   virtual CallbackReturn [01;36m[Kon_init[m[K(const HardwareInfo & hardware_info);
+[5.334s]       |                          [01;36m[K^~~~~~~[m[K
+[7.155s] [ 85%] [32m[1mLinking CXX shared library libfake_robot.so[0m
+[7.305s] [100%] [32m[1mLinking CXX shared library libdiffdrive_arduino.so[0m
+[7.450s] [100%] Built target fake_robot
+[7.542s] [100%] Built target diffdrive_arduino
+[7.556s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino' returned '0': AMENT_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy LD_LIBRARY_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial/lib:${LD_LIBRARY_PATH} /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino -- -j12 -l12
+[7.557s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino': AMENT_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy LD_LIBRARY_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial/lib:${LD_LIBRARY_PATH} /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino
+[7.567s] -- Install configuration: ""
+[7.567s] -- Execute custom install script
+[7.567s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino//robot_hardware.xml
+[7.579s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino//fake_robot_hardware.xml
+[7.590s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/lib/libdiffdrive_arduino.so
+[7.601s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/lib/libfake_robot.so
+[7.613s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/controllers/robot_controller_example.yaml
+[7.624s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/fake_robot.launch.py
+[7.634s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/test_robot.launch.py
+[7.645s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/environment/library_path.sh
+[7.656s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/environment/library_path.dsv
+[7.667s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/ament_index/resource_index/package_run_dependencies/diffdrive_arduino
+[7.677s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/ament_index/resource_index/parent_prefix_path/diffdrive_arduino
+[7.688s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/environment/ament_prefix_path.sh
+[7.699s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/environment/ament_prefix_path.dsv
+[7.709s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/environment/path.sh
+[7.720s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/environment/path.dsv
+[7.731s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.bash
+[7.742s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.sh
+[7.753s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.zsh
+[7.763s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.dsv
+[7.774s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/package.dsv
+[7.785s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/ament_index/resource_index/packages/diffdrive_arduino
+[7.795s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/ament_index/resource_index/hardware_interface__pluginlib__plugin/diffdrive_arduino
+[7.806s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/cmake/ament_cmake_export_libraries-extras.cmake
+[7.817s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/cmake/ament_cmake_export_dependencies-extras.cmake
+[7.828s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/cmake/diffdrive_arduinoConfig.cmake
+[7.838s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/cmake/diffdrive_arduinoConfig-version.cmake
+[7.849s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/diffdrive_arduino/share/diffdrive_arduino/package.xml
+[7.862s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino' returned '0': AMENT_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy LD_LIBRARY_PATH=/home/aiserver-kiki/Sentinel_Project/install/serial/lib:${LD_LIBRARY_PATH} /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino

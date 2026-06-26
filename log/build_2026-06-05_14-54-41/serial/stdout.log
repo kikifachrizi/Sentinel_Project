@@ -1,0 +1,30 @@
+[ 35%] Built target gtest_main
+[ 42%] Built target serial
+[ 57%] Built target gtest
+[100%] Built target serial_example
+[100%] Built target serial-test-timer
+[100%] Built target serial-test
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/lib/libserial.a
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/include/serial/serial.h
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/include/serial/v8stdint.h
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/environment/library_path.sh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/environment/library_path.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/ament_index/resource_index/package_run_dependencies/serial
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/ament_index/resource_index/parent_prefix_path/serial
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/environment/ament_prefix_path.sh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/environment/ament_prefix_path.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/environment/path.sh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/environment/path.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/local_setup.bash
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/local_setup.sh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/local_setup.zsh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/local_setup.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/package.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/ament_index/resource_index/packages/serial
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/cmake/ament_cmake_export_include_directories-extras.cmake
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/cmake/ament_cmake_export_libraries-extras.cmake
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/cmake/serialConfig.cmake
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/cmake/serialConfig-version.cmake
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/serial/share/serial/package.xml

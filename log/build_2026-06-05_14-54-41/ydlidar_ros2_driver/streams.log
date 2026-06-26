@@ -1,0 +1,81 @@
+[0.012s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/ydlidar_ros2_driver_jazzy -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver
+[0.026s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.227s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.234s] -- Found rclcpp: 28.1.18 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.261s] -- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.270s] -- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.281s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.294s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.353s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.354s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.421s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.489s] -- Found sensor_msgs: 5.3.7 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[0.544s] -- Found visualization_msgs: 5.3.7 (/opt/ros/jazzy/share/visualization_msgs/cmake)
+[0.572s] -- Found std_srvs: 5.3.7 (/opt/ros/jazzy/share/std_srvs/cmake)
+[0.600s] -- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[0.746s] -- Added test 'copyright' to check source files copyright and LICENSE
+[0.753s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[0.754s] -- Configured cppcheck include dirs: /home/aiserver-kiki/Sentinel_Project/src/ydlidar_ros2_driver_jazzy/src
+[0.754s] -- Configured cppcheck exclude dirs and/or files: 
+[0.759s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[0.759s] -- Configured cpplint exclude dirs and/or files: 
+[0.761s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.761s] -- Configured 'flake8' exclude dirs and/or files: 
+[0.763s] -- Added test 'lint_cmake' to check CMake code style
+[0.764s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.769s] -- Added test 'uncrustify' to check C / C++ code style
+[0.769s] -- Configured uncrustify additional arguments: 
+[0.771s] -- Added test 'xmllint' to check XML markup files
+[0.773s] -- Configuring done (0.8s)
+[0.791s] -- Generating done (0.0s)
+[0.796s] -- Build files have been written to: /home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver
+[0.806s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/ydlidar_ros2_driver_jazzy -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver
+[0.807s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver -- -j12 -l12
+[0.866s] [ 50%] [32mBuilding CXX object CMakeFiles/ydlidar_ros2_driver_client.dir/src/ydlidar_ros2_driver_client.cpp.o[0m
+[0.866s] [ 50%] [32mBuilding CXX object CMakeFiles/ydlidar_ros2_driver_node.dir/src/ydlidar_ros2_driver_node.cpp.o[0m
+[3.188s] [01m[K/home/aiserver-kiki/Sentinel_Project/src/ydlidar_ros2_driver_jazzy/src/ydlidar_ros2_driver_node.cpp:[m[K In function ‘[01m[Kint[01;32m[K main[m[K(int, char**)[m[K’:
+[3.188s] [01m[K/home/aiserver-kiki/Sentinel_Project/src/ydlidar_ros2_driver_jazzy/src/ydlidar_ros2_driver_node.cpp:132:8:[m[K [01;35m[Kwarning: [m[Kunused variable ‘[01m[Kinvalid_range_is_inf[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Wunused-variable]8;;[m[K]
+[3.188s]   132 |   bool [01;35m[Kinvalid_range_is_inf[m[K = node->declare_parameter<bool>("invalid_range_is_inf", false);
+[3.189s]       |        [01;35m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[6.369s] [ 75%] [32m[1mLinking CXX executable ydlidar_ros2_driver_node[0m
+[6.824s] [ 75%] Built target ydlidar_ros2_driver_node
+[8.496s] [100%] [32m[1mLinking CXX executable ydlidar_ros2_driver_client[0m
+[8.838s] [100%] Built target ydlidar_ros2_driver_client
+[8.852s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver -- -j12 -l12
+[8.852s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver
+[8.861s] -- Install configuration: ""
+[8.861s] -- Execute custom install script
+[8.862s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/lib/ydlidar_ros2_driver/ydlidar_ros2_driver_node
+[8.872s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/lib/ydlidar_ros2_driver/ydlidar_ros2_driver_client
+[8.883s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/launch/ydlidar.py
+[8.893s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/launch/ydlidar_launch.py
+[8.904s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/launch/ydlidar_launch_view.py
+[8.914s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/G1.yaml
+[8.924s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/G2.yaml
+[8.935s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/G6.yaml
+[8.945s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/GS2.yaml
+[8.956s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/TEA.yaml
+[8.966s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/TG.yaml
+[8.976s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/TminiPro.yaml
+[8.987s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/X2.yaml
+[8.997s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/X4-Pro.yaml
+[9.007s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/X4.yaml
+[9.018s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/params/ydlidar.yaml
+[9.028s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/startup/initenv.sh
+[9.039s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/config/ydlidar.rviz
+[9.049s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ament_index/resource_index/package_run_dependencies/ydlidar_ros2_driver
+[9.059s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ament_index/resource_index/parent_prefix_path/ydlidar_ros2_driver
+[9.070s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/environment/ament_prefix_path.sh
+[9.081s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/environment/ament_prefix_path.dsv
+[9.091s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/environment/path.sh
+[9.102s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/environment/path.dsv
+[9.113s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/local_setup.bash
+[9.123s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/local_setup.sh
+[9.134s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/local_setup.zsh
+[9.144s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/local_setup.dsv
+[9.155s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/package.dsv
+[9.166s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ament_index/resource_index/packages/ydlidar_ros2_driver
+[9.177s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/cmake/ydlidar_ros2_driverConfig.cmake
+[9.187s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/cmake/ydlidar_ros2_driverConfig-version.cmake
+[9.198s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver/share/ydlidar_ros2_driver/package.xml
+[9.210s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver

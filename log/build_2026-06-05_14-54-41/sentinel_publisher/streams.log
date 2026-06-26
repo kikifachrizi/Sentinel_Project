@@ -1,0 +1,43 @@
+[0.012s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher -- -j12 -l12
+[0.074s] [ 50%] [32mBuilding CXX object CMakeFiles/twist_to_stamped.dir/src/twist_to_stamped.cpp.o[0m
+[8.523s] [100%] [32m[1mLinking CXX executable twist_to_stamped[0m
+[8.892s] [100%] Built target twist_to_stamped
+[8.906s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher -- -j12 -l12
+[8.907s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher
+[8.916s] -- Install configuration: ""
+[8.917s] -- Execute custom install script
+[8.917s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/lib/sentinel_publisher/twist_to_stamped
+[8.928s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/imu.xacro
+[8.938s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/inertial_macros.xacro
+[8.949s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/lidar.xacro
+[8.959s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/robot.urdf.xacro
+[8.970s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/robot_core.xacro
+[8.980s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/ros2_control.xacro
+[8.990s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/back_caster.stl
+[9.000s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/base.stl
+[9.011s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/body_case.stl
+[9.021s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/front_caster.stl
+[9.031s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/left_wheel.stl
+[9.042s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/right_wheel.stl
+[9.052s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/rplidar.stl
+[9.063s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/launch/launch_sim.launch.py
+[9.073s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/config/bridge_gazebo.yaml
+[9.084s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/config/laser_filter.yaml
+[9.095s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/config/my_controllers.yaml
+[9.105s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/worlds/industrial-warehouse.sdf
+[9.116s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/ament_index/resource_index/package_run_dependencies/sentinel_publisher
+[9.127s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/ament_index/resource_index/parent_prefix_path/sentinel_publisher
+[9.137s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.sh
+[9.148s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.dsv
+[9.158s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/path.sh
+[9.169s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/path.dsv
+[9.180s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.bash
+[9.191s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.sh
+[9.201s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.zsh
+[9.212s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.dsv
+[9.222s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/package.dsv
+[9.233s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/ament_index/resource_index/packages/sentinel_publisher
+[9.243s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig.cmake
+[9.253s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig-version.cmake
+[9.263s] -- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/package.xml
+[9.276s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher

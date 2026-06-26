@@ -1,0 +1,11 @@
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/uninstall.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/diffdrive_arduino_uninstall.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/diffdrive_arduino.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/fake_robot.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/test.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/edit_cache.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/rebuild_cache.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/list_install_components.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/install.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/install/local.dir
+/home/aiserver-kiki/Sentinel_Project/build/diffdrive_arduino/CMakeFiles/install/strip.dir

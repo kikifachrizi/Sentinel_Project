@@ -1,0 +1,1 @@
+Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/sentinel_publisher -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher

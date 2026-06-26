@@ -1,0 +1,4 @@
+/home/aiserver-kiki/Sentinel_Project/src/dreame_lds_ros2/src/dreame_lds_node.cpp: In member function ‘void DreameLdsNode::parse_packet(const uint8_t*)’:
+/home/aiserver-kiki/Sentinel_Project/src/dreame_lds_ros2/src/dreame_lds_node.cpp:187:17: warning: unused variable ‘step’ [-Wunused-variable]
+  187 |     const float step = span / static_cast<float>(N_SAMPLES - 1);
+      |                 ^~~~

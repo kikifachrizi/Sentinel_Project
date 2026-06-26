@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/twist_to_stamped" "TARGETS" "twist_to_stamped" "DESTINATION" "lib/sentinel_publisher")

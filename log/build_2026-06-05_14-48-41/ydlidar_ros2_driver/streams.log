@@ -1,0 +1,48 @@
+[0.011s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/ydlidar_ros2_driver_jazzy -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver
+[0.099s] -- The C compiler identification is GNU 13.3.0
+[0.192s] -- The CXX compiler identification is GNU 13.3.0
+[0.210s] -- Detecting C compiler ABI info
+[0.312s] -- Detecting C compiler ABI info - done
+[0.323s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.323s] -- Detecting C compile features
+[0.323s] -- Detecting C compile features - done
+[0.333s] -- Detecting CXX compiler ABI info
+[0.443s] -- Detecting CXX compiler ABI info - done
+[0.452s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.452s] -- Detecting CXX compile features
+[0.453s] -- Detecting CXX compile features - done
+[0.459s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.613s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.696s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.763s] -- Found rclcpp: 28.1.18 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.833s] -- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.856s] -- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.883s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.915s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.023s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[1.029s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[1.163s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[1.188s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[1.216s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.362s] -- Found sensor_msgs: 5.3.7 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[1.482s] -- Found visualization_msgs: 5.3.7 (/opt/ros/jazzy/share/visualization_msgs/cmake)
+[1.538s] -- Found std_srvs: 5.3.7 (/opt/ros/jazzy/share/std_srvs/cmake)
+[1.578s] [31mCMake Error at CMakeLists.txt:25 (find_package):
+[1.578s]   By not providing "Findydlidar_sdk.cmake" in CMAKE_MODULE_PATH this project
+[1.578s]   has asked CMake to find a package configuration file provided by
+[1.578s]   "ydlidar_sdk", but CMake did not find one.
+[1.578s] 
+[1.578s]   Could not find a package configuration file provided by "ydlidar_sdk" with
+[1.578s]   any of the following names:
+[1.578s] 
+[1.578s]     ydlidar_sdkConfig.cmake
+[1.578s]     ydlidar_sdk-config.cmake
+[1.579s] 
+[1.579s]   Add the installation prefix of "ydlidar_sdk" to CMAKE_PREFIX_PATH or set
+[1.579s]   "ydlidar_sdk_DIR" to a directory containing one of the above files.  If
+[1.579s]   "ydlidar_sdk" provides a separate development package or SDK, be sure it
+[1.579s]   has been installed.
+[1.579s] 
+[1.579s] [0m
+[1.579s] -- Configuring incomplete, errors occurred!
+[1.592s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/ydlidar_ros2_driver' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/ydlidar_ros2_driver_jazzy -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/ydlidar_ros2_driver

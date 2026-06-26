@@ -1,0 +1,61 @@
+[0.010s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/dreame_lds_ros2 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2
+[0.064s] -- The C compiler identification is GNU 13.3.0
+[0.118s] -- The CXX compiler identification is GNU 13.3.0
+[0.135s] -- Detecting C compiler ABI info
+[0.227s] -- Detecting C compiler ABI info - done
+[0.236s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.236s] -- Detecting C compile features
+[0.236s] -- Detecting C compile features - done
+[0.246s] -- Detecting CXX compiler ABI info
+[0.351s] -- Detecting CXX compiler ABI info - done
+[0.360s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.360s] -- Detecting CXX compile features
+[0.361s] -- Detecting CXX compile features - done
+[0.366s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.496s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.637s] -- Found rclcpp: 28.1.18 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.700s] -- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.721s] -- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.744s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.771s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.874s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.879s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.986s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[1.008s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[1.032s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.125s] -- Found sensor_msgs: 5.3.7 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[1.290s] -- Configuring done (1.3s)
+[1.308s] -- Generating done (0.0s)
+[1.312s] -- Build files have been written to: /home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2
+[1.321s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/aiserver-kiki/Sentinel_Project/src/dreame_lds_ros2 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2
+[1.323s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2 -- -j12 -l12
+[1.379s] [ 50%] Building CXX object CMakeFiles/dreame_lds_node.dir/src/dreame_lds_node.cpp.o
+[6.210s] [100%] Linking CXX executable dreame_lds_node
+[6.370s] [100%] Built target dreame_lds_node
+[6.383s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2 -- -j12 -l12
+[6.394s] Invoking command in '/home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2
+[6.403s] -- Install configuration: "Release"
+[6.403s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/lib/dreame_lds_ros2/dreame_lds_node
+[6.404s] -- Set non-toolchain portion of runtime path of "/home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/lib/dreame_lds_ros2/dreame_lds_node" to ""
+[6.404s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/launch
+[6.404s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/launch/dreame_lds.launch.py
+[6.404s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/config
+[6.404s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/config/dreame_lds.rviz
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/params
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/params/dreame_lds.yaml
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/ament_index/resource_index/package_run_dependencies/dreame_lds_ros2
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/ament_index/resource_index/parent_prefix_path/dreame_lds_ros2
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/ament_prefix_path.sh
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/ament_prefix_path.dsv
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/path.sh
+[6.405s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/path.dsv
+[6.406s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.bash
+[6.406s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.sh
+[6.406s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.zsh
+[6.406s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.dsv
+[6.406s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/package.dsv
+[6.406s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/ament_index/resource_index/packages/dreame_lds_ros2
+[6.406s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/cmake/dreame_lds_ros2Config.cmake
+[6.407s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/cmake/dreame_lds_ros2Config-version.cmake
+[6.407s] -- Installing: /home/aiserver-kiki/Sentinel_Project/install/dreame_lds_ros2/share/dreame_lds_ros2/package.xml
+[6.409s] Invoked command in '/home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/aiserver-kiki/Sentinel_Project/build/dreame_lds_ros2

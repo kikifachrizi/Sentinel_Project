@@ -1,0 +1,1 @@
+/home/aiserver-kiki/Sentinel_Project/build/serial/ament_cmake_core/serialConfig.cmake

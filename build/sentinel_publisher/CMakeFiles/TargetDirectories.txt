@@ -1,0 +1,10 @@
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/uninstall.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/sentinel_publisher_uninstall.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/twist_to_stamped.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/test.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/edit_cache.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/rebuild_cache.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/list_install_components.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/install.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/install/local.dir
+/home/aiserver-kiki/Sentinel_Project/build/sentinel_publisher/CMakeFiles/install/strip.dir

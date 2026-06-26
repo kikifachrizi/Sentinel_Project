@@ -1,0 +1,39 @@
+[ 50%] [32mBuilding CXX object CMakeFiles/twist_to_stamped.dir/src/twist_to_stamped.cpp.o[0m
+[100%] [32m[1mLinking CXX executable twist_to_stamped[0m
+[100%] Built target twist_to_stamped
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/lib/sentinel_publisher/twist_to_stamped
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/imu.xacro
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/inertial_macros.xacro
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/lidar.xacro
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/robot.urdf.xacro
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/robot_core.xacro
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/description/ros2_control.xacro
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/back_caster.stl
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/base.stl
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/body_case.stl
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/front_caster.stl
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/left_wheel.stl
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/right_wheel.stl
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/meshes/rplidar.stl
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/launch/launch_sim.launch.py
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/config/bridge_gazebo.yaml
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/config/laser_filter.yaml
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/config/my_controllers.yaml
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/worlds/industrial-warehouse.sdf
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/ament_index/resource_index/package_run_dependencies/sentinel_publisher
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/ament_index/resource_index/parent_prefix_path/sentinel_publisher
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.sh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/path.sh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/environment/path.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.bash
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.sh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.zsh
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/local_setup.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/package.dsv
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/ament_index/resource_index/packages/sentinel_publisher
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig.cmake
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig-version.cmake
+-- Symlinking: /home/aiserver-kiki/Sentinel_Project/install/sentinel_publisher/share/sentinel_publisher/package.xml
