@@ -1,0 +1,19 @@
+| No | Tool AI | Tanggal | Tujuan Penggunaan | Contoh Prompt | Output yang Dipakai | Cara Verifikasi |
+|----|---------|---------|-------------------|---------------|---------------------|-----------------|
+| 1 | Claude Code | 24 Mei 2026 | Inisiasi repository proyek Sentinel | "buat repo baru untuk Sentinel Project berbasis mT-Kernel dan TinyML" | README.md awal + LICENSE (Apache-2.0) | `git log --oneline` → commit Initial commit |
+| 2 | Claude Code | 24 Mei 2026 | Update awal struktur repository | "update repo dengan struktur awal" | File-file awal proyek (udpate repo) | `git show ccaaaa0 --stat` |
+| 3 | Claude Code | 24 Mei 2026 | Pembaruan kode robot ROS2 | "update kode terbaru untuk diffdrive dan serial communication" | Package diffdrive_arduino, serial, sentinel_publisher | `git show 2a9d4dc --stat` |
+| 4 | Claude Code | 24 Mei 2026 | Setup simulasi Gazebo + identifikasi masalah launch file | "setup gazebo untuk simulasi robot, perbaiki launch file" | launch_sim.launch.py, world file industrial-warehouse.sdf | `git show dab9225 --stat` |
+| 5 | Claude Code | 25 Mei 2026 | Update umum repository | "update repo 25 may" | Pembaruan berbagai file proyek | `git show 49fa4d9 --stat` |
+| 6 | Claude Code | 28 Mei 2026 | Tambah dokumentasi awal (STM32CubeIDE .metadata) | "tambahkan folder dokumentasi IDE" | Folder .metadata dari STM32CubeIDE | `git show 02b3495 --stat` |
+| 7 | Claude Code | 28 Mei 2026 | Merge & Revert docs (cleanup file IDE dari repo) | "revert docs karena .metadata tidak perlu masuk repo" | Folder .metadata di-remove dari tracking | `git log --oneline` → PR #1 merge + PR #2 revert |
+| 8 | Claude Code | 28 Mei 2026 | Update README.md | "update readme dengan deskripsi proyek" | README.md diperbarui | `git show af5ada2` |
+| 9 | Claude Code | 28 Mei 2026 | Perbaikan plugin Gazebo & teleop ROS2 Control | "repair gz plugin dan teleop ros2 control" | Fix topic prefix (/scan, /imu, /clock), fix tipe msg LaserScan, update imu.xacro, lidar.xacro, bridge_gazebo.yaml | `git show 06939e8 --stat` → 5 file changed |
+| 10 | Claude Code | 04 Jun 2026 | Dokumentasi teknis porting µT-Kernel + planning | "buat dokumentasi SOP porting µT-Kernel 3.0 ke NUCLEO-H533RE dan planning development" | Porting & Integrasi µT-Kernel.md (SOP 4 fase lengkap) + SENTINEL_Planning_Dev.md | `git show 492a534 --stat` → 2 file baru |
+| 11 | Claude Code | 05 Jun 2026 | Update VSCode settings | "update vscode settings untuk project" | .vscode/settings.json diperbarui | `git show acfd2e7 --stat` |
+| 12 | Claude Code | 05 Jun 2026 | Tambah package driver LiDAR Dreame untuk ROS2 | "tambahkan package ROS2 untuk LiDAR Dreame LDS (protokol AA-03 binary)" | Package dreame_lds_ros2: dreame_lds_node.cpp (parser protokol biner), dreame_lds.yaml, dreame_lds.launch.py, lds_lidar_data.txt | `git show d280588 --stat` → 6 file baru |
+| 13 | Claude Code | 27 Jun 2026 | Grep & rekap riwayat pembahasan proyek dari awal | "bisa anda grep pembahasan dari awal folder ini dibuat hingga yang terbaru?" | Rekap riwayat git log + ringkasan 2 jalur pengembangan (ROS2 & Embedded RTOS) | Output ditampilkan di chat session ini |
+| 14 | Claude Code | 27 Jun 2026 | Analisis detail sisi Embedded/RTOS | "bisa cari tahu detail terkait point kedua yang embedded RTOS side?" | Breakdown: target H/W (Cortex-M33), SOP porting 4 fase, algoritma PID+TinyML/PSO, koneksi serial ke ROS2, status implementasi | Output ditampilkan di chat session ini |
+| 15 | Claude Code | 27 Jun 2026 | Membuat resume tabel seluruh pekerjaan | "buat resume yang dapat saya copy paste semua pekerjaan... format tabel" | Tabel ini (kolom: no, tool AI, tanggal, tujuan, prompt, output, verifikasi) | Tabel terlihat lengkap di chat session ini |
+
+> **Catatan:** Kolom "Contoh Prompt" diisi berdasarkan rekonstruksi dari commit message dan isi perubahan file, karena prompt asli tidak tersimpan di git. Untuk sesi 27 Jun 2026 (No. 13–15), prompt adalah verbatim dari percakapan ini.
