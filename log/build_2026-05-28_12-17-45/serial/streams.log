@@ -1,0 +1,81 @@
+[0.007s] Invoking command in '/home/kiki/sentinel_ws/build/serial': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/kiki/sentinel_ws/src/serial -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/kiki/sentinel_ws/install/serial
+[0.045s] -- The C compiler identification is GNU 13.3.0
+[0.085s] -- The CXX compiler identification is GNU 13.3.0
+[0.098s] -- Detecting C compiler ABI info
+[0.167s] -- Detecting C compiler ABI info - done
+[0.177s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.177s] -- Detecting C compile features
+[0.177s] -- Detecting C compile features - done
+[0.185s] -- Detecting CXX compiler ABI info
+[0.266s] -- Detecting CXX compiler ABI info - done
+[0.273s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.273s] -- Detecting CXX compile features
+[0.273s] -- Detecting CXX compile features - done
+[0.275s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.377s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.420s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.452s] -- Found ament_cmake_gtest: 2.5.4 (/opt/ros/jazzy/share/ament_cmake_gtest/cmake)
+[0.458s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.83.0/BoostConfig.cmake (found version "1.83.0")  
+[0.460s] -- Found gtest sources under '/opt/ros/jazzy/src/gtest_vendor': C++ tests using 'Google Test' will be built
+[0.461s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.523s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.524s] -- Found Threads: TRUE  
+[0.582s] -- Configuring done (0.6s)
+[0.587s] -- Generating done (0.0s)
+[0.589s] -- Build files have been written to: /home/kiki/sentinel_ws/build/serial
+[0.593s] Invoked command in '/home/kiki/sentinel_ws/build/serial' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/kiki/sentinel_ws/src/serial -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/kiki/sentinel_ws/install/serial
+[0.594s] Invoking command in '/home/kiki/sentinel_ws/build/serial': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/serial -- -j20 -l20
+[0.634s] [  7%] [32mBuilding CXX object CMakeFiles/serial.dir/src/serial.cc.o[0m
+[0.635s] [ 14%] [32mBuilding CXX object gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o[0m
+[0.635s] [ 21%] [32mBuilding CXX object gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o[0m
+[0.636s] [ 35%] [32mBuilding CXX object CMakeFiles/serial.dir/src/impl/unix.cc.o[0m
+[0.636s] [ 35%] [32mBuilding CXX object CMakeFiles/serial.dir/src/impl/list_ports/list_ports_linux.cc.o[0m
+[0.904s] [ 42%] [32m[1mLinking CXX static library libserial.a[0m
+[0.957s] [ 42%] Built target serial
+[0.977s] [ 50%] [32mBuilding CXX object CMakeFiles/serial_example.dir/examples/serial_example.cc.o[0m
+[1.166s] [ 57%] [32m[1mLinking CXX executable serial_example[0m
+[1.166s] [ 64%] [32m[1mLinking CXX static library libgtest_main.a[0m
+[1.218s] [ 64%] Built target gtest_main
+[1.220s] [ 64%] Built target serial_example
+[2.725s] [ 71%] [32m[1mLinking CXX static library libgtest.a[0m
+[2.789s] [ 71%] Built target gtest
+[2.809s] [ 85%] [32mBuilding CXX object tests/CMakeFiles/serial-test.dir/unix_serial_tests.cc.o[0m
+[2.809s] [ 85%] [32mBuilding CXX object tests/CMakeFiles/serial-test-timer.dir/unit/unix_timer_tests.cc.o[0m
+[3.194s] In file included from [01m[K/usr/include/boost/bind/detail/requires_cxx11.hpp:9[m[K,
+[3.194s]                  from [01m[K/usr/include/boost/bind/bind.hpp:24[m[K,
+[3.194s]                  from [01m[K/usr/include/boost/bind.hpp:29[m[K,
+[3.194s]                  from [01m[K/home/kiki/sentinel_ws/src/serial/tests/unix_serial_tests.cc:23[m[K:
+[3.194s] [01m[K/usr/include/boost/bind.hpp:36:1:[m[K [01;36m[Knote: [m[K‘[01m[K#pragma message: The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace boost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.[m[K’
+[3.195s]    36 | [01;36m[KBOOST_PRAGMA_MESSAGE[m[K(
+[3.195s]       | [01;36m[K^~~~~~~~~~~~~~~~~~~~[m[K
+[3.288s] [ 92%] [32m[1mLinking CXX executable serial-test-timer[0m
+[3.356s] [100%] [32m[1mLinking CXX executable serial-test[0m
+[3.359s] [100%] Built target serial-test-timer
+[3.429s] [100%] Built target serial-test
+[3.440s] Invoked command in '/home/kiki/sentinel_ws/build/serial' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/serial -- -j20 -l20
+[3.446s] Invoking command in '/home/kiki/sentinel_ws/build/serial': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/serial
+[3.452s] -- Install configuration: ""
+[3.452s] -- Execute custom install script
+[3.452s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/lib/libserial.a
+[3.460s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/include/serial/serial.h
+[3.466s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/include/serial/v8stdint.h
+[3.472s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/environment/library_path.sh
+[3.478s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/environment/library_path.dsv
+[3.485s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/ament_index/resource_index/package_run_dependencies/serial
+[3.492s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/ament_index/resource_index/parent_prefix_path/serial
+[3.497s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/environment/ament_prefix_path.sh
+[3.503s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/environment/ament_prefix_path.dsv
+[3.511s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/environment/path.sh
+[3.518s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/environment/path.dsv
+[3.523s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/local_setup.bash
+[3.531s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/local_setup.sh
+[3.537s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/local_setup.zsh
+[3.543s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/local_setup.dsv
+[3.551s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/package.dsv
+[3.557s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/ament_index/resource_index/packages/serial
+[3.563s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/cmake/ament_cmake_export_include_directories-extras.cmake
+[3.571s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/cmake/ament_cmake_export_libraries-extras.cmake
+[3.577s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/cmake/serialConfig.cmake
+[3.583s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/cmake/serialConfig-version.cmake
+[3.591s] -- Symlinking: /home/kiki/sentinel_ws/install/serial/share/serial/package.xml
+[3.599s] Invoked command in '/home/kiki/sentinel_ws/build/serial' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/serial

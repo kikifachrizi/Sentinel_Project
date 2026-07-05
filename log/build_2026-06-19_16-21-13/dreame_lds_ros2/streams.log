@@ -1,0 +1,59 @@
+[0.007s] Invoking command in '/home/kiki/sentinel_ws/build/dreame_lds_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/kiki/sentinel_ws/src/dreame_lds_ros2 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/kiki/sentinel_ws/install/dreame_lds_ros2
+[0.046s] -- The C compiler identification is GNU 13.3.0
+[0.087s] -- The CXX compiler identification is GNU 13.3.0
+[0.099s] -- Detecting C compiler ABI info
+[0.171s] -- Detecting C compiler ABI info - done
+[0.178s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.178s] -- Detecting C compile features
+[0.178s] -- Detecting C compile features - done
+[0.185s] -- Detecting CXX compiler ABI info
+[0.257s] -- Detecting CXX compiler ABI info - done
+[0.262s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.262s] -- Detecting CXX compile features
+[0.263s] -- Detecting CXX compile features - done
+[0.268s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.390s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.443s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.474s] -- Found rclcpp: 28.1.13 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.514s] -- Found rosidl_generator_c: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.525s] -- Found rosidl_generator_cpp: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.537s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.550s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.604s] -- Found rmw_implementation_cmake: 7.3.2 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.607s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.676s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[0.692s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[0.709s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.774s] -- Found sensor_msgs: 5.3.6 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[0.902s] -- Configuring done (0.9s)
+[0.909s] -- Generating done (0.0s)
+[0.911s] -- Build files have been written to: /home/kiki/sentinel_ws/build/dreame_lds_ros2
+[0.919s] Invoked command in '/home/kiki/sentinel_ws/build/dreame_lds_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/kiki/sentinel_ws/src/dreame_lds_ros2 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/kiki/sentinel_ws/install/dreame_lds_ros2
+[0.920s] Invoking command in '/home/kiki/sentinel_ws/build/dreame_lds_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/dreame_lds_ros2 -- -j20 -l20
+[0.971s] [ 50%] [32mBuilding CXX object CMakeFiles/dreame_lds_node.dir/src/dreame_lds_node.cpp.o[0m
+[3.535s] [100%] [32m[1mLinking CXX executable dreame_lds_node[0m
+[3.665s] [100%] Built target dreame_lds_node
+[3.677s] Invoked command in '/home/kiki/sentinel_ws/build/dreame_lds_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/dreame_lds_ros2 -- -j20 -l20
+[3.678s] Invoking command in '/home/kiki/sentinel_ws/build/dreame_lds_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/dreame_lds_ros2
+[3.686s] -- Install configuration: ""
+[3.686s] -- Execute custom install script
+[3.686s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/lib/dreame_lds_ros2/dreame_lds_node
+[3.693s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/launch/dreame_lds.launch.py
+[3.702s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/config/dreame_lds.rviz
+[3.708s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/params/dreame_lds.yaml
+[3.716s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/ament_index/resource_index/package_run_dependencies/dreame_lds_ros2
+[3.725s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/ament_index/resource_index/parent_prefix_path/dreame_lds_ros2
+[3.734s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/ament_prefix_path.sh
+[3.744s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/ament_prefix_path.dsv
+[3.750s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/path.sh
+[3.757s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/environment/path.dsv
+[3.765s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.bash
+[3.771s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.sh
+[3.777s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.zsh
+[3.786s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/local_setup.dsv
+[3.795s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/package.dsv
+[3.804s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/ament_index/resource_index/packages/dreame_lds_ros2
+[3.813s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/cmake/dreame_lds_ros2Config.cmake
+[3.820s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/cmake/dreame_lds_ros2Config-version.cmake
+[3.829s] -- Symlinking: /home/kiki/sentinel_ws/install/dreame_lds_ros2/share/dreame_lds_ros2/package.xml
+[3.838s] Invoked command in '/home/kiki/sentinel_ws/build/dreame_lds_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/dreame_lds_ros2

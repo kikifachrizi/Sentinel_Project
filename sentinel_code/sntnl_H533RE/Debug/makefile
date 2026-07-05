@@ -9,98 +9,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/lib/libtm/evk_xmc7200/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/lib/libtk/cpu/xmc7200/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/lib/libtk/cpu/core/armv7m/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/device/hal_i2c/sysdepend/xmc7200/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/device/hal_i2c/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/device/hal_adc/sysdepend/xmc7200/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/device/hal_adc/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/cpu/xmc7200/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/cpu/core/armv7m/subdir.mk
--include mtk3_bsp2/sysdepend/xmc_mtb/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32l4r5/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32l476/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32h723/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32h533/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32g491/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32g431/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32f767/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32f446/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32f411/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32f401/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/discovery_stm32n657/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/stm32n6/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/stm32l4/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/stm32h7/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/stm32h5/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/stm32g4/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/stm32f7/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/stm32f4/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/core/armv8m/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/core/armv7m/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/device/hal_i2c/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/device/hal_adc/sysdepend/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/device/hal_adc/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/subdir.mk
--include mtk3_bsp2/sysdepend/stm32_cube/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtm/sysdepend/no_device/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtm/sysdepend/iote_stm32l4/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtm/sysdepend/iote_rza2m/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtm/sysdepend/iote_rx231/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtm/sysdepend/iote_m367/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtm/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/tx03_m367/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/stm32l4/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/stm32h7/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/rza2m/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/rx65n/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/rx231/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/core/rxv2/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/core/armv7m/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/sysdepend/cpu/core/armv7a/subdir.mk
--include mtk3_bsp2/mtkernel/lib/libtk/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/usermain/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/tstdlib/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/tkernel/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysinit/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/iote_stm32l4/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/iote_rza2m/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/iote_rx231/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/iote_m367/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/tx03_m367/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/stm32l4/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/stm32h7/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/rza2m/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/rx65n/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/rx231/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/core/rxv2/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/core/armv7m/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/sysdepend/cpu/core/armv7a/subdir.mk
--include mtk3_bsp2/mtkernel/kernel/inittask/subdir.mk
--include mtk3_bsp2/mtkernel/device/ser/sysdepend/tx03_m367/subdir.mk
--include mtk3_bsp2/mtkernel/device/ser/sysdepend/stm32l4/subdir.mk
--include mtk3_bsp2/mtkernel/device/ser/sysdepend/stm32h7/subdir.mk
--include mtk3_bsp2/mtkernel/device/ser/sysdepend/rza2m/subdir.mk
--include mtk3_bsp2/mtkernel/device/ser/sysdepend/rx65n/subdir.mk
--include mtk3_bsp2/mtkernel/device/ser/sysdepend/rx231/subdir.mk
--include mtk3_bsp2/mtkernel/device/ser/subdir.mk
--include mtk3_bsp2/mtkernel/device/i2c/sysdepend/tx03_m367/subdir.mk
--include mtk3_bsp2/mtkernel/device/i2c/sysdepend/stm32l4/subdir.mk
--include mtk3_bsp2/mtkernel/device/i2c/sysdepend/stm32h7/subdir.mk
--include mtk3_bsp2/mtkernel/device/i2c/sysdepend/rza2m/subdir.mk
--include mtk3_bsp2/mtkernel/device/i2c/sysdepend/rx65n/subdir.mk
--include mtk3_bsp2/mtkernel/device/i2c/sysdepend/rx231/subdir.mk
--include mtk3_bsp2/mtkernel/device/i2c/subdir.mk
--include mtk3_bsp2/mtkernel/device/common/drvif/subdir.mk
--include mtk3_bsp2/mtkernel/device/adc/sysdepend/tx03_m367/subdir.mk
--include mtk3_bsp2/mtkernel/device/adc/sysdepend/stm32l4/subdir.mk
--include mtk3_bsp2/mtkernel/device/adc/sysdepend/stm32h7/subdir.mk
--include mtk3_bsp2/mtkernel/device/adc/sysdepend/rza2m/subdir.mk
--include mtk3_bsp2/mtkernel/device/adc/sysdepend/rx65n/subdir.mk
--include mtk3_bsp2/mtkernel/device/adc/sysdepend/rx231/subdir.mk
--include mtk3_bsp2/mtkernel/device/adc/subdir.mk
 -include application/subdir.mk
 -include Drivers/STM32H5xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
@@ -153,8 +61,8 @@ all: main-build
 main-build: sntnl_H533RE.elf secondary-outputs
 
 # Tool invocations
-sntnl_H533RE.elf sntnl_H533RE.map: $(OBJS) $(USER_OBJS) D:\Robotic\Sentinel\sentinel_code\sntnl_H533RE\STM32H533RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "sntnl_H533RE.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"D:\Robotic\Sentinel\sentinel_code\sntnl_H533RE\STM32H533RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sntnl_H533RE.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+sntnl_H533RE.elf sntnl_H533RE.map: $(OBJS) $(USER_OBJS) /home/kiki/sentinel_ws/sentinel_code/sntnl_H533RE/STM32H533RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "sntnl_H533RE.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/kiki/sentinel_ws/sentinel_code/sntnl_H533RE/STM32H533RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sntnl_H533RE.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

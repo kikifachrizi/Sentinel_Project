@@ -1,0 +1,1 @@
+/home/kiki/sentinel_ws/build/dreame_lds_ros2/ament_cmake_core/dreame_lds_ros2Config-version.cmake

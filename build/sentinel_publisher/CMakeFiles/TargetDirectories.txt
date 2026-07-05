@@ -1,0 +1,10 @@
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/uninstall.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/sentinel_publisher_uninstall.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/twist_to_stamped.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/test.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/edit_cache.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/rebuild_cache.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/list_install_components.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/install.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/install/local.dir
+/home/kiki/sentinel_ws/build/sentinel_publisher/CMakeFiles/install/strip.dir

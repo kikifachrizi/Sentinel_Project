@@ -1,0 +1,44 @@
+[100%] Built target twist_to_stamped
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/lib/sentinel_publisher/twist_to_stamped
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/imu.xacro
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/inertial_macros.xacro
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/lidar.xacro
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/robot.urdf.xacro
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/robot_core.xacro
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/description/ros2_control.xacro
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/back_caster.stl
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/base.stl
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/body_case.stl
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/front_caster.stl
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/left_wheel.stl
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/right_wheel.stl
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/meshes/rplidar.stl
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/launch/launch_sim.launch.py
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/config/bridge_gazebo.yaml
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/config/laser_filter.yaml
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/config/my_controllers.yaml
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/Singapore River Robot X 2026 world.zip
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/Singapore River Robot X 2026 world/sg_river_course/model.sdf
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/Singapore River Robot X 2026 world/thumbnails/thumbnail.png
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/iau_campus.sdf
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/industrial-warehouse.sdf
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/simple_baylands.sdf
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/singapore.sdf
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/worlds/sonoma.sdf
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/ament_index/resource_index/package_run_dependencies/sentinel_publisher
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/ament_index/resource_index/parent_prefix_path/sentinel_publisher
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/path.sh
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/environment/path.dsv
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.bash
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.sh
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.zsh
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/local_setup.dsv
+-- Symlinking: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/package.dsv
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/ament_index/resource_index/packages/sentinel_publisher
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig.cmake
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/cmake/sentinel_publisherConfig-version.cmake
+-- Up-to-date symlink: /home/kiki/sentinel_ws/install/sentinel_publisher/share/sentinel_publisher/package.xml

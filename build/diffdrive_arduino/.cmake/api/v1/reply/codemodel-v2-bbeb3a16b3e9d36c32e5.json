@@ -1,0 +1,88 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-249ef236af576e603dc8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "diffdrive_arduino",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "diffdrive_arduino::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-diffdrive_arduino-4527b4c470981c0ba934.json",
+					"name" : "diffdrive_arduino",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "diffdrive_arduino_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-diffdrive_arduino_uninstall-eb27f6989fae8b010ce3.json",
+					"name" : "diffdrive_arduino_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "fake_robot::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-fake_robot-3eee521cb119423d28ef.json",
+					"name" : "fake_robot",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-054c353a2d140539dff5.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/kiki/sentinel_ws/build/diffdrive_arduino",
+		"source" : "/home/kiki/sentinel_ws/src/diffdrive_arduino"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

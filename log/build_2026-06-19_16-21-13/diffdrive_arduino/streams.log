@@ -1,0 +1,82 @@
+[0.006s] Invoking command in '/home/kiki/sentinel_ws/build/diffdrive_arduino': CMAKE_PREFIX_PATH=/home/kiki/sentinel_ws/install/serial:/home/kiki/sentinel_ws/install/diffdrive_arduino:/home/kiki/sentinel_ws/install/sentinel_publisher:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/diffdrive_arduino -- -j20 -l20
+[0.028s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.175s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.179s] -- Found serial: 1.2.1 (/home/kiki/sentinel_ws/install/serial/share/serial/cmake)
+[0.179s] -- Found hardware_interface: 4.39.2 (/opt/ros/jazzy/share/hardware_interface/cmake)
+[0.199s] -- Found rosidl_generator_c: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.204s] -- Found rosidl_generator_cpp: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.211s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.219s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.336s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[0.358s] -- Found rmw_implementation_cmake: 7.3.2 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.359s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.369s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[0.376s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[0.388s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[0.396s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[0.405s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.494s] -- Found controller_manager: 4.39.2 (/opt/ros/jazzy/share/controller_manager/cmake)
+[0.614s] -- Configuring done (0.6s)
+[0.635s] -- Generating done (0.0s)
+[0.639s] -- Build files have been written to: /home/kiki/sentinel_ws/build/diffdrive_arduino
+[0.686s] [ 42%] [32mBuilding CXX object CMakeFiles/diffdrive_arduino.dir/src/wheel.cpp.o[0m
+[0.686s] [ 42%] [32mBuilding CXX object CMakeFiles/diffdrive_arduino.dir/src/diffdrive_arduino.cpp.o[0m
+[0.686s] [ 42%] [32mBuilding CXX object CMakeFiles/fake_robot.dir/src/wheel.cpp.o[0m
+[0.687s] [ 57%] [32mBuilding CXX object CMakeFiles/diffdrive_arduino.dir/src/arduino_comms.cpp.o[0m
+[0.687s] [ 71%] [32mBuilding CXX object CMakeFiles/fake_robot.dir/src/fake_robot.cpp.o[0m
+[2.284s] [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/src/fake_robot.cpp:[m[K In member function ‘[01m[Kvirtual hardware_interface::CallbackReturn FakeRobot::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’:
+[2.284s] [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/src/fake_robot.cpp:10:51:[m[K [01;35m[Kwarning: [m[K‘[01m[Kvirtual rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn hardware_interface::HardwareComponentInterface::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’ is deprecated: Use on_init(const HardwareComponentInterfaceParams & params) instead. [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wdeprecated-declarations-Wdeprecated-declarations]8;;[m[K]
+[2.284s]    10 |   if ([01;35m[Khardware_interface::SystemInterface::on_init(info)[m[K != CallbackReturn::SUCCESS) {
+[2.284s]       |       [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~[m[K
+[2.284s] In file included from [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/system_interface.hpp:18[m[K,
+[2.284s]                  from [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/include/diffdrive_arduino/fake_robot.h:7[m[K,
+[2.284s]                  from [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/src/fake_robot.cpp:1[m[K:
+[2.284s] [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/hardware_component_interface.hpp:235:26:[m[K [01;36m[Knote: [m[Kdeclared here
+[2.284s]   235 |   virtual CallbackReturn [01;36m[Kon_init[m[K(const HardwareInfo & hardware_info)
+[2.284s]       |                          [01;36m[K^~~~~~~[m[K
+[2.320s] [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/src/diffdrive_arduino.cpp:[m[K In member function ‘[01m[Kvirtual hardware_interface::CallbackReturn DiffDriveArduino::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’:
+[2.320s] [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/src/diffdrive_arduino.cpp:10:51:[m[K [01;35m[Kwarning: [m[K‘[01m[Kvirtual rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn hardware_interface::HardwareComponentInterface::[01;32m[Kon_init[m[K(const hardware_interface::HardwareInfo&)[m[K’ is deprecated: Use on_init(const HardwareComponentInterfaceParams & params) instead. [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wdeprecated-declarations-Wdeprecated-declarations]8;;[m[K]
+[2.320s]    10 |   if ([01;35m[Khardware_interface::SystemInterface::on_init(info)[m[K != CallbackReturn::SUCCESS) {
+[2.321s]       |       [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~[m[K
+[2.321s] In file included from [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/system_interface.hpp:18[m[K,
+[2.321s]                  from [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/include/diffdrive_arduino/diffdrive_arduino.h:8[m[K,
+[2.321s]                  from [01m[K/home/kiki/sentinel_ws/src/diffdrive_arduino/src/diffdrive_arduino.cpp:1[m[K:
+[2.321s] [01m[K/opt/ros/jazzy/include/hardware_interface/hardware_interface/hardware_component_interface.hpp:235:26:[m[K [01;36m[Knote: [m[Kdeclared here
+[2.321s]   235 |   virtual CallbackReturn [01;36m[Kon_init[m[K(const HardwareInfo & hardware_info)
+[2.321s]       |                          [01;36m[K^~~~~~~[m[K
+[3.761s] [ 85%] [32m[1mLinking CXX shared library libfake_robot.so[0m
+[3.799s] [100%] [32m[1mLinking CXX shared library libdiffdrive_arduino.so[0m
+[3.916s] [100%] Built target fake_robot
+[3.941s] [100%] Built target diffdrive_arduino
+[3.948s] Invoked command in '/home/kiki/sentinel_ws/build/diffdrive_arduino' returned '0': CMAKE_PREFIX_PATH=/home/kiki/sentinel_ws/install/serial:/home/kiki/sentinel_ws/install/diffdrive_arduino:/home/kiki/sentinel_ws/install/sentinel_publisher:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/kiki/sentinel_ws/build/diffdrive_arduino -- -j20 -l20
+[3.949s] Invoking command in '/home/kiki/sentinel_ws/build/diffdrive_arduino': CMAKE_PREFIX_PATH=/home/kiki/sentinel_ws/install/serial:/home/kiki/sentinel_ws/install/diffdrive_arduino:/home/kiki/sentinel_ws/install/sentinel_publisher:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/diffdrive_arduino
+[3.955s] -- Install configuration: ""
+[3.955s] -- Execute custom install script
+[3.955s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino//robot_hardware.xml
+[3.955s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino//fake_robot_hardware.xml
+[3.955s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/lib/libdiffdrive_arduino.so
+[3.955s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/lib/libfake_robot.so
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/controllers/robot_controller_example.yaml
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/fake_robot.launch.py
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/test_robot.launch.py
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/environment/library_path.sh
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/environment/library_path.dsv
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/ament_index/resource_index/package_run_dependencies/diffdrive_arduino
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/ament_index/resource_index/parent_prefix_path/diffdrive_arduino
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/environment/ament_prefix_path.sh
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/environment/ament_prefix_path.dsv
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/environment/path.sh
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/environment/path.dsv
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.bash
+[3.956s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.sh
+[3.957s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.zsh
+[3.957s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/local_setup.dsv
+[3.957s] -- Symlinking: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/package.dsv
+[3.962s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/ament_index/resource_index/packages/diffdrive_arduino
+[3.962s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/ament_index/resource_index/hardware_interface__pluginlib__plugin/diffdrive_arduino
+[3.962s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/cmake/ament_cmake_export_libraries-extras.cmake
+[3.962s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/cmake/ament_cmake_export_dependencies-extras.cmake
+[3.963s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/cmake/diffdrive_arduinoConfig.cmake
+[3.963s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/cmake/diffdrive_arduinoConfig-version.cmake
+[3.963s] -- Up-to-date symlink: /home/kiki/sentinel_ws/install/diffdrive_arduino/share/diffdrive_arduino/package.xml
+[3.964s] Invoked command in '/home/kiki/sentinel_ws/build/diffdrive_arduino' returned '0': CMAKE_PREFIX_PATH=/home/kiki/sentinel_ws/install/serial:/home/kiki/sentinel_ws/install/diffdrive_arduino:/home/kiki/sentinel_ws/install/sentinel_publisher:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/kiki/sentinel_ws/build/diffdrive_arduino

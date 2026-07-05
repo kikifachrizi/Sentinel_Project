@@ -16,7 +16,7 @@ S_DEPS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Core/Startup/%.o: ../Core/Startup/%.s Core/Startup/subdir.mk
-	arm-none-eabi-gcc -mcpu=cortex-m33 -g3 -DDEBUG -D_STM32CUBE_NUCLEO_H533_ -c -I"D:/Robotic/Sentinel/sentinel_code/sntnl_H533RE/mtk3_bsp2" -I"D:/Robotic/Sentinel/sentinel_code/sntnl_H533RE/mtk3_bsp2/config" -I"D:/Robotic/Sentinel/sentinel_code/sntnl_H533RE/mtk3_bsp2/include" -I"D:/Robotic/Sentinel/sentinel_code/sntnl_H533RE/mtk3_bsp2/mtkernel/kernel/knlinc" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m33 -g3 -DDEBUG -D_STM32CUBE_NUCLEO_H533_ -c -I"/home/kiki/sentinel_ws/sentinel_code/sntnl_H533RE/mtk3_bsp2" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -o "$@" "$<"
 
 clean: clean-Core-2f-Startup
 
