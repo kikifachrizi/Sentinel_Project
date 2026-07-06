@@ -1,7 +1,7 @@
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:49:13:isQueEmpty	1
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:58:13:QueInsert	1
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:71:13:QueRemove	2
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/kernel/knlinc/../tkernel/timer.h:92:13:knl_timer_delete	1
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:49:13:isQueEmpty	1
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:58:13:QueInsert	1
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:71:13:QueRemove	2
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/kernel/knlinc/../tkernel/timer.h:92:13:knl_timer_delete	1
 ../mtk3_bsp2/mtkernel/kernel/tkernel/wait.h:78:13:knl_queue_insert_tpri	3
 ../mtk3_bsp2/mtkernel/kernel/tkernel/wait.h:143:13:knl_make_non_wait	2
 ../mtk3_bsp2/mtkernel/kernel/tkernel/wait.h:155:13:knl_wait_release	1

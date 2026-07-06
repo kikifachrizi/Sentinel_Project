@@ -1,6 +1,6 @@
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:40:13:QueInit	1
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:58:13:QueInsert	1
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:71:13:QueRemove	2
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:40:13:QueInit	1
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:58:13:QueInsert	1
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:71:13:QueRemove	2
 ../mtk3_bsp2/mtkernel/kernel/tkernel/memory.c:29:15:knl_searchFreeArea	9
 ../mtk3_bsp2/mtkernel/kernel/tkernel/memory.c:77:13:knl_appendFreeArea	4
 ../mtk3_bsp2/mtkernel/kernel/tkernel/memory.c:111:13:knl_removeFreeQue	4

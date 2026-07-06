@@ -1,4 +1,4 @@
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/cpu_status.h:62:13:knl_isTaskIndependent	1
+/home/kiki/sentinel_ws/mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/cpu_status.h:62:13:knl_isTaskIndependent	1
 ../mtk3_bsp2/mtkernel/kernel/tkernel/cpuctl.c:29:12:tk_dis_dsp	4
 ../mtk3_bsp2/mtkernel/kernel/tkernel/cpuctl.c:45:12:tk_ena_dsp	5
 ../mtk3_bsp2/mtkernel/kernel/tkernel/cpuctl.c:64:12:tk_set_reg	15

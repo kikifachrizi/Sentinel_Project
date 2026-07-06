@@ -1,8 +1,8 @@
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:40:13:QueInit	16	static
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:49:13:isQueEmpty	16	static
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:58:13:QueInsert	16	static
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:71:13:QueRemove	16	static
-/home/aiserver-kiki/low_lvl_sentinel/mtk3_bsp2/mtkernel/include/sys/queue.h:85:15:QueRemoveNext	24	static
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:40:13:QueInit	16	static
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:49:13:isQueEmpty	16	static
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:58:13:QueInsert	16	static
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:71:13:QueRemove	16	static
+/home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/sys/queue.h:85:15:QueRemoveNext	24	static
 ../mtk3_bsp2/mtkernel/kernel/tkernel/deviceio.c:37:15:knl_GetResCB	8	static
 ../mtk3_bsp2/mtkernel/kernel/tkernel/deviceio.c:55:11:knl_check_devdesc	32	static
 ../mtk3_bsp2/mtkernel/kernel/tkernel/deviceio.c:80:13:knl_delOpnCB	16	static

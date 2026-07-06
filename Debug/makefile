@@ -127,34 +127,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := low_lvl_sentinel
+BUILD_ARTIFACT_NAME := sentinel_ws
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-low_lvl_sentinel.elf \
+sentinel_ws.elf \
 
 MAP_FILES += \
-low_lvl_sentinel.map \
+sentinel_ws.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-low_lvl_sentinel.list \
+sentinel_ws.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: low_lvl_sentinel.elf secondary-outputs
+main-build: sentinel_ws.elf secondary-outputs
 
 # Tool invocations
-low_lvl_sentinel.elf low_lvl_sentinel.map: $(OBJS) $(USER_OBJS) /home/aiserver-kiki/low_lvl_sentinel/STM32H533RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "low_lvl_sentinel.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/aiserver-kiki/low_lvl_sentinel/STM32H533RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="low_lvl_sentinel.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+sentinel_ws.elf sentinel_ws.map: $(OBJS) $(USER_OBJS) /home/kiki/sentinel_ws/STM32H533RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "sentinel_ws.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/kiki/sentinel_ws/STM32H533RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sentinel_ws.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -163,14 +163,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-low_lvl_sentinel.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "low_lvl_sentinel.list"
+sentinel_ws.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "sentinel_ws.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout low_lvl_sentinel.elf low_lvl_sentinel.list low_lvl_sentinel.map
+	-$(RM) default.size.stdout sentinel_ws.elf sentinel_ws.list sentinel_ws.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
