@@ -154,7 +154,7 @@ main-build: sentinel_ws.elf secondary-outputs
 
 # Tool invocations
 sentinel_ws.elf sentinel_ws.map: $(OBJS) $(USER_OBJS) /home/kiki/sentinel_ws/STM32H533RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "sentinel_ws.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/kiki/sentinel_ws/STM32H533RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sentinel_ws.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "sentinel_ws.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/kiki/sentinel_ws/STM32H533RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sentinel_ws.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

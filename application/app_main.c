@@ -38,19 +38,49 @@ extern void MX_TIM8_Init(void);
 #define INA219_CURRENT 0x04
 #define INA219_CALIB 0x05
 
-LOCAL void read_ina219(INT stacd, void *exinf);
+#define PCA9548A_ADDR   (0x70 << 1)   // default, A0/A1/A2 = GND
+
+#define MUX_CH_MPU6050   0
+#define MUX_CH_INA219_1  1
+#define MUX_CH_INA219_2  2
+
+LOCAL ID i2c_mux_mtx_id;
+LOCAL T_CSEM csem_i2c_mux = {
+    .isemcnt = 1,
+    .maxsem  = 1,
+    .sematr  = TA_TFIFO,
+};
+
+static HAL_StatusTypeDef pca9548a_select_channel(uint8_t channel)
+{
+    uint8_t ch_mask = (1 << channel);
+    return HAL_I2C_Master_Transmit(&hi2c1, PCA9548A_ADDR, &ch_mask, 1, 100);
+}
+
+LOCAL void read_mpu6050(INT stacd, void *exinf);
+LOCAL ID   mpu6050_id;
+LOCAL T_CTSK ctsk_mpu6050 = {
+    .itskpri  = 10,
+    .stksz    = 1024,
+    .task     = read_mpu6050,   
+    .tskatr   = TA_HLNG | TA_RNG3,
+};
+
+LOCAL void read_ina219_1(INT stacd, void *exinf);
 LOCAL ID   ina219_1_id;
-LOCAL ID   ina219_3_id;
 LOCAL T_CTSK ctsk_ina219_1 = {
     .itskpri  = 10,
     .stksz    = 1024,
-    .task     = read_ina219,
+    .task     = read_ina219_1,
     .tskatr   = TA_HLNG | TA_RNG3,
 };
-LOCAL T_CTSK ctsk_ina219_3 = {
+
+LOCAL void read_ina219_2(INT stacd, void *exinf);
+LOCAL ID   ina219_2_id;
+LOCAL T_CTSK ctsk_ina219_2 = {
     .itskpri  = 10,
     .stksz    = 1024,
-    .task     = read_ina219,
+    .task     = read_ina219_2,
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
@@ -87,24 +117,6 @@ LOCAL T_CTSK ctsk_motor1 = {
     .itskpri  = 10,
     .stksz    = 1024,
     .task     = motor1,
-    .tskatr   = TA_HLNG | TA_RNG3,
-};
-
-LOCAL void motor2(INT stacd, void *exinf);
-LOCAL ID   motor2_id;
-LOCAL T_CTSK ctsk_motor2 = {
-    .itskpri  = 10,
-    .stksz    = 1024,
-    .task     = motor2,
-    .tskatr   = TA_HLNG | TA_RNG3,
-};
-
-LOCAL void read_mpu6050(INT stacd, void *exinf);
-LOCAL ID   mpu6050_id;
-LOCAL T_CTSK ctsk_mpu6050 = {
-    .itskpri  = 10,
-    .stksz    = 1024,
-    .task     = read_mpu6050,   
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
@@ -210,55 +222,33 @@ LOCAL void motor1(INT stacd, void *exinf)
     }
 }
 
-LOCAL void motor2(INT stacd, void *exinf)
-{
-    while(1) {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, 1);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-        TIM8->CCR2 = 500;        
-        HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
-        tk_dly_tsk(5000);
-
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, 0);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-        TIM8->CCR2 = 0;
-        tk_dly_tsk(3000);
-
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, 0);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
-        TIM8->CCR2 = 500;
-        HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
-        tk_dly_tsk(5000);
-
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, 0);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-        TIM8->CCR2 = 0;
-        tk_dly_tsk(3000);
-    }
-}
-
 LOCAL void read_mpu6050(INT stacd, void *exinf)
 {
     uint8_t who_am_i;
-    int16_t ax,ay,az,gx,gy,gz;
+    int16_t ax, ay, az, gx, gy, gz;
     uint8_t data[14];
     uint8_t buf[2];
 
-    // Wake up MPU6050: tulis reg 0x6B dengan 0x00
+    tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
+    pca9548a_select_channel(MUX_CH_MPU6050);
+
     buf[0] = MPU6050_PWR_MGMT;
     buf[1] = 0x00;
     HAL_I2C_Master_Transmit(&hi2c1, MPU6050_ADDR, buf, 2, 100);
 
-    // Cek WHO_AM_I (harus 0x68)
     HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, MPU6050_WHO_AM_I,
                       I2C_MEMADD_SIZE_8BIT, &who_am_i, 1, 100);
-    tm_printf((UB*)"MPU6050 WHO_AM_I: 0x%02X\r\n", who_am_i);
+    tk_sig_sem(i2c_mux_mtx_id, 1);
 
+    tm_printf((UB*)"MPU6050 (ch%d) WHO_AM_I: 0x%02X\r\n", MUX_CH_MPU6050, who_am_i);
     tk_dly_tsk(100);
 
-    while(1){
+    while (1) {
+        tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
+        pca9548a_select_channel(MUX_CH_MPU6050);
         HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, MPU6050_ACCEL,
                           I2C_MEMADD_SIZE_8BIT, data, 14, 100);
+        tk_sig_sem(i2c_mux_mtx_id, 1);
 
         ax = (data[0] << 8) | data[1];
         ay = (data[2] << 8) | data[3];
@@ -273,56 +263,58 @@ LOCAL void read_mpu6050(INT stacd, void *exinf)
     }
 }
 
-// stacd = I2C address (7-bit, e.g. 0x40 or 0x41)
-LOCAL void read_ina219(INT stacd, void *exinf)
+
+LOCAL void read_ina219_1(INT stacd, void *exinf)
 {
+    const uint8_t dev_addr = INA219_ADDR;   // 0x40 << 1
+    const uint8_t mux_ch   = MUX_CH_INA219_1;
     uint8_t data[2];
     int16_t shunt_raw, current_raw, power_raw, bus_raw;
     int32_t bus_mV, shunt_uV, current_mA, power_mW;
     HAL_StatusTypeDef ret;
-    uint16_t dev_addr = stacd << 1;
 
-    // Config INA219
+    tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
+    pca9548a_select_channel(mux_ch);
+
     uint8_t cfg[] = {INA219_CONFIG, 0x39, 0x9F};
-    ret = HAL_I2C_Master_Transmit(&hi2c3, dev_addr, cfg, 3, 100);
+    ret = HAL_I2C_Master_Transmit(&hi2c1, dev_addr, cfg, 3, 100);
     if (ret != HAL_OK) {
-        tm_printf((UB*)"INA219@0x%02X config FAIL\r\n", stacd);
+        tm_printf((UB*)"INA219 ch%d config FAIL\r\n", mux_ch);
     }
 
     uint8_t cal[] = {INA219_CALIB, 0x10, 0x00};
-    HAL_I2C_Master_Transmit(&hi2c3, dev_addr, cal, 3, 100);
+    HAL_I2C_Master_Transmit(&hi2c1, dev_addr, cal, 3, 100);
+    tk_sig_sem(i2c_mux_mtx_id, 1);
     tk_dly_tsk(100);
 
-    // Verify
-    ret = HAL_I2C_Mem_Read(&hi2c3, dev_addr, 0xFE,
-                           I2C_MEMADD_SIZE_8BIT, data, 2, 100);
-    tm_printf((UB*)"INA219@0x%02X Manuf ID: 0x%02X%02X (%s)\r\n",
-              stacd, data[0], data[1], ret == HAL_OK ? "OK" : "FAIL");
+    while (1) {
+        tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
+        pca9548a_select_channel(mux_ch);
 
-    while(1) {
-        ret = HAL_I2C_Mem_Read(&hi2c3, dev_addr, INA219_BUS_V,
+        ret = HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_BUS_V,
                                I2C_MEMADD_SIZE_8BIT, data, 2, 100);
-        if (ret != HAL_OK) { tk_dly_tsk(500); continue; }
+        if (ret != HAL_OK) { tk_sig_sem(i2c_mux_mtx_id, 1); tk_dly_tsk(500); continue; }
         bus_raw = (data[0] << 8) | data[1];
         bus_mV = (bus_raw >> 3) * 4;
 
-        HAL_I2C_Mem_Read(&hi2c3, dev_addr, INA219_SHUNT_V,
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_SHUNT_V,
                          I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         shunt_raw = (data[0] << 8) | data[1];
         shunt_uV = shunt_raw * 10;
 
-        HAL_I2C_Mem_Read(&hi2c3, dev_addr, INA219_CURRENT,
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_CURRENT,
                          I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         current_raw = (data[0] << 8) | data[1];
         current_mA = current_raw;
 
-        HAL_I2C_Mem_Read(&hi2c3, dev_addr, INA219_POWER,
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_POWER,
                          I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         power_raw = (data[0] << 8) | data[1];
         power_mW = power_raw * 2;
+        tk_sig_sem(i2c_mux_mtx_id, 1);
 
-        tm_printf((UB*)"[0x%02X] Bus: %ld.%03ld V | Shunt: %ld.%03ld mV | Current: %ld.%ld mA | Power: %ld mW\r\n",
-                  stacd,
+        tm_printf((UB*)"[ch%d 0x40] Bus: %ld.%03ld V | Shunt: %ld.%03ld mV | Current: %ld.%ld mA | Power: %ld mW\r\n",
+                  mux_ch,
                   bus_mV / 1000, abs(bus_mV % 1000),
                   shunt_uV / 1000, abs(shunt_uV % 1000),
                   current_mA / 10, abs(current_mA % 10),
@@ -331,13 +323,73 @@ LOCAL void read_ina219(INT stacd, void *exinf)
     }
 }
 
+LOCAL void read_ina219_2(INT stacd, void *exinf)
+{
+    const uint8_t dev_addr = 0x44 << 1;
+    const uint8_t mux_ch   = MUX_CH_INA219_2;
+    uint8_t data[2];
+    int16_t shunt_raw, current_raw, power_raw, bus_raw;
+    int32_t bus_mV, shunt_uV, current_mA, power_mW;
+    HAL_StatusTypeDef ret;
+
+    tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
+    pca9548a_select_channel(mux_ch);
+
+    uint8_t cfg[] = {INA219_CONFIG, 0x39, 0x9F};
+    ret = HAL_I2C_Master_Transmit(&hi2c1, dev_addr, cfg, 3, 100);
+    if (ret != HAL_OK) {
+        tm_printf((UB*)"INA219 ch%d config FAIL\r\n", mux_ch);
+    }
+
+    uint8_t cal[] = {INA219_CALIB, 0x10, 0x00};
+    HAL_I2C_Master_Transmit(&hi2c1, dev_addr, cal, 3, 100);
+    tk_sig_sem(i2c_mux_mtx_id, 1);
+    tk_dly_tsk(100);
+
+    while (1) {
+        tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
+        pca9548a_select_channel(mux_ch);
+
+        ret = HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_BUS_V,
+                               I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        if (ret != HAL_OK) { tk_sig_sem(i2c_mux_mtx_id, 1); tk_dly_tsk(500); continue; }
+        bus_raw = (data[0] << 8) | data[1];
+        bus_mV = (bus_raw >> 3) * 4;
+
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_SHUNT_V,
+                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        shunt_raw = (data[0] << 8) | data[1];
+        shunt_uV = shunt_raw * 10;
+
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_CURRENT,
+                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        current_raw = (data[0] << 8) | data[1];
+        current_mA = current_raw;
+
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_POWER,
+                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        power_raw = (data[0] << 8) | data[1];
+        power_mW = power_raw * 2;
+        tk_sig_sem(i2c_mux_mtx_id, 1);
+
+        tm_printf((UB*)"[ch%d 0x44] Bus: %ld.%03ld V | Shunt: %ld.%03ld mV | Current: %ld.%ld mA | Power: %ld mW\r\n",
+                  mux_ch,
+                  bus_mV / 1000, abs(bus_mV % 1000),
+                  shunt_uV / 1000, abs(shunt_uV % 1000),
+                  current_mA / 10, abs(current_mA % 10),
+                  power_mW);
+        tk_dly_tsk(500);
+    }
+}
+
+
 /* fungsi usermain */
 EXPORT INT usermain(void)
 {
     tm_putstring((UB*)"Start User-main program.\n");
     /* Buat & Jalankan Task */
-    // tskid_1 = tk_cre_tsk(&ctsk_1);
-    // tk_sta_tsk(tskid_1, 0);
+    //  tskid_1 = tk_cre_tsk(&ctsk_1);
+    //  tk_sta_tsk(tskid_1, 0);
 
     // read_enc1_id = tk_cre_tsk(&ctsk_enc1);
     // tk_sta_tsk(read_enc1_id, 0);
@@ -348,17 +400,17 @@ EXPORT INT usermain(void)
     motor1_id = tk_cre_tsk(&ctsk_motor1);
     tk_sta_tsk(motor1_id, 0);
 
-    //  motor2_id = tk_cre_tsk(&ctsk_motor2);
-    //  tk_sta_tsk(motor2_id, 0);
+    // motor2_id = tk_cre_tsk(&ctsk_motor2);
+    // tk_sta_tsk(motor2_id, 0);
 
     // mpu6050_id = tk_cre_tsk(&ctsk_mpu6050);
     // tk_sta_tsk(mpu6050_id, 0);
 
     ina219_1_id = tk_cre_tsk(&ctsk_ina219_1);
-    tk_sta_tsk(ina219_1_id, 0x40);  // INA219 #1 di I2C3, addr 0x40
+    tk_sta_tsk(ina219_1_id, 0);  // INA219 #1 di I2C3, addr 0x40
 
-    ina219_3_id = tk_cre_tsk(&ctsk_ina219_3);
-    tk_sta_tsk(ina219_3_id, 0x41);  // INA219 #2 di I2C3, addr 0x41 (A0=VCC)
+    ina219_2_id = tk_cre_tsk(&ctsk_ina219_2);
+    tk_sta_tsk(ina219_2_id, 0);  // INA219 #2 di I2C3, addr 0x41 (A0=VCC)
 
     tk_slp_tsk(TMO_FEVR);
     return 0;

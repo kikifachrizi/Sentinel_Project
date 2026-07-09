@@ -1,3 +1,9 @@
 /build
 /log
 /install
+.vscode
+.settings
+.metadata
+.cproject
+.mxproject
+.project
