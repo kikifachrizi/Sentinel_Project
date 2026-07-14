@@ -57,6 +57,8 @@ this repository for Sentinel project (enhanced for TIFA) using mT-Kernel 3.0 and
 ### INA219 (I2C) → micro testing
 - https://github.com/thibeaux/STM32_INA219_Library/tree/main
 
+---
+
 ### How to add tinyML model to mT-kernel 3.0
 ### Communicate STM32 NUCLEO-H533RE → Raspberry Pi 5 (ROS2 Jazzy)
 

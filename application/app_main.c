@@ -6,6 +6,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "lib/commands.h"
+#include "lib/sensors.h"
+
 
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
@@ -43,6 +46,8 @@ extern void MX_TIM8_Init(void);
 #define MUX_CH_MPU6050   0
 #define MUX_CH_INA219_1  1
 #define MUX_CH_INA219_2  2
+
+// build NUCLEO-Bridge in this file
 
 LOCAL ID i2c_mux_mtx_id;
 LOCAL T_CSEM csem_i2c_mux = {
@@ -84,12 +89,12 @@ LOCAL T_CTSK ctsk_ina219_2 = {
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
-LOCAL void task_1(INT stacd, void *exinf);  // fungsi eksekusi task
-LOCAL ID   tskid_1;                         // nomor Task ID
-LOCAL T_CTSK ctsk_1 = {                     // informasi pembuatan task
+LOCAL void com1(INT stacd, void *exinf);  // fungsi eksekusi task
+LOCAL ID   com1_id;                         // nomor Task ID
+LOCAL T_CTSK ctsk_com1 = {                     // informasi pembuatan task
     .itskpri  = 10,
     .stksz    = 1024,
-    .task     = task_1,
+    .task     = com1,
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
@@ -120,7 +125,7 @@ LOCAL T_CTSK ctsk_motor1 = {
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
-LOCAL void task_1(INT stacd, void *exinf)
+LOCAL void com1(INT stacd, void *exinf)
 {
     uint8_t rx_byte;
 
@@ -236,8 +241,7 @@ LOCAL void read_mpu6050(INT stacd, void *exinf)
     buf[1] = 0x00;
     HAL_I2C_Master_Transmit(&hi2c1, MPU6050_ADDR, buf, 2, 100);
 
-    HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, MPU6050_WHO_AM_I,
-                      I2C_MEMADD_SIZE_8BIT, &who_am_i, 1, 100);
+    HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, MPU6050_WHO_AM_I,I2C_MEMADD_SIZE_8BIT, &who_am_i, 1, 100);
     tk_sig_sem(i2c_mux_mtx_id, 1);
 
     tm_printf((UB*)"MPU6050 (ch%d) WHO_AM_I: 0x%02X\r\n", MUX_CH_MPU6050, who_am_i);
@@ -291,24 +295,20 @@ LOCAL void read_ina219_1(INT stacd, void *exinf)
         tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
         pca9548a_select_channel(mux_ch);
 
-        ret = HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_BUS_V,
-                               I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        ret = HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_BUS_V,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         if (ret != HAL_OK) { tk_sig_sem(i2c_mux_mtx_id, 1); tk_dly_tsk(500); continue; }
         bus_raw = (data[0] << 8) | data[1];
         bus_mV = (bus_raw >> 3) * 4;
 
-        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_SHUNT_V,
-                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_SHUNT_V,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         shunt_raw = (data[0] << 8) | data[1];
         shunt_uV = shunt_raw * 10;
 
-        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_CURRENT,
-                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_CURRENT,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         current_raw = (data[0] << 8) | data[1];
         current_mA = current_raw;
 
-        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_POWER,
-                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_POWER,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         power_raw = (data[0] << 8) | data[1];
         power_mW = power_raw * 2;
         tk_sig_sem(i2c_mux_mtx_id, 1);
@@ -350,24 +350,20 @@ LOCAL void read_ina219_2(INT stacd, void *exinf)
         tk_wai_sem(i2c_mux_mtx_id, 1, TMO_FEVR);
         pca9548a_select_channel(mux_ch);
 
-        ret = HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_BUS_V,
-                               I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        ret = HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_BUS_V,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         if (ret != HAL_OK) { tk_sig_sem(i2c_mux_mtx_id, 1); tk_dly_tsk(500); continue; }
         bus_raw = (data[0] << 8) | data[1];
         bus_mV = (bus_raw >> 3) * 4;
 
-        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_SHUNT_V,
-                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_SHUNT_V,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         shunt_raw = (data[0] << 8) | data[1];
         shunt_uV = shunt_raw * 10;
 
-        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_CURRENT,
-                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_CURRENT,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         current_raw = (data[0] << 8) | data[1];
         current_mA = current_raw;
 
-        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_POWER,
-                         I2C_MEMADD_SIZE_8BIT, data, 2, 100);
+        HAL_I2C_Mem_Read(&hi2c1, dev_addr, INA219_POWER,I2C_MEMADD_SIZE_8BIT, data, 2, 100);
         power_raw = (data[0] << 8) | data[1];
         power_mW = power_raw * 2;
         tk_sig_sem(i2c_mux_mtx_id, 1);
@@ -388,8 +384,8 @@ EXPORT INT usermain(void)
 {
     tm_putstring((UB*)"Start User-main program.\n");
     /* Buat & Jalankan Task */
-    //  tskid_1 = tk_cre_tsk(&ctsk_1);
-    //  tk_sta_tsk(tskid_1, 0);
+    com1_id = tk_cre_tsk(&ctsk_com1);
+    tk_sta_tsk(com1_id, 0);
 
     // read_enc1_id = tk_cre_tsk(&ctsk_enc1);
     // tk_sta_tsk(read_enc1_id, 0);
@@ -399,9 +395,6 @@ EXPORT INT usermain(void)
 
     motor1_id = tk_cre_tsk(&ctsk_motor1);
     tk_sta_tsk(motor1_id, 0);
-
-    // motor2_id = tk_cre_tsk(&ctsk_motor2);
-    // tk_sta_tsk(motor2_id, 0);
 
     // mpu6050_id = tk_cre_tsk(&ctsk_mpu6050);
     // tk_sta_tsk(mpu6050_id, 0);
