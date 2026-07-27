@@ -1,45 +1,32 @@
+// include for uT-kernel 3.0
 #include <tk/tkernel.h>
 #include <tm/tmonitor.h>
 #include <tk/device.h>
+
+// include for HAL Library
 #include "stm32h5xx_hal.h"
+
+// include for C
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+// include for my own library
 #include "lib/commands.h"
 #include "lib/sensors.h"
 
 
-extern UART_HandleTypeDef huart1;
-extern UART_HandleTypeDef huart2;
-extern I2C_HandleTypeDef hi2c1;
-extern I2C_HandleTypeDef hi2c2;
-extern I2C_HandleTypeDef hi2c3;
-extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim4;
-extern TIM_HandleTypeDef htim8;
+extern UART_HandleTypeDef huart1; // vcp (virtual com port)
+extern UART_HandleTypeDef huart2; // com1
+
+extern I2C_HandleTypeDef hi2c1; // for pca i2c mux
+
+extern TIM_HandleTypeDef htim2; // for encoder 1
+extern TIM_HandleTypeDef htim3; //for encoder 2
 extern void MX_TIM2_Init(void);
 extern void MX_TIM3_Init(void);
-extern void MX_GPIO_Init(void);
-extern void MX_TIM1_Init(void);
-extern void MX_TIM4_Init(void);
-extern void MX_TIM8_Init(void);
 
-#define MPU6050_ADDR 0x68 << 1
-#define MPU6050_WHO_AM_I 0x75
-#define MPU6050_PWR_MGMT 0x6B
-#define MPU6050_ACCEL 0x3B
-#define MPU6050_GYRO 0x43
 
-#define INA219_ADDR 0x40 << 1
-#define INA219_CONFIG 0x00
-#define INA219_SHUNT_V 0x01
-#define INA219_BUS_V 0x02
-#define INA219_POWER 0x03
-#define INA219_CURRENT 0x04
-#define INA219_CALIB 0x05
 
 #define PCA9548A_ADDR   (0x70 << 1)   // default, A0/A1/A2 = GND
 
@@ -62,6 +49,7 @@ static HAL_StatusTypeDef pca9548a_select_channel(uint8_t channel)
     return HAL_I2C_Master_Transmit(&hi2c1, PCA9548A_ADDR, &ch_mask, 1, 100);
 }
 
+// start read sensor 
 LOCAL void read_mpu6050(INT stacd, void *exinf);
 LOCAL ID   mpu6050_id;
 LOCAL T_CTSK ctsk_mpu6050 = {
@@ -89,15 +77,6 @@ LOCAL T_CTSK ctsk_ina219_2 = {
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
-LOCAL void com1(INT stacd, void *exinf);  // fungsi eksekusi task
-LOCAL ID   com1_id;                         // nomor Task ID
-LOCAL T_CTSK ctsk_com1 = {                     // informasi pembuatan task
-    .itskpri  = 10,
-    .stksz    = 1024,
-    .task     = com1,
-    .tskatr   = TA_HLNG | TA_RNG3,
-};
-
 LOCAL void read_enc1(INT stacd, void *exinf);
 LOCAL ID   read_enc1_id;
 LOCAL T_CTSK ctsk_enc1 = {
@@ -113,6 +92,16 @@ LOCAL T_CTSK ctsk_enc2 = {
     .itskpri  = 10,
     .stksz    = 1024,
     .task     = read_enc2,
+    .tskatr   = TA_HLNG | TA_RNG3,
+};
+// end read sensor 
+
+LOCAL void com1(INT stacd, void *exinf);  // fungsi eksekusi task
+LOCAL ID   com1_id;                         // nomor Task ID
+LOCAL T_CTSK ctsk_com1 = {                     // informasi pembuatan task
+    .itskpri  = 10,
+    .stksz    = 1024,
+    .task     = com1,
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
@@ -146,83 +135,24 @@ LOCAL void com1(INT stacd, void *exinf)
 
 LOCAL void read_enc1(INT stacd, void *exinf)
 {
-    int counterVal = 0;
-    int pastCounterVal = 0;
-    float angleVal = 0;
-    char printMsg[200]={'\0'};
-    HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+
 
     while(1) {
-        counterVal = TIM2->CNT;
-        if(counterVal != pastCounterVal) {
-            angleVal = (360 / 2400.0) * ((float)counterVal);
-            sprintf(printMsg, "Counter 1: %d, Angle: %.2f\r\n", counterVal, angleVal);
-            HAL_UART_Transmit(&huart1, (uint8_t*)printMsg, strlen(printMsg), 300);
-        }
-        pastCounterVal = counterVal;
-        tk_dly_tsk(100);
+
     }
 }
 
 LOCAL void read_enc2(INT stacd, void *exinf)
 {
-    int16_t counterVal = 0;
-    int16_t pastCounterVal = 0;
-    int16_t angleVal = 0;
-    char printMsg[200]={'\0'};
-    HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 
     while(1) {
-        counterVal = (int16_t)(TIM3->CNT);
-        if(counterVal != pastCounterVal) {
-            angleVal = counterVal * 15;
-            sprintf(printMsg, "Counter 2: %d, Angle: %d.%02d\r\n",counterVal, angleVal / 100, abs(angleVal % 100));
-            HAL_UART_Transmit(&huart1, (uint8_t*)printMsg, strlen(printMsg), 300);
-        }
-        pastCounterVal = counterVal;
-        tk_dly_tsk(100);
+
     }
 }
 
 LOCAL void motor1(INT stacd, void *exinf)
 {
     while(1) {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, 1);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 1);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-        TIM4->CCR1 = 500;
-        TIM8->CCR2 = 500;
-        HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
-        tk_dly_tsk(5000);
-
-
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, 0);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 0);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-        TIM4->CCR1 = 0;
-        TIM8->CCR2 = 0;
-        tk_dly_tsk(3000);
-
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 1);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, 0);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 0);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
-        TIM4->CCR1 = 300;
-        TIM8->CCR2 = 300;
-        HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
-        tk_dly_tsk(5000);
-
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, 0);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 0);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 0);
-        TIM4->CCR1 = 0;
-        TIM8->CCR2 = 0;
-        tk_dly_tsk(3000);
 
     }
 }
