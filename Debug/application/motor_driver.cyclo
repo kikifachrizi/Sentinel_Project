@@ -1,0 +1,3 @@
+../application/motor_driver.c:19:13:initMotorController	1
+../application/motor_driver.c:23:13:setMotorSpeed	7
+../application/motor_driver.c:35:13:setMotorSpeeds	1

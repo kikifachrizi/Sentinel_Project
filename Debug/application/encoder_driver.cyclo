@@ -1,0 +1,5 @@
+../application/encoder_driver.c:11:13:initEncoder	1
+../application/encoder_driver.c:15:13:readEncoder	1
+../application/encoder_driver.c:20:13:resetEncoder	1
+../application/encoder_driver.c:24:13:resetEncoders	1
+../application/encoder_driver.c:29:13:debugEncoder	2

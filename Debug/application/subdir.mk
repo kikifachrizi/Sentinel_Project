@@ -5,13 +5,28 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../application/app_main.c 
+../application/app_main.c \
+../application/diff_controller.c \
+../application/encoder_driver.c \
+../application/motor_driver.c \
+../application/sensors.c \
+../application/uart_bridge.c 
 
 OBJS += \
-./application/app_main.o 
+./application/app_main.o \
+./application/diff_controller.o \
+./application/encoder_driver.o \
+./application/motor_driver.o \
+./application/sensors.o \
+./application/uart_bridge.o 
 
 C_DEPS += \
-./application/app_main.d 
+./application/app_main.d \
+./application/diff_controller.d \
+./application/encoder_driver.d \
+./application/motor_driver.d \
+./application/sensors.d \
+./application/uart_bridge.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +36,7 @@ application/%.o application/%.su application/%.cyclo: ../application/%.c applica
 clean: clean-application
 
 clean-application:
-	-$(RM) ./application/app_main.cyclo ./application/app_main.d ./application/app_main.o ./application/app_main.su
+	-$(RM) ./application/app_main.cyclo ./application/app_main.d ./application/app_main.o ./application/app_main.su ./application/diff_controller.cyclo ./application/diff_controller.d ./application/diff_controller.o ./application/diff_controller.su ./application/encoder_driver.cyclo ./application/encoder_driver.d ./application/encoder_driver.o ./application/encoder_driver.su ./application/motor_driver.cyclo ./application/motor_driver.d ./application/motor_driver.o ./application/motor_driver.su ./application/sensors.cyclo ./application/sensors.d ./application/sensors.o ./application/sensors.su ./application/uart_bridge.cyclo ./application/uart_bridge.d ./application/uart_bridge.o ./application/uart_bridge.su
 
 .PHONY: clean-application
 
