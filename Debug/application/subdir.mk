@@ -6,6 +6,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../application/app_main.c \
+../application/commands.c \
 ../application/diff_controller.c \
 ../application/encoder_driver.c \
 ../application/motor_driver.c \
@@ -14,6 +15,7 @@ C_SRCS += \
 
 OBJS += \
 ./application/app_main.o \
+./application/commands.o \
 ./application/diff_controller.o \
 ./application/encoder_driver.o \
 ./application/motor_driver.o \
@@ -22,6 +24,7 @@ OBJS += \
 
 C_DEPS += \
 ./application/app_main.d \
+./application/commands.d \
 ./application/diff_controller.d \
 ./application/encoder_driver.d \
 ./application/motor_driver.d \
@@ -36,7 +39,7 @@ application/%.o application/%.su application/%.cyclo: ../application/%.c applica
 clean: clean-application
 
 clean-application:
-	-$(RM) ./application/app_main.cyclo ./application/app_main.d ./application/app_main.o ./application/app_main.su ./application/diff_controller.cyclo ./application/diff_controller.d ./application/diff_controller.o ./application/diff_controller.su ./application/encoder_driver.cyclo ./application/encoder_driver.d ./application/encoder_driver.o ./application/encoder_driver.su ./application/motor_driver.cyclo ./application/motor_driver.d ./application/motor_driver.o ./application/motor_driver.su ./application/sensors.cyclo ./application/sensors.d ./application/sensors.o ./application/sensors.su ./application/uart_bridge.cyclo ./application/uart_bridge.d ./application/uart_bridge.o ./application/uart_bridge.su
+	-$(RM) ./application/app_main.cyclo ./application/app_main.d ./application/app_main.o ./application/app_main.su ./application/commands.cyclo ./application/commands.d ./application/commands.o ./application/commands.su ./application/diff_controller.cyclo ./application/diff_controller.d ./application/diff_controller.o ./application/diff_controller.su ./application/encoder_driver.cyclo ./application/encoder_driver.d ./application/encoder_driver.o ./application/encoder_driver.su ./application/motor_driver.cyclo ./application/motor_driver.d ./application/motor_driver.o ./application/motor_driver.su ./application/sensors.cyclo ./application/sensors.d ./application/sensors.o ./application/sensors.su ./application/uart_bridge.cyclo ./application/uart_bridge.d ./application/uart_bridge.o ./application/uart_bridge.su
 
 .PHONY: clean-application
 

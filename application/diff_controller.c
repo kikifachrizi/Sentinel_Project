@@ -27,6 +27,10 @@ EXPORT void doPID(SetPointInfo *pid){
     long output;
     int input;
 
+    //update encoder reading
+    readEncoder(pid->enc);
+    pid->Encoder = pid->enc->counterVal;
+
     input = pid->Encoder - pid->PrevEnc;
     Perror = pid->TargetTicksPerFrame - input;
     output = (pid->Kp * Perror - pid->Kd * (input - pid->PrevInput) + pid->Iterm) / pid->Ko;

@@ -1,3 +1,5 @@
+#ifndef DIFF_CONTROLLER_H
+#define DIFF_CONTROLLER_H
 #include <tk/tkernel.h>
 #include "stm32h5xx_hal.h"
 
@@ -23,3 +25,4 @@ EXPORT void resetPID(SetPointInfo *pid);
 EXPORT void resetAllPID();
 EXPORT void doPID(SetPointInfo *pid);
 EXPORT void updatePID();
+#endif

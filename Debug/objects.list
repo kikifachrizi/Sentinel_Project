@@ -25,6 +25,7 @@
 "./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart.o"
 "./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart_ex.o"
 "./application/app_main.o"
+"./application/commands.o"
 "./application/diff_controller.o"
 "./application/encoder_driver.o"
 "./application/motor_driver.o"

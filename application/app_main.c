@@ -5,7 +5,6 @@
 
 // include for HAL Library
 #include "stm32h5xx_hal.h"
-
 // include for C
 #include <stdio.h>
 #include <string.h>
@@ -16,47 +15,62 @@
 #include "lib/sensors.h"
 #include "lib/encoder.h"
 #include "lib/uart_bridge.h"
+#include "lib/diff_controller.h"
 
-extern I2C_HandleTypeDef hi2c1; // for pca i2c mux
-
-#define PCA9548A_ADDR   (0x70 << 1)   // default, A0/A1/A2 = GND
-
-#define MUX_CH_MPU6050   0
-#define MUX_CH_INA219_1  1
-#define MUX_CH_INA219_2  2
-
-// build NUCLEO-Bridge in this file
-
-LOCAL ID i2c_mux_mtx_id;
-LOCAL T_CSEM csem_i2c_mux = {
-    .isemcnt = 1,
-    .maxsem  = 1,
-    .sematr  = TA_TFIFO,
-};
-
-static HAL_StatusTypeDef pca9548a_select_channel(uint8_t channel)
-{
-    uint8_t ch_mask = (1 << channel);
-    return HAL_I2C_Master_Transmit(&hi2c1, PCA9548A_ADDR, &ch_mask, 1, 100);
-}
-
-LOCAL void com1(INT stacd, void *exinf);  // fungsi eksekusi task
-LOCAL ID   com1_id;                         // nomor Task ID
-LOCAL T_CTSK ctsk_com1 = {                     // informasi pembuatan task
+LOCAL void pidTask(INT stacd, void *exinf);  // fungsi eksekusi task
+LOCAL ID   pid_task_id;                         // nomor Task ID
+LOCAL T_CTSK ctsk_pid_task = {                     // informasi pembuatan task
     .itskpri  = 10,
     .stksz    = 1024,
-    .task     = com1,
+    .task     = pidTask,
     .tskatr   = TA_HLNG | TA_RNG3,
 };
+
+LOCAL void comTask(INT stacd, void *exinf);
+LOCAL ID com_task_id;
+LOCAL T_CTSK ctsk_com_task = {
+    .itskpri = 11,
+    .stksz = 1024,
+    .task = comTask,
+    .tskatr = TA_HLNG | TA_RNG3,
+};
+
+LOCAL void pidTask(INT stacd, void *exinf){
+    resetAllPID();
+    while(1){
+        updatePID();
+        tk_dly_tsk(33);
+    }
+};
+
+LOCAL void comTask(INT stacd, void *exinf){
+    while(1){
+        readCom(&com_pi);
+    }
+}
+
 
 
 /* fungsi usermain */
 EXPORT INT usermain(void)
 {
     tm_putstring((UB*)"Start User-main program.\n");
+
+    // initSensors(); //init semaphore on imu and ina reading
+    initEncoder(&enc1);
+    initEncoder(&enc2);
+    // initINA219(&ina1);
+    // initINA219(&ina2);
+    initMotorController(&motorLeft);
+    initMotorController(&motorRight);
+    // initMpu6050(&imu);
     // /* Buat & Jalankan Task */
-    // com1_id = tk_cre_tsk(&ctsk_com1);
-    // tk_sta_tsk(com1_id, 0);
+    pid_task_id = tk_cre_tsk(&ctsk_pid_task);
+    tk_sta_tsk(pid_task_id, 0);
+
+    com_task_id = tk_cre_tsk(&ctsk_com_task);
+    tk_sta_tsk(com_task_id, 0);
+    
     tk_slp_tsk(TMO_FEVR);
     return 0;
 }

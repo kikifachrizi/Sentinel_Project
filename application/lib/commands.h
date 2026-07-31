@@ -1,5 +1,6 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
+#include "uart_bridge.h"
 
 #define ANALOG_READ    'a'
 #define GET_BAUDRATE   'b'
@@ -19,5 +20,7 @@
 #define ANALOG_WRITE   'x'
 #define LEFT            0
 #define RIGHT           1
+
+EXPORT void runCommand(UartBridge *com);
 
 #endif

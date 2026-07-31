@@ -1,0 +1,8 @@
+../application/sensors.c:15:13:initSensors	1
+../application/sensors.c:19:26:pca9548a_select_channel	1
+../application/sensors.c:25:13:initMpu6050	1
+../application/sensors.c:43:13:initINA219	2
+../application/sensors.c:64:13:readMPU6050	1
+../application/sensors.c:81:13:readINA219	2
+../application/sensors.c:117:13:debugINA219	1
+../application/sensors.c:126:13:debugMPU6050	1

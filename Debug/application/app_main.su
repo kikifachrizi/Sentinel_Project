@@ -1,9 +1,3 @@
-../application/app_main.c:37:26:pca9548a_select_channel	32	static
-../application/app_main.c:108:12:com1	16	static
-../application/app_main.c:115:12:read_enc1	16	static
-../application/app_main.c:124:12:read_enc2	16	static
-../application/app_main.c:132:12:motor1	16	static
-../application/app_main.c:139:12:read_mpu6050	72	static
-../application/app_main.c:180:12:read_ina219_1	104	static
-../application/app_main.c:235:12:read_ina219_2	104	static
-../application/app_main.c:292:12:usermain	8	static
+../application/app_main.c:38:12:pidTask	16	static
+../application/app_main.c:46:12:comTask	16	static
+../application/app_main.c:55:12:usermain	8	static

@@ -1,3 +1,5 @@
+#ifndef ENCODER_H
+#define ENCODER_H
 #include <tk/tkernel.h>
 #include "stm32h5xx_hal.h"
 
@@ -19,3 +21,4 @@ EXPORT void readEncoder(EncoderState *enc);
 EXPORT void resetEncoder(EncoderState *enc);
 EXPORT void resetEncoders();
 EXPORT void debugEncoder(EncoderState *enc);
+#endif

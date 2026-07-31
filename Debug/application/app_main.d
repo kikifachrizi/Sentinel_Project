@@ -65,8 +65,10 @@ application/app_main.o: ../application/app_main.c \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_uart_ex.h \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_exti.h \
  /home/kiki/sentinel_ws/mtk3_bsp2/config/config_bsp/stm32_cube/config_bsp.h \
- ../application/lib/commands.h ../application/lib/sensors.h \
- ../application/lib/encoder.h ../application/lib/uart_bridge.h
+ ../application/lib/commands.h ../application/lib/uart_bridge.h \
+ ../application/lib/sensors.h ../application/lib/encoder.h \
+ ../application/lib/uart_bridge.h ../application/lib/diff_controller.h \
+ ../application/lib/encoder.h ../application/lib/motor_driver.h
 /home/kiki/sentinel_ws/mtk3_bsp2/include/tk/tkernel.h:
 /home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/tk/tkernel.h:
 /home/kiki/sentinel_ws/mtk3_bsp2/include/sys/machine.h:
@@ -134,6 +136,10 @@ application/app_main.o: ../application/app_main.c \
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_exti.h:
 /home/kiki/sentinel_ws/mtk3_bsp2/config/config_bsp/stm32_cube/config_bsp.h:
 ../application/lib/commands.h:
+../application/lib/uart_bridge.h:
 ../application/lib/sensors.h:
 ../application/lib/encoder.h:
 ../application/lib/uart_bridge.h:
+../application/lib/diff_controller.h:
+../application/lib/encoder.h:
+../application/lib/motor_driver.h:

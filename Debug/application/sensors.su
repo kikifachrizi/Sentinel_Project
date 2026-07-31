@@ -1,0 +1,8 @@
+../application/sensors.c:15:13:initSensors	8	static
+../application/sensors.c:19:26:pca9548a_select_channel	32	static
+../application/sensors.c:25:13:initMpu6050	40	static
+../application/sensors.c:43:13:initINA219	40	static
+../application/sensors.c:64:13:readMPU6050	48	static
+../application/sensors.c:81:13:readINA219	48	static
+../application/sensors.c:117:13:debugINA219	56	static
+../application/sensors.c:126:13:debugMPU6050	40	static
