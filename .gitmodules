@@ -1,3 +1,4 @@
-[submodule "src/diffdrive_arduino"]
-	path = src/diffdrive_arduino
+[submodule "diffdrive_arduino"]
+	path = diffdrive_arduino
 	url = https://github.com/joshnewans/diffdrive_arduino.git
+	branch = humble
