@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     pkg = get_package_share_directory('dreame_lds_ros2')
 
-    use_rviz = LaunchConfiguration('use_rviz', default='true')
+    use_rviz = LaunchConfiguration('use_rviz', default='false')
 
     return LaunchDescription([
         DeclareLaunchArgument(

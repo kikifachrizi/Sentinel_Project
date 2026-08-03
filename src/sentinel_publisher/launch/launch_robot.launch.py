@@ -32,6 +32,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory(lidar_pkg), 'launch', 'dreame_lds.launch.py')
         ),
+        launch_arguments={'use_rviz': 'false'}.items()
     )
 
     laser_filter_node = Node(
@@ -88,6 +89,6 @@ def generate_launch_description():
     # =========================================================================
     return LaunchDescription([
         rsp, rplidar_activate,
-        laser_filter_node,controller_manager,
+        controller_manager,
         layer2_on_controller_start,
     ])
