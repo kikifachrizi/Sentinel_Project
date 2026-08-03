@@ -1,0 +1,14 @@
+twist_mux:
+  ros__parameters:
+    topics:
+      # Nav2 controller server publish ke /cmd_vel_nav (sesuai remapping di navigation_launch)
+      navigation:
+        topic   : /cmd_vel_nav
+        timeout : 0.5
+        priority: 10
+
+      # robot_api publish teleop ke /diff_cont (konfirmasi dari ros2 node info)
+      teleop:
+        topic   : /diff_cont
+        timeout : 0.5
+        priority: 20
