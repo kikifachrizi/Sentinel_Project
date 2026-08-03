@@ -4,8 +4,9 @@
 #include "lib/diff_controller.h"
 #define MAX_PWM 499
 
-SetPointInfo leftPID = { .enc = &enc1 , .Kp = 20 , .Ki = 0 , .Kd = 12 , .Ko = 50};
-SetPointInfo rightPID = { .enc = &enc2, .Kp = 20 , .Ki = 0 , .Kd = 12 , .Ko = 50 };
+uint8_t moving = 0;
+SetPointInfo leftPID = { .enc = &enc1 , .motor = &motorLeft, .Kp = 20 , .Ki = 0 , .Kd = 12 , .Ko = 50};
+SetPointInfo rightPID = { .enc = &enc2, .motor = &motorRight, .Kp = 20 , .Ki = 0 , .Kd = 12 , .Ko = 50 };
 
 EXPORT void resetPID(SetPointInfo *pid){
     pid->TargetTicksPerFrame = 0.0;
@@ -48,6 +49,7 @@ EXPORT void doPID(SetPointInfo *pid){
 
     pid->output = output;
     pid->PrevInput = input;
+    setMotorSpeed(pid->motor, pid->output);
 }
 
 EXPORT void updatePID(){

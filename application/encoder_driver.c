@@ -5,8 +5,8 @@
 #include "lib/encoder.h"
 #include "lib/uart_bridge.h"
 
-EncoderState enc1 = { .htim = &htim2, .label = "1" };
-EncoderState enc2 = { .htim = &htim3,  .label = "2" };
+EncoderState enc1 = { .htim = &htim2, .label = "1" }; //left encoder
+EncoderState enc2 = { .htim = &htim3,  .label = "2" }; //right encoder
 
 EXPORT void initEncoder(EncoderState *enc){
     HAL_TIM_Encoder_Start(enc->htim, TIM_CHANNEL_ALL);
@@ -28,8 +28,9 @@ EXPORT void resetEncoders(){
 
 EXPORT void debugEncoder(EncoderState *enc){
     if (enc->counterVal != enc->pastCounterVal) {
-        sprintf(enc->printMsg, "%s: %ld, %.2f\r\n", enc->label, enc->counterVal, enc->angleVal);
-        writeCom(&com_pi, enc->printMsg);
+        sprintf(enc->printMsg, "[enc %s]: %ld, %.2f\r\n", enc->label, enc->counterVal, enc->angleVal);
+        // writeCom(&com_pi, enc->printMsg);
+        vcpMonitor(enc->label, enc->printMsg);
     }
     enc->pastCounterVal = enc->counterVal;
 }

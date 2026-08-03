@@ -1,4 +1,4 @@
-../application/uart_bridge.c:18:13:vcpMonitor	256	static
-../application/uart_bridge.c:24:13:readCom	16	static
+../application/uart_bridge.c:19:13:vcpMonitor	256	static
+../application/uart_bridge.c:25:13:readCom	16	static
 ../application/uart_bridge.c:42:13:writeCom	24	static
 ../application/uart_bridge.c:46:13:parseCommand	24	static

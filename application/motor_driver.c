@@ -4,17 +4,16 @@
 #include "lib/motor_driver.h"
 
 MotorController motorLeft = {
+        .htim = &htim8, .pwmChannel = TIM_CHANNEL_2,
+        .dir1Port = GPIOA, .dir1Pin = GPIO_PIN_5,
+        .dir2Port = GPIOC, .dir2Pin = GPIO_PIN_12,
+};
+
+MotorController motorRight = {
         .htim = &htim4, .pwmChannel = TIM_CHANNEL_1,
         .dir1Port = GPIOC, .dir1Pin = GPIO_PIN_4,
         .dir2Port = GPIOC, .dir2Pin = GPIO_PIN_10,
 };
-
-MotorController motorRight = {
-        .htim = &htim8, .pwmChannel = TIM_CHANNEL_2,
-        .dir1Port = GPIOC, .dir1Pin = GPIO_PIN_12,
-        .dir2Port = GPIOA, .dir2Pin = GPIO_PIN_5,
-};
-
 
 EXPORT void initMotorController(MotorController *motor){
         HAL_TIM_PWM_Start(motor->htim, motor->pwmChannel);

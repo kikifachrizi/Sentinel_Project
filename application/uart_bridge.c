@@ -1,4 +1,5 @@
 #include <tk/tkernel.h>
+#include <tm/tmonitor.h>
 #include "stm32h5xx_hal.h"
 
 #include <stdio.h>
@@ -23,7 +24,6 @@ EXPORT void vcpMonitor(const char *label,const char *msg){
 
 EXPORT void readCom(UartBridge *com){
     if (HAL_UART_Receive(com->huart, &com->rx_byte , 1, 100) == HAL_OK) {
-        vcpMonitor(com->name, "BYTE MASUK");
         if (com->rx_byte == '\r' || com->rx_byte == '\n') {
             com->rxBuf[com->rxIndex] = '\0'; //closed the string
             if(com->rxIndex > 0){//this line tell buffer not empty

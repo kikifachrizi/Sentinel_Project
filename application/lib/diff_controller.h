@@ -9,6 +9,7 @@
 
 typedef struct{
     EncoderState *enc;
+    MotorController *motor;
     float Kp, Ki, Kd, Ko;
     long TargetTicksPerFrame;
     long Encoder;
@@ -20,6 +21,7 @@ typedef struct{
 } SetPointInfo;
 
 extern SetPointInfo leftPID , rightPID;
+extern uint8_t moving;
 
 EXPORT void resetPID(SetPointInfo *pid);
 EXPORT void resetAllPID();
