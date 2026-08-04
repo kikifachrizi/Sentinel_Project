@@ -5533,6 +5533,7 @@ Discarded input sections
  .text          0x00000000        0x0 ./application/uart_bridge.o
  .data          0x00000000        0x0 ./application/uart_bridge.o
  .bss           0x00000000        0x0 ./application/uart_bridge.o
+ .data.com_pi   0x00000000       0x80 ./application/uart_bridge.o
  .rodata.PID_INTERVAL
                 0x00000000        0x4 ./application/uart_bridge.o
  .data.nextPID  0x00000000        0x4 ./application/uart_bridge.o
@@ -16681,7 +16682,7 @@ LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools
 .rel.dyn        0x08011438        0x0
  .rel.iplt      0x08011438        0x0 /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/thumb/v8-m.main+fp/hard/crtbegin.o
 
-.data           0x20000000      0x54c load address 0x08011438
+.data           0x20000000      0x4cc load address 0x08011438
                 0x20000000                        . = ALIGN (0x4)
                 0x20000000                        _sdata = .
  *(.data)
@@ -16715,35 +16716,33 @@ LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools
  .data.motorRight
                 0x20000270       0x14 ./application/motor_driver.o
                 0x20000270                motorRight
- .data.com_pi   0x20000284       0x80 ./application/uart_bridge.o
-                0x20000284                com_pi
- .data.debug    0x20000304       0x80 ./application/uart_bridge.o
-                0x20000304                debug
- .data.__sglue  0x20000384        0xc /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-findfp.o)
-                0x20000384                __sglue
+ .data.debug    0x20000284       0x80 ./application/uart_bridge.o
+                0x20000284                debug
+ .data.__sglue  0x20000304        0xc /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-findfp.o)
+                0x20000304                __sglue
  .data._impure_ptr
-                0x20000390        0x4 /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-impure.o)
-                0x20000390                _impure_ptr
+                0x20000310        0x4 /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-impure.o)
+                0x20000310                _impure_ptr
  .data._impure_data
-                0x20000394       0x4c /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-impure.o)
-                0x20000394                _impure_data
+                0x20000314       0x4c /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-impure.o)
+                0x20000314                _impure_data
  .data.__global_locale
-                0x200003e0      0x16c /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-locale.o)
-                0x200003e0                __global_locale
+                0x20000360      0x16c /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libc_nano.a(libc_a-locale.o)
+                0x20000360                __global_locale
  *(.RamFunc)
  *(.RamFunc*)
-                0x2000054c                        . = ALIGN (0x4)
-                0x2000054c                        _edata = .
+                0x200004cc                        . = ALIGN (0x4)
+                0x200004cc                        _edata = .
 
-.igot.plt       0x2000054c        0x0 load address 0x08011984
- .igot.plt      0x2000054c        0x0 /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/thumb/v8-m.main+fp/hard/crtbegin.o
+.igot.plt       0x200004cc        0x0 load address 0x08011904
+ .igot.plt      0x200004cc        0x0 /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/thumb/v8-m.main+fp/hard/crtbegin.o
 
-.mtk_exctbl     0x20000800      0x950 load address 0x08011984
+.mtk_exctbl     0x20000800      0x950 load address 0x08011904
  .mtk_exctbl    0x20000800      0x950 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/sys_start.o
                 0x20000800                knl_exctbl
                 0x20001150                        . = ALIGN (0x4)
 
-.bss            0x20001150      0x54c load address 0x080122d4
+.bss            0x20001150      0x54c load address 0x08012254
                 0x20001150                        _sbss = .
                 0x20001150                        __bss_start__ = _sbss
  *(.bss)
@@ -16829,7 +16828,7 @@ LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools
                 0x2000169c                        _ebss = .
                 0x2000169c                        __bss_end__ = _ebss
 
-.noinit         0x200016a0     0x22d8 load address 0x080122d4
+.noinit         0x200016a0     0x22d8 load address 0x08012254
  .noinit        0x200016a0      0x264 ./mtk3_bsp2/mtkernel/kernel/tkernel/device.o
                 0x200016a0                knl_DevMgrLock
                 0x200016b0                knl_DefaultIDev
@@ -16883,7 +16882,7 @@ LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools
                 0x20003970                knl_timer_queue
 
 ._user_heap_stack
-                0x20003978      0x600 load address 0x080122d4
+                0x20003978      0x600 load address 0x08012254
                 0x20003978                        . = ALIGN (0x8)
                 [!provide]                        PROVIDE (end = .)
                 0x20003978                        PROVIDE (_end = .)
@@ -17161,7 +17160,7 @@ LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools
 LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/hard/libm.a
 LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools/bin/../lib/gcc/arm-none-eabi/14.3.1/thumb/v8-m.main+fp/hard/libgcc.a
 
-.debug_info     0x00000000    0x2eab9
+.debug_info     0x00000000    0x2eaad
  .debug_info    0x00000000     0x23bf ./Core/Src/main.o
  .debug_info    0x000023bf     0x1ac0 ./Core/Src/stm32h5xx_hal_msp.o
  .debug_info    0x00003e7f      0x128 ./Core/Src/stm32h5xx_it.o
@@ -17181,46 +17180,46 @@ LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools
  .debug_info    0x000105b7     0x1eaa ./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim_ex.o
  .debug_info    0x00012461     0x4066 ./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart.o
  .debug_info    0x000164c7     0x10ec ./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart_ex.o
- .debug_info    0x000175b3     0x176f ./application/app_main.o
- .debug_info    0x00018d22     0x10d9 ./application/commands.o
- .debug_info    0x00019dfb      0xca3 ./application/diff_controller.o
- .debug_info    0x0001aa9e      0xab5 ./application/encoder_driver.o
- .debug_info    0x0001b553      0xb5a ./application/motor_driver.o
- .debug_info    0x0001c0ad      0xbe6 ./application/uart_bridge.o
- .debug_info    0x0001cc93      0x2ac ./mtk3_bsp2/mtkernel/kernel/inittask/inittask.o
- .debug_info    0x0001cf3f      0x2b2 ./mtk3_bsp2/mtkernel/kernel/sysinit/sysinit.o
- .debug_info    0x0001d1f1     0x1335 ./mtk3_bsp2/mtkernel/kernel/tkernel/device.o
- .debug_info    0x0001e526     0x18c4 ./mtk3_bsp2/mtkernel/kernel/tkernel/deviceio.o
- .debug_info    0x0001fdea      0xdb8 ./mtk3_bsp2/mtkernel/kernel/tkernel/eventflag.o
- .debug_info    0x00020ba2      0xd42 ./mtk3_bsp2/mtkernel/kernel/tkernel/mailbox.o
- .debug_info    0x000218e4      0x56d ./mtk3_bsp2/mtkernel/kernel/tkernel/memory.o
- .debug_info    0x00021e51      0xe3e ./mtk3_bsp2/mtkernel/kernel/tkernel/mempfix.o
- .debug_info    0x00022c8f     0x10cf ./mtk3_bsp2/mtkernel/kernel/tkernel/mempool.o
- .debug_info    0x00023d5e     0x102d ./mtk3_bsp2/mtkernel/kernel/tkernel/messagebuf.o
- .debug_info    0x00024d8b      0xee1 ./mtk3_bsp2/mtkernel/kernel/tkernel/mutex.o
- .debug_info    0x00025c6c       0x9c ./mtk3_bsp2/mtkernel/kernel/tkernel/power.o
- .debug_info    0x00025d08      0xd11 ./mtk3_bsp2/mtkernel/kernel/tkernel/semaphore.o
- .debug_info    0x00026a19      0xca0 ./mtk3_bsp2/mtkernel/kernel/tkernel/task.o
- .debug_info    0x000276b9     0x1033 ./mtk3_bsp2/mtkernel/kernel/tkernel/task_manage.o
- .debug_info    0x000286ec      0xacd ./mtk3_bsp2/mtkernel/kernel/tkernel/task_sync.o
- .debug_info    0x000291b9     0x13b2 ./mtk3_bsp2/mtkernel/kernel/tkernel/time_calls.o
- .debug_info    0x0002a56b      0xac4 ./mtk3_bsp2/mtkernel/kernel/tkernel/timer.o
- .debug_info    0x0002b02f      0x11e ./mtk3_bsp2/mtkernel/kernel/tkernel/tkinit.o
- .debug_info    0x0002b14d      0xb21 ./mtk3_bsp2/mtkernel/kernel/tkernel/wait.o
- .debug_info    0x0002bc6e      0x2dc ./mtk3_bsp2/mtkernel/kernel/tstdlib/string.o
- .debug_info    0x0002bf4a      0x50b ./mtk3_bsp2/mtkernel/lib/libtk/fastmlock.o
- .debug_info    0x0002c455      0x284 ./mtk3_bsp2/mtkernel/lib/libtm/libtm.o
- .debug_info    0x0002c6d9      0x49b ./mtk3_bsp2/mtkernel/lib/libtm/libtm_printf.o
- .debug_info    0x0002cb74      0xb64 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/cpu_cntl.o
- .debug_info    0x0002d6d8       0x25 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/dispatch.o
- .debug_info    0x0002d6fd      0x7aa ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/exc_hdr.o
- .debug_info    0x0002dea7      0x2f4 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/interrupt.o
- .debug_info    0x0002e19b      0x271 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/sys_start.o
- .debug_info    0x0002e40c       0xf4 ./mtk3_bsp2/sysdepend/stm32_cube/devinit.o
- .debug_info    0x0002e500      0x174 ./mtk3_bsp2/sysdepend/stm32_cube/hw_setting.o
- .debug_info    0x0002e674       0x9f ./mtk3_bsp2/sysdepend/stm32_cube/power_save.o
- .debug_info    0x0002e713      0x202 ./mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/core/armv8m/int_armv8m.o
- .debug_info    0x0002e915      0x1a4 ./mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32h533/tm_com.o
+ .debug_info    0x000175b3     0x1763 ./application/app_main.o
+ .debug_info    0x00018d16     0x10d9 ./application/commands.o
+ .debug_info    0x00019def      0xca3 ./application/diff_controller.o
+ .debug_info    0x0001aa92      0xab5 ./application/encoder_driver.o
+ .debug_info    0x0001b547      0xb5a ./application/motor_driver.o
+ .debug_info    0x0001c0a1      0xbe6 ./application/uart_bridge.o
+ .debug_info    0x0001cc87      0x2ac ./mtk3_bsp2/mtkernel/kernel/inittask/inittask.o
+ .debug_info    0x0001cf33      0x2b2 ./mtk3_bsp2/mtkernel/kernel/sysinit/sysinit.o
+ .debug_info    0x0001d1e5     0x1335 ./mtk3_bsp2/mtkernel/kernel/tkernel/device.o
+ .debug_info    0x0001e51a     0x18c4 ./mtk3_bsp2/mtkernel/kernel/tkernel/deviceio.o
+ .debug_info    0x0001fdde      0xdb8 ./mtk3_bsp2/mtkernel/kernel/tkernel/eventflag.o
+ .debug_info    0x00020b96      0xd42 ./mtk3_bsp2/mtkernel/kernel/tkernel/mailbox.o
+ .debug_info    0x000218d8      0x56d ./mtk3_bsp2/mtkernel/kernel/tkernel/memory.o
+ .debug_info    0x00021e45      0xe3e ./mtk3_bsp2/mtkernel/kernel/tkernel/mempfix.o
+ .debug_info    0x00022c83     0x10cf ./mtk3_bsp2/mtkernel/kernel/tkernel/mempool.o
+ .debug_info    0x00023d52     0x102d ./mtk3_bsp2/mtkernel/kernel/tkernel/messagebuf.o
+ .debug_info    0x00024d7f      0xee1 ./mtk3_bsp2/mtkernel/kernel/tkernel/mutex.o
+ .debug_info    0x00025c60       0x9c ./mtk3_bsp2/mtkernel/kernel/tkernel/power.o
+ .debug_info    0x00025cfc      0xd11 ./mtk3_bsp2/mtkernel/kernel/tkernel/semaphore.o
+ .debug_info    0x00026a0d      0xca0 ./mtk3_bsp2/mtkernel/kernel/tkernel/task.o
+ .debug_info    0x000276ad     0x1033 ./mtk3_bsp2/mtkernel/kernel/tkernel/task_manage.o
+ .debug_info    0x000286e0      0xacd ./mtk3_bsp2/mtkernel/kernel/tkernel/task_sync.o
+ .debug_info    0x000291ad     0x13b2 ./mtk3_bsp2/mtkernel/kernel/tkernel/time_calls.o
+ .debug_info    0x0002a55f      0xac4 ./mtk3_bsp2/mtkernel/kernel/tkernel/timer.o
+ .debug_info    0x0002b023      0x11e ./mtk3_bsp2/mtkernel/kernel/tkernel/tkinit.o
+ .debug_info    0x0002b141      0xb21 ./mtk3_bsp2/mtkernel/kernel/tkernel/wait.o
+ .debug_info    0x0002bc62      0x2dc ./mtk3_bsp2/mtkernel/kernel/tstdlib/string.o
+ .debug_info    0x0002bf3e      0x50b ./mtk3_bsp2/mtkernel/lib/libtk/fastmlock.o
+ .debug_info    0x0002c449      0x284 ./mtk3_bsp2/mtkernel/lib/libtm/libtm.o
+ .debug_info    0x0002c6cd      0x49b ./mtk3_bsp2/mtkernel/lib/libtm/libtm_printf.o
+ .debug_info    0x0002cb68      0xb64 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/cpu_cntl.o
+ .debug_info    0x0002d6cc       0x25 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/dispatch.o
+ .debug_info    0x0002d6f1      0x7aa ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/exc_hdr.o
+ .debug_info    0x0002de9b      0x2f4 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/interrupt.o
+ .debug_info    0x0002e18f      0x271 ./mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/sys_start.o
+ .debug_info    0x0002e400       0xf4 ./mtk3_bsp2/sysdepend/stm32_cube/devinit.o
+ .debug_info    0x0002e4f4      0x174 ./mtk3_bsp2/sysdepend/stm32_cube/hw_setting.o
+ .debug_info    0x0002e668       0x9f ./mtk3_bsp2/sysdepend/stm32_cube/power_save.o
+ .debug_info    0x0002e707      0x202 ./mtk3_bsp2/sysdepend/stm32_cube/lib/libtk/cpu/core/armv8m/int_armv8m.o
+ .debug_info    0x0002e909      0x1a4 ./mtk3_bsp2/sysdepend/stm32_cube/lib/libtm/nucleo_stm32h533/tm_com.o
 
 .debug_abbrev   0x00000000     0x7e03
  .debug_abbrev  0x00000000      0x332 ./Core/Src/main.o
@@ -17808,7 +17807,7 @@ LOAD /opt/st/stm32cubeide_2.1.1_2/plugins/com.st.stm32cube.ide.mcu.externaltools
  .debug_str     0x00126c4c   0x11548e ./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim_ex.o
  .debug_str     0x00126c4c   0x1150fb ./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart.o
  .debug_str     0x00126c4c   0x114acc ./Drivers/STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart_ex.o
- .debug_str     0x00126c4c   0x11999f ./application/app_main.o
+ .debug_str     0x00126c4c   0x119998 ./application/app_main.o
  .debug_str     0x00126c4c   0x1192ab ./application/commands.o
  .debug_str     0x00126c4c   0x1188cf ./application/diff_controller.o
  .debug_str     0x00126c4c   0x118e05 ./application/encoder_driver.o

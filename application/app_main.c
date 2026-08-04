@@ -76,7 +76,8 @@ LOCAL void pidTask(INT stacd, void *exinf){
 
 LOCAL void comTask(INT stacd, void *exinf){
     while(1){
-        readCom(&com_pi);
+        // readCom(&com_pi); //this is for robot
+        readCom(&debug); // this is for debug [just use stm only]
     }
 }
 
