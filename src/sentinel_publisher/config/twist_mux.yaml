@@ -9,6 +9,6 @@ twist_mux:
 
       # robot_api publish teleop ke /diff_cont (konfirmasi dari ros2 node info)
       teleop:
-        topic   : /diff_cont
+        topic   : /cmd_vel_stamped
         timeout : 0.5
         priority: 20

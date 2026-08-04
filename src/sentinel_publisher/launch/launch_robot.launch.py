@@ -73,7 +73,7 @@ def generate_launch_description():
         package='twist_mux', executable='twist_mux', name='twist_mux', output='log',
         arguments=['--ros-args', '--log-level', 'warn'],
         parameters=[twist_mux_config],
-        remappings=[('cmd_vel_out', '/diff_cont/cmd_vel_unstamped_raw')]  # absolute path
+        remappings=[('cmd_vel_out', '/diff_cont/cmd_vel')]  # absolute path
     )
 
     layer2_on_controller_start = RegisterEventHandler(
