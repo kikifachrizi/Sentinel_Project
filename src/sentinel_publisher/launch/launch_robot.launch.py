@@ -45,10 +45,21 @@ def generate_launch_description():
         package='controller_manager', executable='spawner', arguments=['joint_state_broadcaster']
     )
 
+    twist_to_stamped_node = Node(
+        package='sentinel_publisher',
+        executable='twist_to_stamped',
+        remappings=[
+            ('cmd_vel_in', '/cmd_vel'),
+            ('cmd_vel_out', '/diff_cont/cmd_vel')
+        ],
+        output='screen'
+    )
+
     return LaunchDescription([
         rsp, 
-        # rplidar_activate,
+        rplidar_activate,
         controller_manager,
         diff_drive_spawner,
-        joint_state_broadcaster_spawner
+        joint_state_broadcaster_spawner,
+        twist_to_stamped_node
     ])
