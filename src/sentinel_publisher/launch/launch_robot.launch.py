@@ -88,7 +88,7 @@ def generate_launch_description():
     # RETURN
     # =========================================================================
     return LaunchDescription([
-        rsp, rplidar_activate,
+        rsp,
         controller_manager,
         layer2_on_controller_start,
     ])
