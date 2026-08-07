@@ -45,7 +45,7 @@ class DreameLdsNode : public rclcpp::Node
 public:
   DreameLdsNode() : Node("dreame_lds")
   {
-    declare_parameter("port",      "/dev/ttyUSB1");
+    declare_parameter("port",      "/dev/ttyLIDAR");
     declare_parameter("baudrate",  115200);
     declare_parameter("frame_id",  "laser_frame");
     declare_parameter("range_min", 0.05);
