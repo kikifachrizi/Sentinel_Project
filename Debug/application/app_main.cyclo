@@ -1,6 +1,6 @@
 ../application/app_main.c:67:12:pidTask	2
-../application/app_main.c:77:12:comTask	1
-../application/app_main.c:84:12:sumTask	1
-../application/app_main.c:99:12:inaTask	1
-../application/app_main.c:107:12:imuTask	1
-../application/app_main.c:117:12:usermain	1
+../application/app_main.c:84:12:comTask	1
+../application/app_main.c:91:12:sumTask	1
+../application/app_main.c:106:12:inaTask	1
+../application/app_main.c:114:12:imuTask	1
+../application/app_main.c:124:12:usermain	1

@@ -68,6 +68,13 @@ LOCAL void pidTask(INT stacd, void *exinf){
     resetAllPID();
     while(1){
         if(moving){
+            char plot[160];
+            snprintf(plot, sizeof(plot),
+                ">L_target:%ld\n>L_actual:%d\n>L_output:%d\n"
+                ">R_target:%ld\n>R_actual:%d\n>R_output:%d\n",
+                leftPID.TargetTicksPerFrame, leftPID.PrevInput, leftPID.output,
+                rightPID.TargetTicksPerFrame, rightPID.PrevInput, rightPID.output);
+            HAL_UART_Transmit(debug.huart, (uint8_t*)plot, strlen(plot), 50);
             updatePID();
         }
         tk_dly_tsk(33);
@@ -76,8 +83,8 @@ LOCAL void pidTask(INT stacd, void *exinf){
 
 LOCAL void comTask(INT stacd, void *exinf){
     while(1){
-        // readCom(&com_pi); //this is for robot
-        readCom(&debug); // this is for debug [just use stm only]
+        readCom(&com_pi); //this is for robot
+        // readCom(&debug); // this is for debug [just use stm only]
     }
 }
 

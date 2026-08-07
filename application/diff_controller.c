@@ -5,8 +5,8 @@
 #define MAX_PWM 499
 
 uint8_t moving = 0;
-SetPointInfo leftPID = { .enc = &enc1 , .motor = &motorLeft, .Kp = 20 , .Ki = 0 , .Kd = 12 , .Ko = 50};
-SetPointInfo rightPID = { .enc = &enc2, .motor = &motorRight, .Kp = 20 , .Ki = 0 , .Kd = 12 , .Ko = 50 };
+SetPointInfo leftPID = { .enc = &enc1 , .motor = &motorLeft, .Kp = 10 , .Ki = 0 , .Kd = 6 , .Ko = 50};
+SetPointInfo rightPID = { .enc = &enc2, .motor = &motorRight, .Kp = 10 , .Ki = 0 , .Kd = 6 , .Ko = 50 };
 
 EXPORT void resetPID(SetPointInfo *pid){
     pid->TargetTicksPerFrame = 0.0;

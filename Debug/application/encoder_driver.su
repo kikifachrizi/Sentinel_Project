@@ -1,5 +1,5 @@
 ../application/encoder_driver.c:11:13:initEncoder	16	static
 ../application/encoder_driver.c:15:13:readEncoder	16	static
 ../application/encoder_driver.c:20:13:resetEncoder	16	static
-../application/encoder_driver.c:24:13:resetEncoders	8	static
-../application/encoder_driver.c:29:13:debugEncoder	40	static
+../application/encoder_driver.c:26:13:resetEncoders	8	static
+../application/encoder_driver.c:31:13:debugEncoder	40	static

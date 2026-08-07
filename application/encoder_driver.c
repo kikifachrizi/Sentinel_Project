@@ -18,7 +18,9 @@ EXPORT void readEncoder(EncoderState *enc){
 }
 
 EXPORT void resetEncoder(EncoderState *enc){
+    __HAL_TIM_SET_COUNTER(enc->htim, 0);
     enc->counterVal = 0;
+    enc->pastCounterVal = 0;
 }
 
 EXPORT void resetEncoders(){
