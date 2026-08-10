@@ -16,6 +16,19 @@
 #include "lib/encoder.h"
 #include "lib/uart_bridge.h"
 #include "lib/diff_controller.h"
+#include "lib/log_test.h"
+
+volatile uint8_t logActive = 0;
+long logTargetL = 0, logTargetR = 0;
+
+LOCAL void logTest(INT stacd, void *exinf);
+LOCAL ID   log_test_id;
+LOCAL T_CTSK ctsk_log_test = {
+    .itskpri = 5,
+    .stksz   = 1024,
+    .task    = logTest,
+    .tskatr  = TA_HLNG | TA_RNG3,
+};
 
 LOCAL void pidTask(INT stacd, void *exinf);  // fungsi eksekusi task
 LOCAL ID   pid_task_id;                         // nomor Task ID
@@ -68,13 +81,6 @@ LOCAL void pidTask(INT stacd, void *exinf){
     resetAllPID();
     while(1){
         if(moving){
-            char plot[160];
-            snprintf(plot, sizeof(plot),
-                ">L_target:%ld\n>L_actual:%d\n>L_output:%d\n"
-                ">R_target:%ld\n>R_actual:%d\n>R_output:%d\n",
-                leftPID.TargetTicksPerFrame, leftPID.PrevInput, leftPID.output,
-                rightPID.TargetTicksPerFrame, rightPID.PrevInput, rightPID.output);
-            HAL_UART_Transmit(debug.huart, (uint8_t*)plot, strlen(plot), 50);
             updatePID();
         }
         tk_dly_tsk(33);
@@ -118,6 +124,37 @@ LOCAL void imuTask(INT stacd, void *exinf){
     }
 }
 
+LOCAL void logTest(INT stacd, void *exinf){
+    while(1){
+        if(logActive){
+            SYSTIM startTime, now;
+            tk_get_tim(&startTime);
+
+            moving = 1;
+            leftPID.TargetTicksPerFrame = logTargetL;
+            rightPID.TargetTicksPerFrame = logTargetR;
+
+            char line[80];
+            while(1){
+                tk_get_tim(&now);
+                UW elapsed = now.lo - startTime.lo;
+                if(elapsed >= 10000) break;
+
+                snprintf(line, sizeof(line), "%lu,%ld,%ld,%d,%d\r\n",(unsigned long)elapsed, enc1.counterVal,enc2.counterVal,leftPID.output,rightPID.output);
+                writeCom(&com_pi, line);
+                tk_dly_tsk(33);
+            }
+            moving = 0; 
+            leftPID.TargetTicksPerFrame = 0;
+            rightPID.TargetTicksPerFrame = 0;
+            logActive = 0;
+            setMotorSpeeds(0,0);
+            resetAllPID();
+        }
+        tk_dly_tsk(50);
+    }
+}
+
 
 
 /* fungsi usermain */
@@ -139,6 +176,9 @@ EXPORT INT usermain(void)
 
     com_task_id = tk_cre_tsk(&ctsk_com_task);
     tk_sta_tsk(com_task_id, 0);
+
+    log_test_id = tk_cre_tsk(&ctsk_log_test);
+    tk_sta_tsk(log_test_id, 0);
 
     // sum_task_id = tk_cre_tsk(&ctsk_sum_task);
     // tk_sta_tsk(sum_task_id, 0);

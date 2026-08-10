@@ -63,7 +63,8 @@ application/commands.o: ../application/commands.c \
  ../application/lib/commands.h ../application/lib/uart_bridge.h \
  ../application/lib/uart_bridge.h ../application/lib/motor_driver.h \
  ../application/lib/diff_controller.h ../application/lib/encoder.h \
- ../application/lib/motor_driver.h
+ ../application/lib/motor_driver.h ../application/lib/sensors.h \
+ ../application/lib/log_test.h
 /home/kiki/sentinel_ws/mtk3_bsp2/include/tk/tkernel.h:
 /home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/tk/tkernel.h:
 /home/kiki/sentinel_ws/mtk3_bsp2/include/sys/machine.h:
@@ -132,3 +133,5 @@ application/commands.o: ../application/commands.c \
 ../application/lib/diff_controller.h:
 ../application/lib/encoder.h:
 ../application/lib/motor_driver.h:
+../application/lib/sensors.h:
+../application/lib/log_test.h:

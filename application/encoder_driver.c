@@ -13,7 +13,12 @@ EXPORT void initEncoder(EncoderState *enc){
 }
 
 EXPORT void readEncoder(EncoderState *enc){
-    enc->counterVal = __HAL_TIM_GET_COUNTER(enc->htim); 
+    uint32_t raw = __HAL_TIM_GET_COUNTER(enc->htim);
+    if(enc->htim->Instance == TIM3){
+        enc->counterVal = (int16_t)raw;
+    }else{
+        enc->counterVal = (int32_t)raw;
+    }
     enc->angleVal = (360 / 2400.0) * ((float)enc->counterVal);
 }
 

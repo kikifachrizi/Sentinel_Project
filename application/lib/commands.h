@@ -7,6 +7,7 @@
 #define PIN_MODE       'c'
 #define DIGITAL_READ   'd'
 #define READ_ENCODERS  'e'
+#define LOG_TEST       'g'
 #define READ_IMU       'i'
 #define MOTOR_SPEEDS   'm'
 #define READ_INA219    'n'
