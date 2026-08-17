@@ -140,7 +140,7 @@ LOCAL void logTest(INT stacd, void *exinf){
                 UW elapsed = now.lo - startTime.lo;
                 if(elapsed >= 10000) break;
 
-                snprintf(line, sizeof(line), "%lu,%ld,%ld,%d,%d\r\n",(unsigned long)elapsed, enc1.counterVal,enc2.counterVal,leftPID.output,rightPID.output);
+                snprintf(line, sizeof(line), "%lu,%ld,%ld,%ld,%ld,%d,%d\r\n",(unsigned long)elapsed,logTargetL,logTargetR, enc1.counterVal,enc2.counterVal,leftPID.output,rightPID.output);
                 writeCom(&com_pi, line);
                 tk_dly_tsk(33);
             }

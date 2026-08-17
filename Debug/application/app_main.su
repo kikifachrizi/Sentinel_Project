@@ -3,5 +3,5 @@
 ../application/app_main.c:97:12:sumTask	216	static
 ../application/app_main.c:112:12:inaTask	16	static
 ../application/app_main.c:120:12:imuTask	16	static
-../application/app_main.c:127:12:logTest	144	static
+../application/app_main.c:127:12:logTest	160	static
 ../application/app_main.c:161:12:usermain	8	static
