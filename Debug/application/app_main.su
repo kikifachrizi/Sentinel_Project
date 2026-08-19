@@ -1,7 +1,7 @@
-../application/app_main.c:80:12:pidTask	16	static
-../application/app_main.c:90:12:comTask	16	static
-../application/app_main.c:97:12:sumTask	216	static
-../application/app_main.c:112:12:inaTask	16	static
-../application/app_main.c:120:12:imuTask	16	static
-../application/app_main.c:127:12:logTest	160	static
-../application/app_main.c:161:12:usermain	8	static
+../application/app_main.c:86:12:pidTask	128	static
+../application/app_main.c:167:12:comTask	16	static
+../application/app_main.c:174:12:sumTask	216	static
+../application/app_main.c:189:12:inaTask	16	static
+../application/app_main.c:197:12:imuTask	16	static
+../application/app_main.c:204:12:logTest	160	static
+../application/app_main.c:240:12:usermain	8	static

@@ -73,6 +73,15 @@ EXPORT void runCommand(UartBridge *com){
         case LOG_TEST:
             logTargetL = com->arg1;
             logTargetR = com->arg2;
+            logSilent = 0; /* streaming CSV ON */
+            logActive = 1;
+            writeCom(com, "OK\r\n");
+            break;
+        case PID_PROBE:
+            /* Fase 1: identical 10s run as LOG_TEST, but logTest skips writeCom() */
+            logTargetL = com->arg1;
+            logTargetR = com->arg2;
+            logSilent = 1; /* streaming CSV OFF */
             logActive = 1;
             writeCom(com, "OK\r\n");
             break;

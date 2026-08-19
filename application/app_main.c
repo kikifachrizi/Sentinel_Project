@@ -19,7 +19,13 @@
 #include "lib/log_test.h"
 
 volatile uint8_t logActive = 0;
+volatile uint8_t logSilent = 0;
 long logTargetL = 0, logTargetR = 0;
+
+/* Fase 1 instrumentation: DWT cycle counter is enabled once at startup
+ * (usermain). pidProbeCycPerMs converts CYCCNT deltas to ms and is set
+ * from SystemCoreClock at the same time - never touched inside a loop. */
+static uint32_t pidProbeCycPerMs = 1;
 
 LOCAL void logTest(INT stacd, void *exinf);
 LOCAL ID   log_test_id;
@@ -79,10 +85,81 @@ LOCAL T_CTSK ctsk_ina_task = {
 
 LOCAL void pidTask(INT stacd, void *exinf){
     resetAllPID();
+
+    /* Fase 1 instrumentation: measure pidTask's actual wake-to-wake period
+     * with DWT CYCCNT. Inline in pidTask on purpose (a separate task would
+     * change the scheduling being measured). Integer-only inside the loop,
+     * no printf/UART/float there - the report is built once, when the
+     * measurement window closes (moving: 1 -> 0), not every iteration. */
+    static uint32_t last_cyc;
+    static uint32_t period_min;
+    static uint32_t period_max;
+    static uint64_t period_sum;
+    static uint32_t period_cnt;
+    static uint32_t warmup;
+    static uint8_t  prev_moving;
+
+    last_cyc    = DWT->CYCCNT;
+    period_min  = 0xFFFFFFFFu;
+    period_max  = 0u;
+    period_sum  = 0u;
+    period_cnt  = 0u;
+    warmup      = 0u;
+    prev_moving = 0u;
+
     while(1){
         if(moving){
             updatePID();
         }
+
+        uint32_t now_cyc = DWT->CYCCNT;
+        uint32_t delta   = now_cyc - last_cyc; /* unsigned sub: wraps correctly */
+        last_cyc = now_cyc;
+
+        if(moving && !prev_moving){
+            /* rising edge: a new 10s measurement window just started */
+            period_min = 0xFFFFFFFFu;
+            period_max = 0u;
+            period_sum = 0u;
+            period_cnt = 0u;
+            warmup     = 3u; /* discard first 3 iterations of this window */
+        }
+
+        if(moving){
+            if(warmup > 0u){
+                warmup--;
+            } else {
+                if(delta < period_min) period_min = delta;
+                if(delta > period_max) period_max = delta;
+                period_sum += delta;
+                period_cnt++;
+            }
+        }
+
+        if(!moving && prev_moving && period_cnt > 0u){
+            /* falling edge: window just closed - report once, here only */
+            uint32_t mean_cyc = (uint32_t)(period_sum / period_cnt);
+            uint32_t cpm = pidProbeCycPerMs;
+
+            uint32_t min_ms  = period_min / cpm, min_frac  = ((period_min % cpm) * 1000u) / cpm;
+            uint32_t max_ms  = period_max / cpm, max_frac  = ((period_max % cpm) * 1000u) / cpm;
+            uint32_t mean_ms = mean_cyc   / cpm, mean_frac = ((mean_cyc   % cpm) * 1000u) / cpm;
+
+            static char rpt[200];
+            snprintf(rpt, sizeof(rpt),
+                "PID_PERIOD,n=%lu,silent=%u,min_ms=%lu.%03lu,max_ms=%lu.%03lu,mean_ms=%lu.%03lu,min_cyc=%lu,max_cyc=%lu,mean_cyc=%lu\r\n",
+                (unsigned long)period_cnt, (unsigned)logSilent,
+                (unsigned long)min_ms, (unsigned long)min_frac,
+                (unsigned long)max_ms, (unsigned long)max_frac,
+                (unsigned long)mean_ms, (unsigned long)mean_frac,
+                (unsigned long)period_min, (unsigned long)period_max, (unsigned long)mean_cyc);
+            writeCom(&com_pi, rpt);
+
+            period_cnt = 0u; /* avoid re-printing until the next window closes */
+        }
+
+        prev_moving = moving;
+
         tk_dly_tsk(33);
     }
 };
@@ -141,7 +218,9 @@ LOCAL void logTest(INT stacd, void *exinf){
                 if(elapsed >= 10000) break;
 
                 snprintf(line, sizeof(line), "%lu,%ld,%ld,%ld,%ld,%d,%d\r\n",(unsigned long)elapsed,logTargetL,logTargetR, enc1.counterVal,enc2.counterVal,leftPID.output,rightPID.output);
-                writeCom(&com_pi, line);
+                if(!logSilent){ /* Fase 1: same path either way, only the UART write is toggled */
+                    writeCom(&com_pi, line);
+                }
                 tk_dly_tsk(33);
             }
             moving = 0; 
@@ -161,6 +240,12 @@ LOCAL void logTest(INT stacd, void *exinf){
 EXPORT INT usermain(void)
 {
     tm_putstring((UB*)"Start User-main program.\n");
+
+    /* Fase 1 instrumentation: enable DWT cycle counter once at startup. */
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CYCCNT = 0;
+    DWT->CTRL  |= DWT_CTRL_CYCCNTENA_Msk;
+    pidProbeCycPerMs = SystemCoreClock / 1000u;
 
     // initSensors(); //init semaphore on imu and ina reading
     initEncoder(&enc1);

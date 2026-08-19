@@ -8,6 +8,7 @@
 #define DIGITAL_READ   'd'
 #define READ_ENCODERS  'e'
 #define LOG_TEST       'g'
+#define PID_PROBE      'h' /* Fase 1: same as LOG_TEST but silent (no CSV) - for period measurement */
 #define READ_IMU       'i'
 #define MOTOR_SPEEDS   'm'
 #define READ_INA219    'n'
