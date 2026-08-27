@@ -26,6 +26,7 @@ Core/Src \
 Core/Startup \
 Drivers/STM32H5xx_HAL_Driver/Src \
 application \
+application/lib \
 mtk3_bsp2/mtkernel/device/adc \
 mtk3_bsp2/mtkernel/device/adc/sysdepend/rx231 \
 mtk3_bsp2/mtkernel/device/adc/sysdepend/rx65n \

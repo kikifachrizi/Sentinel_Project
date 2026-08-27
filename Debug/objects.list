@@ -31,6 +31,8 @@
 "./application/motor_driver.o"
 "./application/sensors.o"
 "./application/uart_bridge.o"
+"./application/lib/sentinel_features.o"
+"./application/lib/sentinel_model.o"
 "./mtk3_bsp2/mtkernel/device/adc/adc.o"
 "./mtk3_bsp2/mtkernel/device/adc/sysdepend/rx231/adc_rx231.o"
 "./mtk3_bsp2/mtkernel/device/adc/sysdepend/rx65n/adc_rx65n.o"

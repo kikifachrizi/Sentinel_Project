@@ -101,6 +101,7 @@ RM := rm -rf
 -include mtk3_bsp2/mtkernel/device/adc/sysdepend/rx65n/subdir.mk
 -include mtk3_bsp2/mtkernel/device/adc/sysdepend/rx231/subdir.mk
 -include mtk3_bsp2/mtkernel/device/adc/subdir.mk
+-include application/lib/subdir.mk
 -include application/subdir.mk
 -include Drivers/STM32H5xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk

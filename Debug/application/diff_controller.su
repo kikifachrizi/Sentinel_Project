@@ -1,4 +1,5 @@
-../application/diff_controller.c:11:13:resetPID	16	static
-../application/diff_controller.c:21:13:resetAllPID	8	static
-../application/diff_controller.c:26:13:doPID	32	static
-../application/diff_controller.c:55:13:updatePID	8	static
+../application/diff_controller.c:14:13:resetPID	16	static
+../application/diff_controller.c:24:13:resetAllPID	8	static
+../application/diff_controller.c:32:13:computeFeedforward	40	static
+../application/diff_controller.c:50:13:doPID	48	static
+../application/diff_controller.c:107:13:updatePID	8	static

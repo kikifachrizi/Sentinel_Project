@@ -62,7 +62,7 @@ application/sensors.o: ../application/sensors.c \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_uart.h \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_uart_ex.h \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_exti.h \
- ../application/lib/sensors.h
+ ../application/lib/sensors.h ../application/lib/uart_bridge.h
 /home/kiki/sentinel_ws/mtk3_bsp2/include/tk/tkernel.h:
 /home/kiki/sentinel_ws/mtk3_bsp2/mtkernel/include/tk/tkernel.h:
 /home/kiki/sentinel_ws/mtk3_bsp2/include/sys/machine.h:
@@ -127,3 +127,4 @@ application/sensors.o: ../application/sensors.c \
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_uart_ex.h:
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_exti.h:
 ../application/lib/sensors.h:
+../application/lib/uart_bridge.h:

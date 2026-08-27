@@ -1,0 +1,9 @@
+../application/lib/sentinel_features.c:87:15:sentinelFeedforwardPred	6
+../application/lib/sentinel_features.c:96:13:sentinelBeginSession	1
+../application/lib/sentinel_features.c:105:13:sentinelPushFrame	24
+../application/lib/sentinel_features.c:204:16:sentinelInferenceDue	4
+../application/lib/sentinel_features.c:215:13:aggStat	9
+../application/lib/sentinel_features.c:246:15:pearsonCorr	6
+../application/lib/sentinel_features.c:266:13:buildFeatureVector	6
+../application/lib/sentinel_features.c:309:13:sentinelRunInference	16
+../application/lib/sentinel_features.c:356:13:sentinelGetStatus	9

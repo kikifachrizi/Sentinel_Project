@@ -1,75 +1,137 @@
 # Sentinel Project (Low level system docs)
 this repository for Sentinel project (enhanced for TIFA) using mT-Kernel 3.0 and TiniyML for AI-based ccontrolling system enhancement
-# Pin Configuration
----
-### Serial Com
-##### VCP
-- USART2 (PA2/PA3) connected to the STLINKV3EC Virtual COM port.
-##### External Com port
-- RX = PB15
-- TX = PB14
 
-### Motor DC
-###### Right Motor :
-- dir1 = PC10
-- dir2 = PC4
-- pwm = PB6
-###### Left Motor :
-- dir1 = PA5
-- dir2 = PC12
-- pwm = PB13
+### Pin Configuration
 
-### Encoder 
-###### Right Encoder :
-- ch1 = PA7
-- ch2 = PA6
-###### Left Encoder :
-- ch1 = PA0
-- ch2 = PA1
+<div style="display: flex;">
+<table border="0">
+  <th>
+    Function
+  </th>
+  <th>
+    Pin Config
+  </th>
+  <th>
+    Port
+  </th>
+  <tr>
+    <td rowspan="2">VCP</td>
+    <td>PA2</td>
+    <td>RX</td>
+  </tr>
+  <tr>
+    <td>PA3</td>
+    <td>TX</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Serial Com</td>
+    <td>PB15</td>
+    <td>RX</td>
+  </tr>
+  <tr>
+    <td>PB14</td>
+    <td>TX</td>
+  </tr>
+  <tr>
+    <td rowspan="3">Motor DC Right</td>
+    <td>PC10</td>
+    <td>Dir1</td>
+  </tr>
+  <tr>
+    <td>PC4</td>
+    <td>Dir2</td>
+  </tr>
+  <tr>
+    <td>PB6</td>
+    <td>Pwm</td>
+  </tr>
+  <tr>
+    <td rowspan="3">Motor DC Left</td>
+    <td>PA5</td>
+    <td>Dir1</td>
+  </tr>
+  <tr>
+    <td>PC12</td>
+    <td>Dir2</td>
+  </tr>
+  <tr>
+    <td>PB13</td>
+    <td>Pwm</td>
+  </tr>
+</table>
 
-### PCA9548A
-##### I2C
-- SDA = PB7
-- SCL = PB8
-
-### MPU6050
-- ###### Connected to SDA_Ch1 & SCL_Ch1 PCA9548A
-
-### INA219 x 2 unit
-- ###### Connected to SDA_Ch2 & SCL_Ch2 PCA9548A
+<table border="0">
+  <th>
+    Function
+  </th>
+  <th>
+    Pin Config
+  </th>
+  <th>
+    Port
+  </th>
+  <tr>
+    <td rowspan="2">Encoder Right</td>
+    <td>PA7</td>
+    <td>Ch1</td>
+  </tr>
+  <tr>
+    <td>PA6</td>
+    <td>Ch2</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Encoder Left</td>
+    <td>PA0</td>
+    <td>Ch1</td>
+  </tr>
+  <tr>
+    <td>PA1</td>
+    <td>Ch2</td>
+  </tr>
+  <tr>
+    <td rowspan="2">PCA9548A/TCA9548A</td>
+    <td>PB7</td>
+    <td>SDA</td>
+  </tr>
+  <tr>
+    <td>PB8</td>
+    <td>SCL</td>
+  </tr>
+    <tr>
+    <td rowspan="2">MPU6050</td>
+    <td>PCA_SD0</td>
+    <td>SDA</td>
+  </tr>
+  <tr>
+    <td>PCA_SC0</td>
+    <td>SCL</td>
+  </tr>
+    <tr>
+    <td rowspan="2">INA219_1</td>
+    <td>PCA_SD1</td>
+    <td>SDA</td>
+  </tr>
+  <tr>
+    <td>PCA_SC1</td>
+    <td>SCL</td>
+  </tr>
+    <tr>
+    <td rowspan="2">INA219_2</td>
+    <td>PCA_SD2</td>
+    <td>SDA</td>
+  </tr>
+  <tr>
+    <td>PCS_SC2</td>
+    <td>SCL</td>
+  </tr>
+</table>
+</div>
 
 ### External Power System for NUCLEO-H533RE
 
-# System Architecture 
+### System Architecture 
+#### Diagram Block / Flow chart
 
-
-
-
-## Sentinel resources : 
-### MPU6050 (I2C) → micro testing
-- https://dev.to/carolineee/how-to-code-mpu-6050-on-stm32cubeide-1lle
-- https://github.com/MarcoMiglio/stm32_mpu6050
-
-### PCA9548A (I2C) → micro testing
-- https://www.micropeta.com/video110
-- https://github.com/jtainer/i2c-mux
-
-### INA219 (I2C) → micro testing
-- https://github.com/thibeaux/STM32_INA219_Library/tree/main
-
----
-
-### How to add tinyML model to mT-kernel 3.0
-### Communicate STM32 NUCLEO-H533RE → Raspberry Pi 5 (ROS2 Jazzy)
-
----
-## Pure need my logic not AI
-### PID on mT-kernel 3.0
-### Combined PID + tinyML for friction optimization
----
-### decide fusion sensor on ROS2 or mT-kernel 3.0
-### get all data 
-- IMU
-- Current Sensor
-- Odometry
-- Lidar
+### PID + FF
+### Collect Data
+### uT-Kernel 3.0
