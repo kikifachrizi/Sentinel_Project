@@ -1,0 +1,25 @@
+814 23506 142 66
+OK
+0 0 0 0
+0 0 0 0
+OK
+OK
+OK
+OK
+2714 3944 -107 -114
+2714 3944 -107 -114
+OK
+0 1 0 -1
+OK
+0 0 0 0
+OK
+[?2004h[01;32msentinel@sentinel-desktop[00m:[01;34m~/sentinel_ws[00m$ sudo poweroff
+[?2004l[sudo] password for sentinel: 
+Sorry, try again.
+[sudo] password for sentinel: 
+
+Broadcast message from root@sentinel-desktop on pts/3 (Wed 2026-08-26 16:05:25 WIB):
+
+The system will power off now!
+
+[?2004h[01;32msentinel@sentinel-desktop[00m:[01;34m~/sentinel_ws[00m$ 

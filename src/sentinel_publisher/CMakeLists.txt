@@ -43,6 +43,20 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+add_executable(sentinel_classifier_node
+  src/sentinel_classifier_node.cpp
+)
+
+ament_target_dependencies(sentinel_classifier_node
+  rclcpp
+  std_msgs
+)
+
+install(TARGETS
+  sentinel_classifier_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # ===============================
 # Install other resources
 # ===============================

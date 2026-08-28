@@ -5,7 +5,8 @@
   <joint name="laser_joint" type="fixed">
     <parent link="chassis"/>
     <child link="laser_frame"/>
-    <origin xyz="0.113 0 0.15" rpy="0 0 0"/>
+    <!-- <origin xyz="0.113 0 0.15" rpy="0 0 1.2008"/>  dreame lds lidar -->
+    <origin xyz="0.113 0 0.15" rpy="0 0 0"/> <!-- A2 -->
   </joint>
 
   <link name="laser_frame">

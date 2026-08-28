@@ -1,0 +1,62 @@
+OK
+STATIC_INA_US,2187
+STATIC,0,1,0,0,11752,-120
+STATIC,0,1,100,0,11724,-20
+STATIC,0,1,200,255,11648,-30
+STATIC,0,1,300,10325,11620,80
+STATIC,0,1,400,12740,11604,-60
+9825 0 0 0
+OK
+0 0 0 0
+OK
+STATIC_INA_US,2187
+STATIC,0,1,0,0,11748,-40
+STATIC,0,1,100,0,11724,-30
+STATIC,0,1,200,6270,11660,-10
+STATIC,0,1,300,10460,11616,90
+STATIC,0,1,400,12740,11604,140
+11950 0 0 0
+OK
+0 0 0 0
+OK
+OK
+0 0 0 0
+OK
+[INA ch1 0x80] mux select      : HAL_OK
+[INA ch1 0x80] probe (ACK?)     : HAL_OK
+[INA ch1 0x80] write CONFIG=0x399F : HAL_OK
+[INA ch1 0x80] write CALIB=0x1000  : HAL_OK
+[INA ch1 0x80] reg 0x00 CONFIG   = 0x399F  (HAL_OK)
+[INA ch1 0x80] reg 0x01 SHUNT_V  = 0xFFFE  (HAL_OK)
+[INA ch1 0x80] reg 0x02 BUS_V    = 0x5AD2  (HAL_OK)
+[INA ch1 0x80] reg 0x03 POWER    = 0x0003  (HAL_OK)
+[INA ch1 0x80] reg 0x04 CURRENT  = 0x0000  (HAL_OK)
+[INA ch1 0x80] reg 0x05 CALIB    = 0x1000  (HAL_OK)
+[INA ch1 0x80] CALIB expected=0x1000 readback=0x1000 -> MATCH
+[INA ch2 0x88] mux select      : HAL_OK
+[INA ch2 0x88] probe (ACK?)     : HAL_ERROR
+[INA ch2 0x88] write CONFIG=0x399F : HAL_ERROR
+[INA ch2 0x88] write CALIB=0x1000  : HAL_ERROR
+[INA ch2 0x88] reg 0x00 CONFIG   = 0x0000  (HAL_ERROR)
+[INA ch2 0x88] reg 0x01 SHUNT_V  = 0x0000  (HAL_ERROR)
+[INA ch2 0x88] reg 0x02 BUS_V    = 0x0000  (HAL_ERROR)
+[INA ch2 0x88] reg 0x03 POWER    = 0x0000  (HAL_ERROR)
+[INA ch2 0x88] reg 0x04 CURRENT  = 0x0000  (HAL_ERROR)
+[INA ch2 0x88] reg 0x05 CALIB    = 0x0000  (HAL_ERROR)
+[INA ch2 0x88] CALIB expected=0x1000 readback=0x0000 -> MISMATCH (H1: write never landed)
+OK
+OK
+STATIC_INA_US,2189
+STATIC,0,1,0,0,11640,0
+STATIC,0,1,100,0,11616,0
+STATIC,0,1,200,6050,11540,0
+STATIC,0,1,300,10430,11496,-1
+STATIC,0,1,400,12710,11468,0
+[?2004h[01;32msentinel@sentinel-desktop[00m:[01;34m~/sentinel_ws[00m$ sudo poweroff
+[?2004l[sudo] password for sentinel: 
+
+Broadcast message from root@sentinel-desktop on pts/1 (Sat 2026-08-22 15:31:19 WIB):
+
+The system will power off now!
+
+[?2004h[01;32msentinel@sentinel-desktop[00m:[01;34m~/sentinel_ws[00m$ 

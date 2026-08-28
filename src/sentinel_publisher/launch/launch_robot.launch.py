@@ -57,7 +57,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         rsp, 
-        rplidar_activate,
+        # rplidar_activate,
         controller_manager,
         diff_drive_spawner,
         joint_state_broadcaster_spawner,
