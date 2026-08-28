@@ -1,0 +1,30 @@
+1 8 0 0
+OK
+OK
+0 0 0 0
+OK
+STATIC_INA_US,2187
+STATIC,0,1,120,0,1020,6
+STATIC,0,1,140,0,1028,4
+STATIC,0,1,160,0,1028,4
+STATIC,0,1,180,0,1024,5
+STATIC,0,1,200,0,1024,3
+STATIC,0,1,220,0,1024,2
+STATIC,0,1,240,0,1024,4
+STATIC,0,1,260,0,1024,6
+STATIC,0,1,280,4200,1020,5
+STATIC,0,1,300,8040,1020,3
+STATIC,0,1,320,9113,1024,2
+STATIC,0,1,340,9813,1024,3
+STATIC,0,1,360,10273,1020,4
+STATIC,0,1,380,10733,1020,6
+STATIC,0,1,400,11106,1020,6
+STATIC,0,1,420,11466,1020,8
+STATIC,0,1,440,11840,1024,5
+STATIC,0,1,460,12213,1024,4
+[?2004h[01;32msentinel@sentinel-desktop[00m:[01;34m~[00m$ screen -X -S 4419.pts-0.sentinel-desktop quitls[K
+[?2004lThere is a screen on:
+	4959.pts-0.sentinel-desktop	(08/04/2026 05:05:25 PM)	(Attached)
+1 Socket in /run/screen/S-sentinel.
+[?2004h[01;32msentinel@sentinel-desktop[00m:[01;34m~[00m$ screen -lsX -S 4419.pts-0.sentinel-desktop quitls[KX -S 4419.pts-0.sentinel-desktop quit[1P[1P[C[1@5[1@9
+[?2004l
