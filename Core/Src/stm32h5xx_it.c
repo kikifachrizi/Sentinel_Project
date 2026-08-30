@@ -22,6 +22,10 @@
 #include "stm32h5xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "../../application/lib/uart_bridge.h" /* FIX RX starvation: uartRxIsrPush() - lihat uart_bridge.c. Path relatif
+                                                 * langsung (bukan "lib/...") karena Core/Src TIDAK ada di include path
+                                                 * application/ (subdir.mk Core/Src berbeda dari application/) - lihat
+                                                 * catatan kompilasi. */
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -199,5 +203,31 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
+
+/* FIX RX starvation (ReadByte timeout di ros2_control): USART1 RX
+ * interrupt-driven, menggantikan HAL_UART_Receive() polling di readCom()
+ * (uart_bridge.c) - byte ditangkap ISR kapan pun tiba, tidak tergantung
+ * comTask dapat CPU. USART1_IRQHandler() dulu weak-aliased ke
+ * Default_Handler (lihat startup_stm32h533retx.s) - tidak pernah dipanggil
+ * karena NVIC IRQ-nya juga belum pernah di-enable (lihat USART1_MspInit di
+ * stm32h5xx_hal_msp.c). */
+void USART1_IRQHandler(void)
+{
+  HAL_UART_IRQHandler(&huart1);
+}
+
+/* __weak di HAL (stm32h5xx_hal_uart.c) - belum pernah di-override di project
+ * ini sebelumnya. Dipanggil HAL_UART_IRQHandler() di atas begitu 1 byte yang
+ * diminta HAL_UART_Receive_IT() selesai diterima. TIDAK memanggil API kernel
+ * (tk_*) apa pun - cuma tulis ring buffer volatile plain - jadi aman
+ * dijalankan di prioritas NVIC berapa pun tanpa melanggar aturan ISR
+ * uT-Kernel. */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if (huart->Instance == USART1)
+  {
+    uartRxIsrPush();
+  }
+}
 
 /* USER CODE END 1 */

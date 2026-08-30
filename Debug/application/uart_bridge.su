@@ -1,4 +1,6 @@
 ../application/uart_bridge.c:19:13:vcpMonitor	256	static
-../application/uart_bridge.c:25:13:readCom	16	static
-../application/uart_bridge.c:42:13:writeCom	24	static
-../application/uart_bridge.c:46:13:parseCommand	24	static
+../application/uart_bridge.c:36:13:uartRxStart	8	static
+../application/uart_bridge.c:40:13:uartRxIsrPush	16	static
+../application/uart_bridge.c:49:13:readCom	16	static
+../application/uart_bridge.c:71:13:writeCom	24	static
+../application/uart_bridge.c:75:13:parseCommand	24	static

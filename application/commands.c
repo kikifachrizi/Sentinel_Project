@@ -28,7 +28,7 @@ EXPORT void runCommand(UartBridge *com){
             char reply[32];
             readEncoder(&enc1);
             readEncoder(&enc2);
-            snprintf(reply, sizeof(reply), "%ld %ld %d %d\r\n", enc1.counterVal, enc2.counterVal, leftPID.output , rightPID.output);
+            snprintf(reply, sizeof(reply), "%ld %ld\r\n", enc1.counterVal, enc2.counterVal);
             writeCom(com, reply);
             break;
         }
@@ -38,11 +38,23 @@ EXPORT void runCommand(UartBridge *com){
             writeCom(com, "OK\r\n");
             break;
         case UPDATE_PID: {
-            int p , i , d, o;
-            if(sscanf(com->argv1, "%d:%d:%d:%d", &p,&i,&d,&o) == 4){
-                leftPID.Kp = p; leftPID.Ki = i; leftPID.Kd = d; leftPID.Ko = o;
-                rightPID.Kp = p; rightPID.Ki = i; rightPID.Kd = d; rightPID.Ko = o;
-                writeCom(com, "OK\r\n"); 
+            /* FORMAT FIX: diffdrive_arduino (arduino_comms.hpp set_pid_values(),
+             * dipanggil sekali di on_activate() plugin) mengirim
+             * "u Kp:Kd:Ki:Ko\r" - urutan Kp,Kd,Ki,Ko. Sebelumnya di-parse
+             * sebagai Kp,Ki,Kd,Ko di sini - Ki dan Kd TERTUKAR setiap plugin
+             * push PID value, membatalkan asumsi Ki=0 permanen yang dipakai
+             * SENTINEL gain scheduling. Diverifikasi langsung dari source
+             * joshnewans/diffdrive_arduino branch humble. */
+            int p, d, i, o;
+            if(sscanf(com->argv1, "%d:%d:%d:%d", &p,&d,&i,&o) == 4){
+                leftPID.Kp = p; leftPID.Kd = d; leftPID.Ki = i; leftPID.Ko = o;
+                rightPID.Kp = p; rightPID.Kd = d; rightPID.Ki = i; rightPID.Ko = o;
+                writeCom(com, "OK\r\n");
+            } else {
+                /* FIX: dulu tidak ada balasan sama sekali kalau parsing gagal -
+                 * plugin's send_msg() blocking ReadLine() sampai timeout_ms
+                 * penuh (ReadByte timeout) untuk command yang malformed. */
+                writeCom(com, "ERR args\r\n");
             }
             break;
         }
@@ -203,5 +215,16 @@ EXPORT void runCommand(UartBridge *com){
             writeCom(com, reply);
             break;
         }
+        default:
+            /* FIX (opsi 4, ReadByte timeout di ros2_control): dulu com->cmd
+             * yang tidak cocok case manapun (mis. huruf command rusak akibat
+             * UART overrun saat pidTask menahan comTask - lihat diskusi RX
+             * starvation) DIAM TOTAL, tidak ada balasan - plugin nunggu penuh
+             * sampai timeout_ms. Sekarang selalu ada balasan, apapun cmd-nya,
+             * supaya host tidak pernah menunggu buta - membantu resync lebih
+             * cepat, tidak memperbaiki akar penyebab byte-loss itu sendiri
+             * (lihat SENTINEL_SENSOR_DECIMATION di app_main.c untuk itu). */
+            writeCom(com, "ERR unknown\r\n");
+            break;
     }
 }

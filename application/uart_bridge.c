@@ -22,19 +22,48 @@ EXPORT void vcpMonitor(const char *label,const char *msg){
     HAL_UART_Transmit(debug.huart, (uint8_t*)out, strlen(out), 300); // this the one who sent to VCP
 }
 
+/* FIX RX starvation - lihat catatan panjang di uart_bridge.h. Ring buffer
+ * single-producer (ISR, uartRxIsrPush())/single-consumer (comTask, readCom())
+ * - aman tanpa mutex: ISR cuma tulis s_rxHead, task cuma tulis s_rxTail,
+ * masing-masing cuma BACA index milik pihak lain untuk cek kosong/penuh.
+ * Semua index uint8_t (store/load 1 instruksi, atomik terhadap ISR di
+ * Cortex-M33 - tidak ada baca-ubah-tulis lintas ISR/task). */
+static volatile uint8_t s_rxRing[UART_RX_RING_SIZE];
+static volatile uint8_t s_rxHead;
+static volatile uint8_t s_rxTail;
+static volatile uint8_t s_rxByteIt; /* landing byte utk HAL_UART_Receive_IT() - com_pi/huart1 saja */
+
+EXPORT void uartRxStart(void){
+    HAL_UART_Receive_IT(com_pi.huart, (uint8_t*)&s_rxByteIt, 1);
+}
+
+EXPORT void uartRxIsrPush(void){
+    uint8_t next = (uint8_t)((s_rxHead + 1u) % UART_RX_RING_SIZE);
+    if (next != s_rxTail) { /* buffer tidak penuh - kalau penuh, byte ini didrop (jarang, 64 byte cukup) */
+        s_rxRing[s_rxHead] = s_rxByteIt;
+        s_rxHead = next;
+    }
+    HAL_UART_Receive_IT(com_pi.huart, (uint8_t*)&s_rxByteIt, 1); /* re-arm SELALU, walau buffer penuh */
+}
+
 EXPORT void readCom(UartBridge *com){
-    if (HAL_UART_Receive(com->huart, &com->rx_byte , 1, 100) == HAL_OK) {
-        if (com->rx_byte == '\r' || com->rx_byte == '\n') {
-            com->rxBuf[com->rxIndex] = '\0'; //closed the string
-            if(com->rxIndex > 0){//this line tell buffer not empty
-                vcpMonitor(com->name, com->rxBuf);
-                parseCommand(com);
-                runCommand(com);
-            }
-            com->rxIndex = 0;
-        } else if (com->rxIndex < sizeof(com->rxBuf) - 1){
-            com->rxBuf[com->rxIndex++] = com->rx_byte;
+    if (s_rxTail == s_rxHead) return; /* non-blocking: belum ada byte baru */
+    com->rx_byte = s_rxRing[s_rxTail];
+    s_rxTail = (uint8_t)((s_rxTail + 1u) % UART_RX_RING_SIZE);
+
+    /* Logika di bawah ini TIDAK diubah - persis sama seperti versi polling
+     * sebelumnya, cuma sumber com->rx_byte yang berubah (ring buffer,
+     * bukan HAL_UART_Receive() langsung). */
+    if (com->rx_byte == '\r' || com->rx_byte == '\n') {
+        com->rxBuf[com->rxIndex] = '\0'; //closed the string
+        if(com->rxIndex > 0){//this line tell buffer not empty
+            vcpMonitor(com->name, com->rxBuf);
+            parseCommand(com);
+            runCommand(com);
         }
+        com->rxIndex = 0;
+    } else if (com->rxIndex < sizeof(com->rxBuf) - 1){
+        com->rxBuf[com->rxIndex++] = com->rx_byte;
     }
 }
 

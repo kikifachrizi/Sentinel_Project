@@ -334,6 +334,15 @@ LOCAL void pidTask(INT stacd, void *exinf){
              * status (previously void - a failure was invisible). Retry
              * ONCE on failure - cheap (one extra I2C burst, DC_TIMING shows
              * tens of ms of margin in a 50ms frame). */
+            /* REVISI: desimasi baca sensor (opsi 3) DIBATALKAN - root cause
+             * ReadByte timeout diperbaiki di akarnya lewat UART RX interrupt-
+             * driven (uartRxIsrPush(), lihat uart_bridge.c/stm32h5xx_it.c),
+             * bukan lagi dengan mengurangi kerja pidTask. comTask tidak lagi
+             * bergantung pada scheduling CPU untuk menangkap byte - ISR
+             * menangkapnya kapan pun tiba, terlepas dari pidTask sedang
+             * blocking I2C berapa lama pun. Baca sensor kembali TIAP frame
+             * selama moving, sama seperti sebelum opsi 3 - classifier dapat
+             * data segar terus, termasuk saat teleop. */
             HAL_StatusTypeDef r1 = readINA219(&ina1); if(r1 != HAL_OK) r1 = readINA219(&ina1);
             HAL_StatusTypeDef r2 = readINA219(&ina2); if(r2 != HAL_OK) r2 = readINA219(&ina2);
             HAL_StatusTypeDef r3 = readMPU6050(&imu); if(r3 != HAL_OK) r3 = readMPU6050(&imu);
@@ -560,8 +569,16 @@ LOCAL void logTest(INT stacd, void *exinf){
                 if(loutFinal > MAX_PWM) loutFinal = MAX_PWM; else if(loutFinal < -MAX_PWM) loutFinal = -MAX_PWM;
                 if(routFinal > MAX_PWM) routFinal = MAX_PWM; else if(routFinal < -MAX_PWM) routFinal = -MAX_PWM;
 
+                /* FIX (masalah 1): dulu cetak logTargetL/logTargetR (beku sejak
+                 * 'g' diterima) - MOTOR_SPEEDS ('m') TIDAK menjaga logActive
+                 * (beda dari LOG_TEST/PID_PROBE/STATIC_SWEEP yang eksplisit
+                 * menolak saat dataCollectActive), jadi 'm' yang dikirim di
+                 * tengah 'g' BERHASIL mengubah leftPID/rightPID.TargetTicksPerFrame
+                 * secara live (motor beneran berubah) tapi kolom CSV tidak
+                 * pernah ikut berubah. Cetak nilai live-nya sekarang. */
                 snprintf(line, sizeof(line), "%lu,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld\r\n",
-                         (unsigned long)elapsed, logTargetL, logTargetR,
+                         (unsigned long)elapsed,
+                         leftPID.TargetTicksPerFrame, rightPID.TargetTicksPerFrame,
                          (long)enc1.counterVal, (long)enc2.counterVal,
                          loutFinal, routFinal, uffL, uffR);
                 if(!logSilent){ /* Fase 1: same path either way, only the UART write is toggled */
@@ -606,6 +623,15 @@ EXPORT INT usermain(void)
     initMotorController(&motorLeft);
     initMotorController(&motorRight);
     initMpu6050(&imu); // needed so DATA_COLLECT's per-frame readMPU6050() gets real data, not a sleeping chip
+
+    /* FIX RX starvation (ReadByte timeout di ros2_control): arm penerimaan
+     * interrupt-driven pertama kali - lihat uart_bridge.c/stm32h5xx_it.c.
+     * Dipanggil sebelum comTask start supaya tidak ada jendela di mana
+     * comTask jalan tapi belum ada RX yang di-arm sama sekali. huart1 sudah
+     * pasti siap di titik ini (MX_USART1_UART_Init() jalan di main() sebelum
+     * kernel start/usermain() dipanggil - lihat inittask.c). */
+    uartRxStart();
+
     // /* Buat & Jalankan Task */
     pid_task_id = tk_cre_tsk(&ctsk_pid_task);
     tk_sta_tsk(pid_task_id, 0);

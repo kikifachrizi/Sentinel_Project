@@ -13,6 +13,12 @@
 #define SENTINEL_CLASS_LOW_TRACTION 2 /* "BANNER" di KONTEKS */
 #define SENTINEL_CLASS_LOADED       3
 
+/* GAIN SCHEDULING: tabel Kp/Kd per kelas hasil klasifikasi (diukur dari
+ * eksperimen - lihat SENTINEL_GAINS[] di sentinel_features.c). Ki dan Ko
+ * SENGAJA TIDAK ada di sini - keduanya tetap (Ki=0, Ko=50) untuk semua
+ * kelas, tidak pernah diubah gain scheduling. */
+typedef struct { int Kp; int Kd; } GainSet;
+
 /* Dipanggil dari pidTask persis di rising edge moving (0->1), SEBELUM
  * frame pertama dari sesi baru di-push. Reset window + tangkap ax_baseline.
  * Fungsi biasa (bukan task) - lihat sentinel_features.c untuk interpretasi

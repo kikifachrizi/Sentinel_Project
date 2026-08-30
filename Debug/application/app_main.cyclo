@@ -1,6 +1,6 @@
 ../application/app_main.c:117:12:pidTask	41
-../application/app_main.c:437:12:comTask	1
-../application/app_main.c:451:12:sentinelTask	2
-../application/app_main.c:466:12:runStaticSweep	10
-../application/app_main.c:536:12:logTest	10
-../application/app_main.c:591:12:usermain	1
+../application/app_main.c:446:12:comTask	1
+../application/app_main.c:460:12:sentinelTask	2
+../application/app_main.c:475:12:runStaticSweep	10
+../application/app_main.c:545:12:logTest	10
+../application/app_main.c:608:12:usermain	1

@@ -92,7 +92,7 @@ this repository for Sentinel project (enhanced for TIFA) using mT-Kernel 3.0 and
     <td>SCL</td>
   </tr>
   <tr>
-    <td rowspan="2">INA219_1</td>
+    <td rowspan="2"><strong>INA219_1</strong></td>
     <td>PCA_SD1</td>
     <td>SDA</td>
     <td rowspan="2">INA219_2</td>

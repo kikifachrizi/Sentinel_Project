@@ -414,6 +414,16 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 
     /* USER CODE BEGIN USART1_MspInit 1 */
 
+    /* FIX RX starvation (ReadByte timeout di ros2_control): enable NVIC IRQ
+     * untuk USART1 - dulu tidak pernah di-enable sama sekali (project ini
+     * murni polling sejak awal), jadi USART1_IRQHandler() (stm32h5xx_it.c)
+     * dan HAL_UART_Receive_IT() (uart_bridge.c) tidak akan pernah terpanggil
+     * tanpa baris ini. Prioritas 5 - tidak menyentuh tk_* API dari ISR
+     * (lihat HAL_UART_RxCpltCallback()), jadi tidak terikat aturan prioritas
+     * ISR-yang-panggil-kernel uT-Kernel. */
+    HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
+
     /* USER CODE END USART1_MspInit 1 */
   }
   else if(huart->Instance==USART2)

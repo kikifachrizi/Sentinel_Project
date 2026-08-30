@@ -77,6 +77,43 @@ static int      s_votedClass = -1;
 static int      s_voteHistory[SENTINEL_VOTE_N];
 static uint32_t s_inferCount;
 
+/* GAIN SCHEDULING: Kp/Kd per kelas (Ki=0, Ko=50 TETAP untuk semua kelas -
+ * TIDAK ADA di tabel ini, tidak pernah disentuh applyGain()). Angka
+ * TEXTURED/BANNER sengaja sama dengan NORMAL (belum ada bukti eksperimen
+ * yang membedakan - lihat docs/SENTINEL_project_context.md); LOADED diukur
+ * terpisah. */
+static const GainSet SENTINEL_GAINS[SENTINEL_N_CLASSES] = {
+    {70, 110}, /* 0: NORMAL */
+    {70, 110}, /* 1: TEXTURED */
+    {70, 110}, /* 2: BANNER (LOW_TRACTION) */
+    {85, 150}, /* 3: LOADED */
+};
+
+/* Hysteresis KEDUA, di atas 5-vote majority yang sudah ada (s_votedClass):
+ * gain baru diterapkan hanya kalau s_votedClass beda dari kelas gain yang
+ * SEDANG AKTIF selama SENTINEL_GAIN_HYSTERESIS_N keputusan BERTURUT-TURUT
+ * (5 x 0.5s/keputusan = 2.5s) - bukan cuma sekali beda. s_currentGainClass
+ * mulai di NORMAL, cocok dengan Kp/Kd default leftPID/rightPID di
+ * diff_controller.c (70/110) - tidak ada lonjakan gain di boot. */
+#define SENTINEL_GAIN_HYSTERESIS_N 5
+static int s_currentGainClass = SENTINEL_CLASS_NORMAL;
+static int s_gainHysteresisCount;
+
+/* Ganti Kp/Kd SAJA - Ki/Ko/Iterm/output/state lain TIDAK disentuh. Untuk
+ * velocity-form PI dengan Ki=0 permanen, mengganti Kp/Kd tidak membuat
+ * diskontinuitas pada state yang tersimpan (pid->output, akumulator) -
+ * cuma mengubah besar increment SATU frame berikutnya, self-correcting
+ * lewat feedback loop normal sesudahnya. Iterm SENGAJA tidak dipakai untuk
+ * "menyerap lonjakan": karena Ki=0 permanen, pid->Iterm tidak pernah
+ * berubah sendiri lagi (doPID() cuma += Ki*Perror) - nilai apa pun yang
+ * ditulis ke situ akan menempel PERMANEN dan ikut ke setiap frame
+ * berikutnya (bias konstan yang salah), bukan transfer sekali pakai. */
+static void sentinelApplyGain(int klass){
+    const GainSet *g = &SENTINEL_GAINS[klass];
+    leftPID.Kp  = rightPID.Kp  = g->Kp;
+    leftPID.Kd  = rightPID.Kd  = g->Kd;
+}
+
 static uint32_t s_featMin = 0xFFFFFFFFu, s_featMax = 0u; static uint64_t s_featSum; static uint32_t s_featCnt;
 static uint32_t s_modelMin = 0xFFFFFFFFu, s_modelMax = 0u; static uint64_t s_modelSum; static uint32_t s_modelCnt;
 
@@ -342,6 +379,27 @@ EXPORT void sentinelRunInference(void){
     }
     if (numAtMax == 1) s_votedClass = winner;
     /* kalau seri: s_votedClass TIDAK diubah - hysteresis alami, sesuai spec */
+
+    /* GAIN SCHEDULING: dipanggil HANYA dari sini (sentinelRunInference(),
+     * yang hanya pernah dipanggil dari sentinelTask - TIDAK PERNAH dari
+     * pidTask). s_votedClass == -1 (belum ada hasil voting sama sekali,
+     * window belum penuh) sengaja diabaikan - jangan pernah index
+     * SENTINEL_GAINS[-1]. Assignment int/float leftPID.Kp/Kd di
+     * sentinelApplyGain() tanpa mutex - aman: sentinelTask prioritas lebih
+     * rendah dari pidTask (lihat app_main.c), dan tiap store 32-bit
+     * (int->float atau int) atomik terhadap preemption di Cortex-M33. */
+    if (s_votedClass >= 0){
+        if (s_votedClass != s_currentGainClass){
+            s_gainHysteresisCount++;
+            if (s_gainHysteresisCount >= SENTINEL_GAIN_HYSTERESIS_N){
+                sentinelApplyGain(s_votedClass);
+                s_currentGainClass = s_votedClass;
+                s_gainHysteresisCount = 0;
+            }
+        } else {
+            s_gainHysteresisCount = 0;
+        }
+    }
 
     uint32_t cycFeat  = t1 - t0;
     uint32_t cycModel = t2 - t1;
