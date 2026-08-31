@@ -1,9 +1,12 @@
 #include <tk/tkernel.h>
 #include <stdint.h>
 #include <math.h>
+#include <string.h> /* strlen() - CLASSIFY auto-push */
+#include <stdio.h> /* snprintf() - CLASSIFY auto-push */
 #include "stm32h5xx_hal.h"
 #include "sentinel_features.h"
 #include "diff_controller.h" /* leftPID/rightPID.u_db_fwd/kv_num_fwd/u_db_rev/kv_num_rev */
+#include "uart_bridge.h" /* extern huart2 - CLASSIFY auto-push via VCP, lihat catatan di titik pemakaian */
 
 /* ==========================================================================
  * Ring buffer mentah + fitur turunan per-frame. Semua static (.bss), tidak
@@ -113,6 +116,8 @@ static void sentinelApplyGain(int klass){
     leftPID.Kp  = rightPID.Kp  = g->Kp;
     leftPID.Kd  = rightPID.Kd  = g->Kd;
 }
+
+static const char *KLASS_NAME[SENTINEL_N_CLASSES] = {"NORMAL", "TEXTURED", "BANNER", "LOADED"};
 
 static uint32_t s_featMin = 0xFFFFFFFFu, s_featMax = 0u; static uint64_t s_featSum; static uint32_t s_featCnt;
 static uint32_t s_modelMin = 0xFFFFFFFFu, s_modelMax = 0u; static uint64_t s_modelSum; static uint32_t s_modelCnt;
@@ -399,6 +404,28 @@ EXPORT void sentinelRunInference(void){
         } else {
             s_gainHysteresisCount = 0;
         }
+    }
+
+    /* CLASSIFY auto-push lewat huart2/VCP (BUKAN com_pi/huart1 - itu jalur
+     * eksklusif protokol e/m/u ros2_control, sudah dibahas panjang kenapa
+     * tidak boleh disentuh). CATATAN: huart2 SEBENARNYA bukan "tidak dipakai
+     * task lain" seperti asumsi awal - vcpMonitor() (dipanggil readCom() di
+     * comTask, TIAP command 'e'/'m' yang diterima) juga transmit ke huart2.
+     * HAL_UART_Transmit() sama-sama tidak dijaga mutex di sini seperti di
+     * writeCom() - race HAL_BUSY yang sama secara teknis ADA. Bedanya dengan
+     * huart1: konsekuensinya cuma baris log/CLASSIFY yang sesekali
+     * hilang/tumpang tindih di kanal debug - tidak memengaruhi data
+     * encoder/PID yang dipakai ros2_control untuk kendali robot (itu
+     * sepenuhnya di huart1, tidak disentuh sama sekali di sini). Diterima
+     * sebagai trade-off sesuai arahan eksplisit. */
+    if (s_votedClass >= 0){
+        char buf[48];
+        /* (int) WAJIB - leftPID.Kp/Kd itu float, di-promote ke double di
+         * varargs (8 byte) - %d cuma konsumsi 4 byte, tanpa cast argumen
+         * sesudahnya bakal geser (persis bug PING di commands.c). */
+        snprintf(buf, sizeof(buf), "CLASSIFY,%d,%s,Kp=%d,Kd=%d\r\n",
+            s_votedClass, KLASS_NAME[s_votedClass], (int)leftPID.Kp, (int)leftPID.Kd);
+        HAL_UART_Transmit(&huart2, (uint8_t*)buf, strlen(buf), 50);
     }
 
     uint32_t cycFeat  = t1 - t0;
