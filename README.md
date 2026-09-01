@@ -1,6 +1,4 @@
-# Sentinel Project 
----
-## RTOS using uT-Kernel 3.0 & AI-Friction Classification : Classify Surface and gain scheduling 
+# SENTINEL: Adaptive Traction Control for Differential AMR using TinyML Surface Classification on μT-Kernel 3.0
 ![ROS2](https://img.shields.io/badge/ROS2-Humble-3498DB?logo=ros)
 ![TinyML](https://img.shields.io/badge/TinyML-Active-4CAF50)
 ![C++](https://img.shields.io/badge/C++-Firmware-00599C?logo=c%2B%2B)
@@ -10,11 +8,16 @@ this repository for Sentinel project (enhanced for TIFA) using mT-Kernel 3.0 and
 
 ### Demo
 
-<p align="center">
-  <img src="images/Demo_TRON_robot.gif" height="250" /><img src="images/Demo_TRON_ws.gif" height="250" />
-  <br>
-  <b>Left:</b> Robot Demo on Different Surface &nbsp;&nbsp; | &nbsp;&nbsp; <b>Right:</b> ROS Workspace and uT-Kernel Surface Classifier
-</p>
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center"><img src="images/Demo_TRON_robot.gif" height="250" /></td>
+    <td align="center"><img src="images/Demo_TRON_ws.gif" height="250" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Left:</b> Robot Demo on Different Surface</td>
+    <td align="center"><b>Right:</b> ROS Workspace and uT-Kernel Surface Classifier</td>
+  </tr>
+</table>
 
 
 ### Pin Configuration
