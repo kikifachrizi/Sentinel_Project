@@ -1,26 +1,271 @@
-## TinyML Pipeline
+# SENTINEL — ROS2 Workspace & TinyML Pipeline
 
-> Dataset collection, preprocessing, and model training were carried out on a Raspberry Pi using Python. This repository contains the firmware — on-device inference and ROS2 integration. All figures below come from re-running the pipeline against the committed dataset.
+![ROS2](https://img.shields.io/badge/ROS2-Humble-3498DB?logo=ros)
+![Python](https://img.shields.io/badge/ML_Pipeline-Python-3776AB?logo=python)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-RandomForest-F7931E?logo=scikitlearn)
+![C++](https://img.shields.io/badge/Node-C++-00599C?logo=cplusplus)
+
+Host-side workspace for **SENTINEL** — a TinyML adaptive traction control system for a differential-drive AMR running μT-Kernel 3.0 on an STM32H533RE.
+
+This repository contains everything that runs on the Raspberry Pi: the ROS2 control stack, the classifier bridge node, and the machine learning pipeline used to train the model that ships inside the firmware.
+
+The firmware itself — the control loop, feature extraction, on-device inference, and gain scheduling — lives in a separate repository.
 
 ---
 
+## What SENTINEL does
+
+A differential-drive robot has no idea what surface it is driving on. Tune the controller on ceramic tile and it behaves differently on fabric, on a vinyl banner, or when carrying a payload.
+
+SENTINEL classifies the surface in real time using only sensors the robot already has — wheel encoders, current sensors, and an IMU — then adjusts PID gains accordingly. A Random Forest runs directly on the microcontroller at 2 Hz, and the control loop never sees a delay.
+
+| Class | Surface | Gains applied |
+|---|---|---|
+| 0 | NORMAL — clean ceramic | Kp=70, Kd=110 |
+| 1 | TEXTURED — taut fabric | Kp=70, Kd=110 |
+| 2 | BANNER — vinyl sheet | Kp=70, Kd=110 |
+| 3 | LOADED — 2 kg payload | Kp=85, Kd=150 |
+
+---
+
+## Repository Layout
+
+```
+src/
+  sentinel_publisher/          robot description, launch files, classifier node
+    src/
+      sentinel_classifier_node.cpp
+    launch/
+      launch_robot.launch.py   main bringup
+      rsp.launch.py            robot state publisher
+      online_async_launch.py   SLAM (navigation, not part of SENTINEL)
+      navigation_launch.py     Nav2
+      localization_launch.py
+    description/
+      robot.urdf.xacro
+      ros2_control.xacro       hardware interface config
+    config/
+      my_controllers.yaml
+  diffdrive_arduino/           ros2_control hardware interface plugin
+  dreame_lds_ros2/             LiDAR driver (navigation only)
+  serial/
+
+tinyML/
+  sentinel_s0_normal.csv       dataset — 2400 rows, 30 runs
+  sentinel_s1_banner.csv
+  sentinel_s2_textured.csv
+  sentinel_s3_loaded.csv
+  preprocess_v2.py             raw CSV → 84-feature windows
+  gain_tune.py                 step response analysis
+  loaded_*.csv                 gain tuning step responses
+```
+
+---
+
+## ROS2 Integration
+
+ROS2 serves two purposes here: driving the robot through `ros2_control`, and exposing the classifier output as a topic so surface state is observable from the ROS graph.
+
+The firmware runs autonomously — classification and gain scheduling happen on the MCU whether or not ROS2 is running. ROS2 provides the teleop interface and the observability layer.
+
+### Architecture
+
+Two independent serial links carry different traffic:
+
+| Link | Device | Direction | Purpose |
+|---|---|---|---|
+| USART1 | `/dev/ttySTM32` (CP2102) | bidirectional | `ros2_control` commands: `e`, `m`, `u` |
+| USART2 | `/dev/ttyACM0` (ST-LINK VCP) | MCU → Pi only | `CLASSIFY` stream |
+
+Keeping them separate means the classifier stream can never interfere with the control loop's request-response protocol.
+
+```
+                 ┌─────────────── Raspberry Pi ───────────────┐
+                 │                                            │
+STM32 USART1 ────┼──→ diffdrive_arduino ──→ diff_cont ──→ /odom
+                 │         (ros2_control)                     │
+                 │              ↑                             │
+                 │         /cmd_vel ←── teleop_twist_keyboard  │
+                 │                                            │
+STM32 USART2 ────┼──→ sentinel_classifier_node ──→ /sentinel/class
+                 │                                            │
+                 └────────────────────────────────────────────┘
+```
+
+### Hardware Interface — `diffdrive_arduino`
+
+The hardware interface uses [`joshnewans/diffdrive_arduino`](https://github.com/joshnewans/diffdrive_arduino) (humble branch), a `ros2_control` `SystemInterface` plugin that speaks a simple text protocol over serial.
+
+#### Protocol
+
+| Command | Sent | Expected reply |
+|---|---|---|
+| `e\r` | Read encoders | `<enc_left> <enc_right>\r\n` |
+| `m <L> <R>\r` | Set wheel targets (ticks/frame) | any `\n`-terminated line |
+| `u <Kp>:<Kd>:<Ki>:<Ko>\r` | Set PID gains | any `\n`-terminated line |
+
+The plugin blocks on `ReadLine()` after every command, so the firmware must always reply with something newline-terminated. A silent firmware stalls the controller manager for the full `timeout_ms`.
+
+#### Configuration
+
+From `src/sentinel_publisher/description/ros2_control.xacro`:
+
+```xml
+<ros2_control name="RealRobot" type="system">
+  <hardware>
+    <plugin>diffdrive_arduino/DiffDriveArduinoHardware</plugin>
+    <param name="left_wheel_name">left_wheel_joint</param>
+    <param name="right_wheel_name">right_wheel_joint</param>
+    <param name="loop_rate">20</param>
+    <param name="device">/dev/ttySTM32</param>
+    <param name="baud_rate">115200</param>
+    <param name="timeout_ms">1000</param>
+    <param name="enc_counts_per_rev">595</param>
+    <param name="pid_p">70</param>
+    <param name="pid_d">110</param>
+    <param name="pid_i">0</param>
+    <param name="pid_o">50</param>
+  </hardware>
+  ...
+</ros2_control>
+```
+
+`enc_counts_per_rev` is 595 — the measured value at the output shaft with x4 quadrature decoding, not the raw motor encoder specification.
+
+The plugin reads the PID parameters and sends them to the MCU once on activation via `set_pid_values()`. These values match the firmware's compiled-in defaults and the `#config` line recorded in every dataset CSV, so activation restores the NORMAL baseline rather than overriding it with something unexpected.
+
+Gain scheduling then takes over at runtime: the firmware modifies `Kp` and `Kd` in its live PID structs whenever the classified surface changes. Those runtime changes are not reflected back to ROS2 — the xacro values define the starting point, not the operating point.
+
+> Note the argument order. `set_pid_values(k_p, k_d, k_i, k_o)` serialises as `u Kp:Kd:Ki:Ko`, which is not the order the parameter names suggest. The firmware parser matches this order.
+
+A second xacro exists in the workspace — `diffbot.ros2_control.xacro`, shipped with the upstream `diffdrive_arduino` package. It is **not used** by SENTINEL and carries different values (`loop_rate=30`, `baud_rate=57600`, `enc_counts_per_rev=3436`). The active file is `ros2_control.xacro`, included by `robot.urdf.xacro`.
+
+### Classifier Node — `sentinel_classifier_node`
+
+A small C++ node that reads the `CLASSIFY` stream from USART2 and republishes it as ROS2 topics.
+
+#### Why a separate link
+
+The `ros2_control` plugin holds `/dev/ttySTM32` exclusively — no second process can read from it. Pushing `CLASSIFY` over the same link would also risk being consumed by the plugin's `ReadLine()` mid-transaction, silently corrupting an encoder reading.
+
+Using USART2 sidesteps both problems. The node opens `/dev/ttyACM0` in non-blocking read-only mode and polls every 10 ms.
+
+#### Input format
+
+```
+CLASSIFY,3,LOADED,Kp=85,Kd=150
+```
+
+Pushed by the firmware after every inference (~every 0.5 s), regardless of whether the class changed. The `Kp` and `Kd` values are read from the live PID struct, not from the gain table — so the line reports what the control loop is actually using.
+
+> The `c` command on USART1 emits a different line that also begins with `CLASSIFY`, carrying voting state and timing instead. The two formats share a prefix but travel on different links and serve different purposes.
+
+#### Published topics
+
+| Topic | Type | Content |
+|---|---|---|
+| `/sentinel/class` | `std_msgs/String` | Class name: `NORMAL`, `TEXTURED`, `BANNER`, `LOADED` |
+| `/sentinel/class_id` | `std_msgs/Int32` | Class ID: 0–3 |
+
+#### Parameters
+
+| Parameter | Default |
+|---|---|
+| `port` | `/dev/ttyACM0` |
+| `baud_rate` | `115200` |
+
+---
+
+## How To Use
+
+### Prerequisites
+
+- ROS2 Humble
+- `colcon`, `teleop_twist_keyboard`
+- Python 3 with `pandas`, `numpy`, `scikit-learn` for the ML pipeline
+
+### Serial port setup
+
+Both USB devices enumerate as CP2102-class adapters, so a fixed symlink avoids `/dev/ttyUSB*` ordering issues across reboots. The rule matches the CP2102 by serial number:
+
+```
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", \
+  ATTRS{serial}=="0001", SYMLINK+="ttySTM32"
+```
+
+> This file is installed on the Raspberry Pi at `/etc/udev/rules.d/99-sentinel-usb.rules` but is not tracked in this repository. Without it, `/dev/ttySTM32` does not exist and bringup fails.
+
+The ST-LINK VCP enumerates as `/dev/ttyACM0` and generally does not need a rule.
+
+Both devices must be readable by the user running ROS2:
+
+```bash
+sudo usermod -aG dialout $USER
+```
+
+### Build
+
+```bash
+cd ~/sentinel_ws
+colcon build
+source install/setup.bash
+```
+
+### Run
+
+```bash
+# Terminal 1 — robot bringup
+ros2 launch sentinel_publisher launch_robot.launch.py
+
+# Terminal 2 — classifier node (not included in any launch file)
+ros2 run sentinel_publisher sentinel_classifier_node
+
+# Terminal 3 — teleop
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+
+# Terminal 4 — watch the classification
+ros2 topic echo /sentinel/class
+```
+
+The classifier node is registered as an executable in `CMakeLists.txt` but is deliberately not part of `launch_robot.launch.py`. It reads a separate device and serves observability only — keeping it out of the launch file means a missing VCP connection cannot block robot bringup.
+
+### Things to watch for
+
+**Nothing may hold the serial ports before launch.** A leftover `screen` session is the most common cause of a failed bringup:
+
+```bash
+sudo lsof /dev/ttySTM32
+```
+
+`ros2_control` opens the port exclusively. Running `screen` on the same device concurrently does not fail loudly — bytes are split unpredictably between the two readers and both streams corrupt.
+
+**`ReadByte() call has timed out`** appears in `launch.log`, not in the node logs — the plugin writes it to `stderr`. It means the firmware did not reply within `timeout_ms`, and the controller manager stalls for the full timeout, visible as `Overrun detected!` with a loop time matching `timeout_ms` almost exactly.
+
+**`XMLPARSER Error: realpath failed`** is a harmless FastDDS warning about a missing optional profile file. It does not affect operation.
+
+**Classification is most reliable during forward-reverse motion.** The features that separate surfaces best come from direction reversals. Driving in a straight line at constant speed gives the classifier less to work with.
+
+---
+
+## TinyML Pipeline
+
+Everything in this section runs on the Pi. The trained model is exported to C and compiled into the firmware — it does not run here at runtime.
+
 ### Overview
 
-Surface classification runs **inside the MCU**, not on the Raspberry Pi. This is not an architectural preference — it follows from the kind of data the model needs.
+Surface classification runs **inside the MCU**, not on the Pi. This is not an architectural preference — it follows from the kind of data the model needs.
 
 The most discriminative features — PWM residual against the plant model, slip between encoder and IMU, current-to-PWM ratio — all originate from per-frame data inside the 20 Hz control loop. Streaming raw channels at 20 Hz to the Pi just to compute them there would add latency and a failure point with no benefit.
 
-Random Forest was chosen because, once exported through `m2cgen`, the model becomes a **pure C function of nested if/else branches** — no runtime, no memory allocation, no external library. Its execution time is deterministic, which matters for a real-time system.
+Random Forest was chosen because, once exported through `m2cgen`, the model becomes a pure C function of nested if/else branches — no runtime, no memory allocation, no external library. Its execution time is deterministic, which matters for a real-time system.
 
 ```
 Dataset collection    →  Preprocessing     →  Training      →  Export
 (firmware cmd 'd')       (preprocess_v2.py)   (scikit-learn)   (m2cgen)
                                                                   ↓
 ROS2 topic            ←  CLASSIFY push    ←  Inference     ←  sentinel_model.c
-/sentinel/class          (USART2)            (sentinelTask)     (STM32 flash)
+/sentinel/class          (USART2)            (firmware)         (STM32 flash)
 ```
-
----
 
 ### Dataset Collection
 
@@ -37,7 +282,7 @@ The LOADED payload is two 1 kg PLA filament spools in their original packaging, 
 
 #### Protocol
 
-A total of **120 runs**: 4 classes × 5 maneuver patterns × 6 repetitions × 80 frames (4 seconds at 20 Hz). Verified from the committed dataset: 9,600 samples, perfectly balanced at 2,400 per class.
+A total of **120 runs**: 4 classes × 5 maneuver patterns × 6 repetitions × 80 frames (4 seconds at 20 Hz) — 9,600 samples, perfectly balanced at 2,400 per class.
 
 Data is collected through the firmware command `d <pattern> <surface> <repetition>`. Each run produces 80 CSV rows buffered in RAM and written out after the run completes — not per frame, so UART traffic never disturbs loop timing.
 
@@ -57,7 +302,7 @@ The original reason was practical — the available track was only 2.56 m, while
 
 But the decision brought two benefits that were not anticipated:
 
-**Feedforward has separate constants for forward and reverse.** The gap is substantial — the right motor's `u_db` differs by 46 counts between forward (146) and reverse (100). Without reverse data, the classifier would never see a regime the robot actually operates in.
+**Feedforward has separate constants for forward and reverse.** The gap is substantial — the right motor's deadband differs by 46 counts between forward (146) and reverse (100). Without reverse data, the classifier would never see a regime the robot actually operates in.
 
 **The forward→reverse transition produces the largest current spike.** When PWM reverses while the wheel still spins the old way, supply voltage and back-EMF add instead of opposing. The magnitude of that spike depends directly on how quickly the wheel can be decelerated, which is a function of traction.
 
@@ -73,9 +318,18 @@ But the decision brought two benefits that were not anticipated:
 
 Each run also emits a `#config` line carrying the active gains and feedforward constants read from the live PID structs, so every file documents its own configuration. This catches runs contaminated by a runtime override or a mid-session board reset.
 
----
-
 ### Feature Engineering
+
+Run `preprocess_v2.py` to turn the raw CSVs into windowed feature vectors:
+
+```bash
+cd tinyML
+python3 preprocess_v2.py \
+  sentinel_s0_normal.csv sentinel_s2_textured.csv \
+  sentinel_s1_banner.csv sentinel_s3_loaded.csv
+```
+
+Output: `windows_v2.csv` — 840 windows × 84 features.
 
 #### The problem
 
@@ -132,7 +386,7 @@ A 20-frame window (1 second) with a 10-frame stride (50% overlap), producing 840
                                                          84
 ```
 
-The `valid` statistic is the fraction of defined samples in the window, divided by the constant 20. Only six channels carry a meaningful validity mask — `kv_eff*` is undefined near zero velocity, `cur_per_*` is undefined at zero PWM. The remaining ten are always valid, which is why the trained forest never splits on their `valid` columns.
+The `valid` statistic is the fraction of defined samples in the window, divided by the constant 20. Only six channels carry a meaningful validity mask — `kv_eff*` is undefined near zero velocity, `cur_per_*` is undefined at zero PWM.
 
 #### Session leakage: the voltage feature
 
@@ -160,8 +414,6 @@ cur_per_pwmR_mean     2.52%   ← #5
 
 On a real robot a full battery does not mean the floor is ceramic. The 24-point gap is the size of the false confidence that was avoided by removing these features.
 
----
-
 ### Model Selection & Validation
 
 #### Validation split
@@ -178,7 +430,7 @@ Two protocols were compared (RF 50×10, window-level accuracy):
 
 The two grouped protocols are statistically identical. More interesting is that **random splitting does not inflate accuracy** — it comes out 1.4 points *lower* than leave-one-run-out.
 
-This is a direct consequence of removing the voltage features. With `bus_mV` present, every window in a run shares a near-constant voltage fingerprint, so a random split leaks heavily. Once that channel is gone, there is nothing left for a random split to exploit. The convergence of the two protocols is evidence that the v2 feature set is clean.
+This is a direct consequence of removing the voltage features. With `bus_mV` present, every window in a run shares a near-constant voltage fingerprint, so a random split leaks heavily. Once that channel is gone, there is nothing left for a random split to exploit. The convergence of the two protocols is evidence that the feature set is clean.
 
 A separate protocol — **leave-one-pattern-out** — answers a different question: can the model recognize a surface during a maneuver it has never seen? Accuracy drops to 38.1%. That generalization does not hold, and it is reported separately rather than mixed into the table above.
 
@@ -213,11 +465,11 @@ NORMAL and LOADED are recognized reliably. TEXTURED and BANNER are not — and t
 
 This is physically coherent. Banner and fabric both alter grip without adding inertial load, while the 2 kg payload changes the plant dynamics outright. The feature set separates a change in load well; it separates two kinds of surface film poorly.
 
-The same pattern holds under leave-one-run-out (BANNER 55.7%, TEXTURED 58.1%, cross-confusion 23%/22%), so it is a property of the classes rather than an artifact of the split.
+The same pattern holds under leave-one-run-out (BANNER 55.7%, TEXTURED 58.1%), so it is a property of the classes rather than an artifact of the split.
 
 #### Temporal voting
 
-A single window decision is wrong roughly one time in three. The system therefore keeps the last N inference results and takes the majority.
+A single window decision is wrong roughly one time in three. The firmware therefore keeps the last N inference results and takes the majority.
 
 Window = 1.0 s, hop = 0.5 s, so N decisions span `0.5 × (N−1) + 1.0` seconds:
 
@@ -231,8 +483,6 @@ Window = 1.0 s, hop = 0.5 s, so N decisions span `0.5 × (N−1) + 1.0` seconds:
 Accuracy keeps rising through N=7 with no plateau. The firmware uses **N=5** — a deliberate trade-off: longer voting would improve accuracy further, but every additional decision adds 0.5 s of latency before a gain change can take effect.
 
 Voting only helps when errors are independent across windows. Under leave-one-pattern-out, where errors are systematic per maneuver, voting barely moves the number (38.1% → 43.3%).
-
----
 
 ### Export to C — m2cgen
 
@@ -263,7 +513,7 @@ void sentinel_rf50x10(double *input, double *output) {
 }
 ```
 
-Only two helper functions are generated: `add_vectors()` and `mul_vector_number()`. The tree structure is verifiable from the emitted source — 50 output vectors (`var50` through `var99`), 49 `add_vectors` calls to combine them, and a final `mul_vector_number(..., 0.02, ...)` for the 1/50 average. Maximum indentation depth confirms depth 10; the file contains 3,968 split nodes across 16,085 lines.
+Only two helper functions are generated: `add_vectors()` and `mul_vector_number()`. The tree structure is verifiable from the emitted source — 50 output vectors, 49 `add_vectors` calls to combine them, and a final `mul_vector_number(..., 0.02, ...)` for the 1/50 average. The file contains 3,968 split nodes across 16,085 lines.
 
 #### Why this suits an MCU
 
@@ -276,354 +526,48 @@ Only two helper functions are generated: `add_vectors()` and `mul_vector_number(
 
 #### Compilation: `-Os` is mandatory
 
-The generated file is compiled with **`-Os` as a per-file override** while the rest of the project stays at `-O0`. This is not a style preference:
+The generated file must be compiled with `-Os` as a per-file override while the rest of the firmware stays at `-O0`:
 
 | Optimization | `sentinel_model.o` size |
 |---|---|
 | `-O0` | ~610 KB — **does not fit** |
 | `-Os` | 145,046 bytes (141.6 KB) |
 
-Measured breakdown of the object file:
-
-```
-.text.sentinel_rf50x10    123,992 B
-.rodata                    20,960 B
-.text.add_vectors              46 B
-.text.mul_vector_number        48 B
-                          ─────────
-                          145,046 B
-```
-
-In STM32CubeIDE this is set per-file (right-click `sentinel_model.c` → Properties → C/C++ Build → Optimization). The setting is stored in `.cproject`, so that file must be tracked in version control or the build silently overflows flash.
+In STM32CubeIDE this is set per-file. The setting lives in `.cproject`, so that file must be tracked in version control or the build silently overflows flash.
 
 #### `double` vs `float`
 
 `m2cgen` emits `double`. The Cortex-M33 FPU is single-precision only, so double-precision operations are software-emulated — normally a reason to convert.
 
-It was left as `double`. A decision tree only performs comparisons, never arithmetic, so emulation cost is minimal. Measured inference time is 0.54 ms, well inside budget. Converting to `float` would also risk changing classification results where thresholds sit close together.
+It was left as `double`. A decision tree only performs comparisons, never arithmetic, so emulation cost is minimal. Measured inference time on hardware is 0.54 ms, well inside budget. Converting to `float` would also risk changing classification results where thresholds sit close together.
 
 #### Golden test vectors
 
-To confirm the C code produces identical output to the Python model, four test vectors were generated — one per class, choosing the most confident prediction in each — with expected output probabilities.
-
-```c
-#define GOLDEN_N_CASES 4
-#define GOLDEN_N_FEATURES 84
-static const double golden_input[][GOLDEN_N_FEATURES] = { /* ... */ };
-static const double golden_expect[][4] = { /* ... */ };
-```
-
-Maximum absolute difference across all four cases was 1.4e-11, and `argmax` matched in every case. This file is a development-time reference — it is not compiled into the firmware.
+To confirm the C code produces identical output to the Python model, four test vectors were generated — one per class, choosing the most confident prediction in each — with expected output probabilities. Maximum absolute difference across all four cases was 1.4e-11, and `argmax` matched in every case.
 
 ---
 
-## ROS2 Integration
+## Gain Tuning
 
-ROS2 serves two purposes: driving the robot through `ros2_control`, and exposing the classifier output as a topic so surface state is observable from the ROS graph.
-
-The firmware runs autonomously — classification and gain scheduling happen on the MCU whether or not ROS2 is running. ROS2 provides the teleop interface and the observability layer.
-
----
-
-### Architecture
-
-Two independent serial links carry different traffic:
-
-| Link | Device | Direction | Purpose |
-|---|---|---|---|
-| USART1 | `/dev/ttySTM32` (CP2102) | bidirectional | `ros2_control` commands: `e`, `m`, `u` |
-| USART2 | `/dev/ttyACM0` (ST-LINK VCP) | MCU → Pi only | `CLASSIFY` stream |
-
-Keeping them separate means the classifier stream can never interfere with the control loop's request-response protocol.
-
-```
-                 ┌─────────────── Raspberry Pi ───────────────┐
-                 │                                            │
-STM32 USART1 ────┼──→ diffdrive_arduino ──→ diff_cont ──→ /odom
-                 │         (ros2_control)                     │
-                 │              ↑                             │
-                 │         /cmd_vel ←── teleop_twist_keyboard  │
-                 │                                            │
-STM32 USART2 ────┼──→ sentinel_classifier_node ──→ /sentinel/class
-                 │                                            │
-                 └────────────────────────────────────────────┘
-```
-
----
-
-### Hardware Interface — `diffdrive_arduino`
-
-The hardware interface uses [`joshnewans/diffdrive_arduino`](https://github.com/joshnewans/diffdrive_arduino) (humble branch), a `ros2_control` `SystemInterface` plugin that speaks a simple text protocol over serial.
-
-#### Protocol
-
-| Command | Sent | Expected reply |
-|---|---|---|
-| `e\r` | Read encoders | `<enc_left> <enc_right>\r\n` |
-| `m <L> <R>\r` | Set wheel targets (ticks/frame) | any `\n`-terminated line |
-| `u <Kp>:<Kd>:<Ki>:<Ko>\r` | Set PID gains | any `\n`-terminated line |
-
-Note the argument order for `u` — the plugin sends **Kp:Kd:Ki:Ko**, not the more intuitive Kp:Ki:Kd:Ko. The firmware parser was corrected to match.
-
-The plugin blocks on `ReadLine()` after every command, so the firmware must always reply with something newline-terminated. A silent firmware stalls the controller manager for the full `timeout_ms`.
-
-#### Configuration
-
-```xml
-<ros2_control name="RealRobot" type="system">
-  <hardware>
-    <plugin>diffdrive_arduino/DiffDriveArduinoHardware</plugin>
-    <param name="left_wheel_name">left_wheel_joint</param>
-    <param name="right_wheel_name">right_wheel_joint</param>
-    <param name="loop_rate">20</param>
-    <param name="device">/dev/ttySTM32</param>
-    <param name="baud_rate">115200</param>
-    <param name="timeout_ms">1000</param>
-    <param name="enc_counts_per_rev">595</param>
-  </hardware>
-  ...
-</ros2_control>
-```
-
-`enc_counts_per_rev` is 595 — the measured value at the output shaft with x4 quadrature decoding, not the raw motor encoder specification.
-
-PID gains are also passed from the xacro:
-
-```xml
-<param name="pid_p">70</param>
-<param name="pid_d">110</param>
-<param name="pid_i">0</param>
-<param name="pid_o">50</param>
-```
-
-The plugin reads these and sends them to the MCU once on activation via `set_pid_values()`. The values match the firmware's compiled-in defaults and the `#config` line recorded in every dataset CSV, so activation restores the NORMAL baseline rather than overriding it with something unexpected.
-
-Gain scheduling then takes over at runtime: `sentinelApplyGain()` modifies `Kp` and `Kd` in the live PID structs whenever the classified surface changes. Those runtime changes are not reflected back to ROS2 — the xacro values define the starting point, not the operating point.
-
-> Note the argument order. The plugin's `set_pid_values(k_p, k_d, k_i, k_o)` serialises as `u Kp:Kd:Ki:Ko`, which is not the order the parameter names suggest. The firmware parser matches this order.
-
-A second xacro exists in the workspace — `diffbot.ros2_control.xacro`, shipped with the upstream `diffdrive_arduino` package. It is **not used** by SENTINEL and carries different values (`loop_rate=30`, `baud_rate=57600`, `enc_counts_per_rev=3436`). The active file is `ros2_control.xacro`, included by `robot.urdf.xacro`.
-
----
-
-### Classifier Node — `sentinel_classifier_node`
-
-A small C++ node that reads the `CLASSIFY` stream from USART2 and republishes it as ROS2 topics.
-
-#### Why a separate link
-
-The plugin holds `/dev/ttySTM32` exclusively — no second process can read from it. Pushing `CLASSIFY` over the same link would also risk being consumed by the plugin's `ReadLine()` mid-transaction, silently corrupting an encoder reading.
-
-Using USART2 sidesteps both problems. The node opens `/dev/ttyACM0` in non-blocking mode and polls every 10 ms.
-
-#### Input format
-
-```
-CLASSIFY,3,LOADED,Kp=85,Kd=150
-```
-
-Pushed by the firmware after every inference (~every 0.5 s), regardless of whether the class changed. The `Kp` and `Kd` values are read from the live `leftPID` struct, not from the gain table — so the line reports what the control loop is actually using.
-
-> Note: the `c` command on USART1 emits a different line that also begins with `CLASSIFY`, carrying voting state and DWT timing instead. The two formats share a prefix but serve different purposes.
-
-#### Published topics
-
-| Topic | Type | Content |
-|---|---|---|
-| `/sentinel/class` | `std_msgs/String` | Class name: `NORMAL`, `TEXTURED`, `BANNER`, `LOADED` |
-| `/sentinel/class_id` | `std_msgs/Int32` | Class ID: 0–3 |
-
----
-
-### Serial Port Setup
-
-Both USB devices enumerate as CP2102-class adapters, so a fixed symlink avoids `/dev/ttyUSB*` ordering issues across reboots.
-
-The rule matches the CP2102 by its serial number and creates the `/dev/ttySTM32` symlink referenced in the xacro:
-
-```
-SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", \
-  ATTRS{serial}=="0001", SYMLINK+="ttySTM32"
-```
-
-> This file is installed on the Raspberry Pi at `/etc/udev/rules.d/99-sentinel-usb.rules` but is not tracked in this repository. Without it, `/dev/ttySTM32` does not exist and bringup fails.
-
-The ST-LINK VCP enumerates as `/dev/ttyACM0` and generally does not need a rule.
-
-Both devices must be readable by the user running ROS2:
+Gain scheduling values were determined from closed-loop step response experiments, analysed with `gain_tune.py`.
 
 ```bash
-sudo usermod -aG dialout $USER
+cd tinyML
+python3 gain_tune.py gain_tune_loaded.csv loaded_kd130.csv \
+                     loaded_kd150.csv loaded_kp85kd150.csv
 ```
 
----
+### Why not a static sweep
 
-### Running
+The first attempt used the firmware's static sweep command to measure deadband and velocity gain per surface — the same method that worked for feedforward calibration. The results were inconsistent, with no pattern matching the physical properties of the surfaces.
 
-```bash
-# Terminal 1 — robot bringup
-ros2 launch sentinel_publisher launch_robot.launch.py
+The reason: deadband comes from extrapolating a fitted line to the x-axis, which is extremely sensitive to noise in the first few points. The difference between surfaces is smaller than the measurement uncertainty.
 
-# Terminal 2 — classifier node (not included in any launch file)
-ros2 run sentinel_publisher sentinel_classifier_node
+The method was switched to closed-loop: run a step response on each surface with several gain settings and measure rise time, overshoot, and settling time from the actual response.
 
-# Terminal 3 — teleop
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+### Results
 
-# Terminal 4 — watch the classification
-ros2 topic echo /sentinel/class
-```
-
-The classifier node is registered as an executable in `CMakeLists.txt` but is deliberately not part of `launch_robot.launch.py`. It reads a separate device and serves observability only — keeping it out of the launch file means a missing VCP connection cannot block robot bringup.
-
-Nothing may hold `/dev/ttySTM32` or `/dev/ttyACM0` before launch — a leftover `screen` session is the most common cause of a failed bringup.
-
-```bash
-sudo lsof /dev/ttySTM32    # check before launching
-```
-
----
-
-### Debugging Notes
-
-#### `ReadByte() call has timed out`
-
-The plugin logs this to `stderr`, so it appears in `launch.log` but not in the node logs. It means the firmware did not reply within `timeout_ms`, and the controller manager stalls for the full timeout — visible as `Overrun detected!` with a loop time matching `timeout_ms` almost exactly.
-
-Two distinct causes were found during integration:
-
-**Wrong reply format.** The plugin parses the `e` reply by splitting on a space and calling `atoi` on both halves. A reply of `OK 0\r\n` parses without error but yields garbage encoder values. The reply must be exactly two integers.
-
-**Dropped bytes during I2C reads.** `pidTask` blocks the CPU for several milliseconds per frame reading INA219 and MPU6050 over polled I2C. At 115200 baud that window is long enough to swallow an entire command. The fix was moving UART RX to interrupt-driven with a software ring buffer, described in the firmware section.
-
-#### Two processes on one port
-
-`ros2_control` opens the serial port exclusively. Running `screen` on the same device concurrently does not fail loudly — bytes are split unpredictably between the two readers and both streams corrupt.
-
-#### `XMLPARSER Error: realpath failed`
-
-A harmless FastDDS warning about a missing optional profile file. It does not affect operation.
-
----
-
-### Navigation Stack
-
-> This section documents a configuration developed after the contest firmware was finalized, and is not part of the SENTINEL submission.
-
-Navigation was set up on top of the same `ros2_control` stack, using an RPLIDAR A2M8 via `rplidar_ros`, `slam_toolbox` in online async mode for mapping, and Nav2 for autonomous navigation. Both SLAM and Nav2 run headless on the Pi over SSH, with RViz on a separate machine.
-
-The LiDAR is **not used by SENTINEL** — classification and gain scheduling operate on encoder, current, and IMU data only.
-
-Odometry quality directly determines map quality, so the encoder calibration described in the firmware section (595 ticks per revolution at the output shaft) matters as much for mapping as it does for velocity control.
-
----
-
-## Results
-
-### Runtime Performance
-
-All figures below are measured on hardware via DWT cycle counters, or read from the linked ELF.
-
-#### Inference timing
-
-Two DWT timestamps bracket each stage inside `sentinelRunInference()`, accumulated separately as min/max/mean in microseconds:
-
-| Stage | Time |
-|---|---|
-| `buildFeatureVector()` — 84 features | 2.50 ms |
-| `sentinel_rf50x10()` — 50 trees | 0.54 ms |
-| Sum | 3.04 ms |
-
-Against a 500 ms budget (inference runs every 10 frames), total occupancy is **0.6%**.
-
-These statistics accumulate from power-on and are never reset between sessions, so the reported mean is drawn from thousands of inferences rather than a handful. They are read with the `c` command:
-
-```
-CLASSIFY,voted=0,votes=0:0:0:0:0,inferCount=3089,
-featUs_min=2482,featUs_max=2502,featUs_mean=2502,
-modelUs_min=507,modelUs_max=600,modelUs_mean=537
-```
-
-#### Control loop timing
-
-`pidTask` period is instrumented inline with DWT — deliberately not in a separate task, which would change the scheduling being measured. The measurement window opens on the rising edge of `moving` with a 3-iteration warmup.
-
-| Metric | Value |
-|---|---|
-| Target period | 50 ms |
-| Measured spread (max − min) | 31 µs peak-to-peak |
-
-The firmware computes min, max, and mean only — no standard deviation. The 31 µs figure is the full peak-to-peak spread, not a ±tolerance.
-
-Reported automatically when the movement window closes, triggered by the `g` or `h` command:
-
-```
-PID_PERIOD,n=5663,silent=1,min_ms=49.984,max_ms=50.015,mean_ms=49.999,
-min_cyc=4998425,max_cyc=5001559,mean_cyc=4999999
-```
-
-Use `h` rather than `g` for measurement — `h` disables per-frame CSV streaming so UART traffic does not perturb the timing being measured.
-
-#### Flash and RAM
-
-Measured from the linked ELF:
-
-```bash
-$ arm-none-eabi-size Debug/sentinel_ws.elf
-   text    data     bss     dec     hex
- 248872    4008   37224  290104   46d38
-```
-
-| Component | Bytes | KB | % of 512 KB |
-|---|---|---|---|
-| RF 50×10 model (`-Os`) | 145,046 | 141.6 | 27.7% |
-| Feature extraction | 8,421 | 8.2 | 1.6% |
-| HAL, μT-Kernel, application | 99,413 | 97.1 | 19.0% |
-| **Total flash** | **252,880** | **246.9** | **48.2%** |
-
-RAM usage is 41,232 bytes of 272 KB (14.8%).
-
-This is the one figure in this section that is fully reproducible from the repository — run `arm-none-eabi-size Debug/sentinel_ws.elf` to verify.
-
-#### Sensor reliability
-
-Each frame reads two INA219 devices and the MPU6050 over I2C, with one retry on failure. Failure counters increment only when both attempts fail, and only during a `d` data-collection run.
-
-Across all 120 collection runs, every `DC_TIMING` line reported `ina1_fail=0, ina2_fail=0, imu_fail=0` — no frame where an I2C read failed twice consecutively.
-
----
-
-### Classification Performance
-
-Figures from cross-validation on the committed dataset (840 windows, 210 per class).
-
-#### Overall
-
-| Metric | Value |
-|---|---|
-| Window-level accuracy (RF 50×10) | 67.6 ± 1.3% |
-| Voted accuracy (N=5, 3.0 s) | 74.4% |
-| Chance level (4 balanced classes) | 25% |
-
-#### Per class
-
-```
-true\pred      NORMAL   LOADED   BANNER TEXTURED     acc
-NORMAL            168        4       23       15    80.0%
-LOADED             11      162       19       18    77.1%
-BANNER             33        9      124       44    59.0%
-TEXTURED           32       11       52      115    54.8%
-```
-
-The system reliably identifies the two classes that matter most for control: NORMAL (the baseline) and LOADED (the one that requires different gains).
-
----
-
-### Gain Scheduling Verification
-
-#### Tuning results
-
-Closed-loop step response on the LOADED surface, analysed with `gain_tune.py`:
+Step response on the LOADED surface (2 kg payload):
 
 | Gains | Rise time (90%) | Overshoot | Settling |
 |---|---|---|---|
@@ -636,58 +580,43 @@ Kp=85, Kd=150 gives the best combination — rise time back to baseline while cu
 
 > The baseline settling figure is reported as the last excursion outside the ±5% band before the response stabilises. A single isolated blip at t=6.45 s sits 0.17 above the threshold; the script's raw output extends settling to 6500 ms on that account.
 
-Equivalent experiments on TEXTURED and BANNER showed no improvement over the NORMAL baseline, so both use the NORMAL gains.
-
-| Class | Kp | Kd |
-|---|---|---|
-| NORMAL | 70 | 110 |
-| TEXTURED | 70 | 110 |
-| BANNER | 70 | 110 |
-| LOADED | **85** | **150** |
-
-`Ki` and `Ko` are not scheduled — they remain 0 and 50 for every class. In practice this makes gain scheduling binary: NORMAL-equivalent versus LOADED.
-
-#### Proving the gains actually change
-
-The `CLASSIFY` line on USART2 reports `Kp` and `Kd` read from the live `leftPID` struct, so a changing value is evidence the control loop is using the new gains — not merely that the classifier reported a new class.
-
-Stronger evidence comes from reading the gains back through a **different task on a different UART**. The `p` (PING) command is served by `comTask` on USART1 and dumps the full PID state:
-
-```
-p                              → left: 70 0 110 50 157 178 142 190
-                                 right: 70 0 110 50 146 155 100 201
-
-[move robot onto the loaded surface, wait for the class to settle]
-
-                               → CLASSIFY,3,LOADED,Kp=85,Kd=150   (USART2)
-
-p                              → left: 85 0 150 50 157 178 142 190
-                                 right: 85 0 150 50 146 155 100 201
-```
-
-The second `p` confirms the change through a path entirely independent of the task that made it, and also confirms that `Ki`, `Ko`, and the feedforward constants were left untouched.
-
-Observed transition in the live log, showing hysteresis in action:
-
-```
-SENTINEL: 2 (BANNER,Kp=70,Kd=110)
-SENTINEL: 3 (LOADED,Kp=70,Kd=110)    ← class changed, hysteresis counting
-SENTINEL: 3 (LOADED,Kp=70,Kd=110)
-SENTINEL: 3 (LOADED,Kp=85,Kd=150)    ← 5 consecutive → gains applied
-```
+Equivalent experiments on TEXTURED and BANNER showed no improvement over the NORMAL baseline, so both use the NORMAL gains. In practice this makes gain scheduling binary: NORMAL-equivalent versus LOADED.
 
 ---
 
-### Known Limitations
+## Known Limitations
 
 **TEXTURED and BANNER are hard to separate.** Both are thin sheets over ceramic that alter grip without changing inertia. They are confused with each other symmetrically — 25% and 21% — and this holds across validation protocols, so it is a property of the class definitions rather than the split.
 
-**Generalization to unseen maneuvers does not hold.** Under leave-one-pattern-out validation, accuracy drops to 38.1%. The classifier works within the maneuver space it was trained on. Extending coverage would require collecting additional motion patterns.
+**Generalization to unseen maneuvers does not hold.** Under leave-one-pattern-out validation, accuracy drops to 38.1%. The classifier works within the maneuver space it was trained on.
 
-**Voting latency is a design trade-off.** Accuracy continues to improve through N=7 (79.2%) with no plateau, but each additional decision adds 0.5 s before a gain change can take effect. N=5 was chosen to keep response time reasonable.
+**Voting latency is a design trade-off.** Accuracy continues to improve through N=7 (79.2%) with no plateau, but each additional decision adds 0.5 s before a gain change can take effect.
 
 **Debris sensitivity.** Loose hardware on the floor raises current draw and body rotation more than any of the trained surface differences. Under those conditions the classifier reports BANNER — a reasonable nearest match, but the system assumes a clear floor.
 
-**Gain scheduling is effectively binary.** Three of four classes share the NORMAL gains, so in practice the system switches between two gain sets rather than four.
+**Training scripts are not included.** The dataset and preprocessing script are committed here, but the training and cross-validation scripts are not. The figures in this document come from re-running the pipeline against the committed dataset.
 
-**`huart2` has two writers.** Both `sentinelTask` (CLASSIFY push) and `comTask` (via `vcpMonitor()`) transmit on USART2 without arbitration. A `HAL_BUSY` collision can drop a log line. The control path on USART1 is unaffected.
+---
+
+## Navigation Stack
+
+> Developed after the contest firmware was finalized. Not part of the SENTINEL submission.
+
+Navigation was set up on top of the same `ros2_control` stack — an RPLIDAR A2M8 via `rplidar_ros`, `slam_toolbox` in online async mode for mapping, and Nav2 for autonomous navigation. Both run headless on the Pi over SSH, with RViz on a separate machine.
+
+The LiDAR is **not used by SENTINEL** — classification and gain scheduling operate on encoder, current, and IMU data only.
+
+Odometry quality directly determines map quality, so the encoder calibration described above (595 ticks per revolution at the output shaft) matters as much for mapping as it does for velocity control.
+
+---
+
+## Related
+
+- **Firmware repository** — μT-Kernel 3.0 control loop, on-device inference, gain scheduling
+- **TRON Programming Contest 2026** — submission context
+
+---
+
+### License
+> This project was submitted to TRON Programming Contest 2026.
+> Original work by Rifqy Fachrizi, Diagonal Robotics.
