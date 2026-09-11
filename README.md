@@ -1,6 +1,6 @@
 # SENTINEL — ROS2 Workspace & TinyML Pipeline
 
-![ROS2](https://img.shields.io/badge/ROS2-Humble-3498DB?logo=ros)
+![ROS2](https://img.shields.io/badge/ROS2-Jazzy-3498DB?logo=ros)
 ![Python](https://img.shields.io/badge/ML_Pipeline-Python-3776AB?logo=python)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-RandomForest-F7931E?logo=scikitlearn)
 ![C++](https://img.shields.io/badge/Node-C++-00599C?logo=cplusplus)
