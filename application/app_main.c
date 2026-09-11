@@ -62,19 +62,6 @@ LOCAL T_CTSK ctsk_pid_task = {                     // informasi pembuatan task
     .tskatr   = TA_HLNG | TA_RNG3,
 };
 
-/* PRIORITAS 12 (bukan 11): comTask sengaja diturunkan di bawah sentinelTask -
- * lihat catatan panjang di ctsk_sentinel_task tepat di bawah ini soal
- * starvation yang ditemukan (regresi "inferCount=0"). readCom() (uart_bridge.c)
- * memanggil HAL_UART_Receive() mode polling, yaitu busy-wait murni (loop cek
- * flag RXNE + HAL_GetTick() sampai timeout 100ms) - TIDAK PERNAH masuk WAIT
- * state kernel (SysTick_Handler cuma HAL_IncTick(), tidak ada hook ke
- * scheduler uT-Kernel). Task manapun dengan itskpri lebih besar (prioritas
- * lebih rendah) dari comTask TIDAK PERNAH dijadwalkan selama comTask hidup -
- * bukan race, starvation total. Sebelum sentinelTask ada, tidak ada task
- * dengan prioritas lebih rendah dari comTask jadi ini laten/tidak kelihatan.
- * FIX: comTask diturunkan ke bawah sentinelTask (bukan mengubah readCom/
- * HAL_UART_Receive - scope lebih kecil, jalur UART yang sudah lama stabil
- * tidak disentuh). */
 LOCAL void comTask(INT stacd, void *exinf);
 LOCAL ID   com_task_id;
 LOCAL T_CTSK ctsk_com_task = {
@@ -84,24 +71,6 @@ LOCAL T_CTSK ctsk_com_task = {
     .tskatr = TA_HLNG | TA_RNG3,
 };
 
-/* SENTINEL classifier ('c' CLASSIFY_STATUS): task TERPISAH, prioritas LEBIH
- * RENDAH dari pidTask (itskpri lebih besar = prioritas lebih rendah - lihat
- * MIN_TSKPRI di knldef.h) sesuai instruksi eksplisit di spec ("Pakai task
- * terpisah prioritas LEBIH RENDAH dari pidTask") - beda dari fitur lain
- * sebelumnya di sesi ini yang semua "JANGAN buat task baru", spec kali ini
- * secara eksplisit MENGIZINKAN task baru untuk ini. stksz besar (8192,
- * bukan 1024 seperti task lain) karena sentinel_rf50x10() sendiri butuh
- * 3256 byte stack di -O0 (terukur via -fstack-usage), jauh melebihi
- * budget 1024 byte task lain di project ini.
- *
- * itskpri 11 (bukan 12): DITEMUKAN comTask (busy-wait di HAL_UART_Receive,
- * lihat catatan di ctsk_com_task di atas) tidak pernah yield ke kernel,
- * sehingga starvation total task manapun di bawahnya. sentinelTask 11 masih
- * tetap "lebih rendah dari pidTask" (11>10, syarat asli terpenuhi), tapi
- * sekarang LEBIH TINGGI dari comTask - begitu tk_dly_tsk(50) di bawah habis
- * dan sentinelTask jadi READY (event timer/interrupt), scheduler mem-preempt
- * comTask walau comTask sedang busy-wait, karena preemption uT-Kernel
- * dipicu prioritas siap-jalan, bukan menunggu comTask yield sendiri. */
 LOCAL void sentinelTask(INT stacd, void *exinf);
 LOCAL ID   sentinel_task_id;
 LOCAL T_CTSK ctsk_sentinel_task = {
@@ -111,17 +80,9 @@ LOCAL T_CTSK ctsk_sentinel_task = {
     .tskatr  = TA_HLNG | TA_RNG3,
 };
 
-
 // task function
-
 LOCAL void pidTask(INT stacd, void *exinf){
     resetAllPID();
-
-    /* Fase 1 instrumentation: measure pidTask's actual wake-to-wake period
-     * with DWT CYCCNT. Inline in pidTask on purpose (a separate task would
-     * change the scheduling being measured). Integer-only inside the loop,
-     * no printf/UART/float there - the report is built once, when the
-     * measurement window closes (moving: 1 -> 0), not every iteration. */
     static uint32_t last_cyc;
     static uint32_t period_min;
     static uint32_t period_max;
@@ -129,31 +90,18 @@ LOCAL void pidTask(INT stacd, void *exinf){
     static uint32_t period_cnt;
     static uint32_t warmup;
     static uint8_t  prev_moving;
-
-    /* SENTINEL DATA_COLLECT ('d'): state lives here (not in a separate task)
-     * so the CSV row logged below is guaranteed to correspond to the exact
-     * doPID() call in THIS iteration - a separately-clocked sampler task
-     * would not be phase-locked to pidTask's real ~50ms ticks (see Fase 1:
-     * tk_dly_tsk(33) quantizes to 50ms via TIMER_PERIOD, not exactly 33ms). */
+    //data collect variable
     static uint32_t dc_frame;
     static uint8_t  prev_dataCollect;
     static uint32_t dc_work_min, dc_work_max, dc_work_cnt;
     static uint64_t dc_work_sum;
     static SYSTIM   dc_startTime;
-    /* REVISI masalah 1: readINA219()/readMPU6050() now report HAL status -
-     * count how many frames the FIRST attempt failed, so a recurrence shows
-     * up as a number in DC_TIMING instead of silently zeroed columns. */
+    //ina debugging data
     static uint32_t dc_fail_ina1, dc_fail_ina2, dc_fail_imu;
 
-    /* FIX (frame blew out to 60ms): writeCom() inside the timed frame was
-     * blocking ~11ms on UART, pushing knl_current_time past the next 10ms
-     * tick before tk_dly_tsk(33) ran (10+33+10=53 -> wakes at tick 60 - see
-     * Fase 1 quantization). Buffered in RAM instead, flushed AFTER the run
-     * (motor already off) - zero writeCom() calls inside the timed section.
-     * Static (.bss), NOT on pidTask's 1024-byte stack: 100*200=20000 bytes. */
     static char dcHeaderBuf[192];
-    static char dcConfigBuf[256]; /* TAMBAHAN: baris #config, dibaca dari struct AKTIF, dibuffer sama seperti header/data - lihat FIX note */
-    static char dcBuf[100][200]; /* ukuran dibiarkan 100 (REVISI: cukup 80 boleh biarkan 100) - cuma index 0..79 yang dipakai/di-flush sekarang */
+    static char dcConfigBuf[256];
+    static char dcBuf[100][200]; 
 
     last_cyc    = DWT->CYCCNT;
     period_min  = 0xFFFFFFFFu;
@@ -190,13 +138,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
             resetAllPID();
             tk_get_tim(&dc_startTime);
 
-            /* TAMBAHAN: baris #config, dibaca dari struct/variabel yang
-             * SEDANG AKTIF sekarang (bukan #define) - supaya override
-             * runtime ('u'/'f') atau board reset di tengah sesi kelihatan.
-             * Kp/Ki/Kd/Ko itu float di struct - di-cast (int) sebelum %d,
-             * PERSIS pelajaran dari bug PING (float ke %d tanpa cast
-             * menggeser SEMUA argumen sesudahnya). Dibuffer, bukan dikirim
-             * sekarang - lihat FIX note soal writeCom() di jalur frame. */
+            // its just buffer for debugging the data collecting for tinyML
             snprintf(dcConfigBuf, sizeof(dcConfigBuf),
                 "#config,Kp=%d,Ki=%d,Kd=%d,Ko=%d,ffScalePct=%ld,loopHz=20,"
                 "Ldb_f=%ld,Lkv_f=%ld,Ldb_r=%ld,Lkv_r=%ld,"
@@ -214,10 +156,6 @@ LOCAL void pidTask(INT stacd, void *exinf){
         if(dataCollectActive){
             /* Set THIS frame's target BEFORE updatePID() reads it below -
              * pure sequencing, does not touch doPID/updatePID/computeFeedforward. */
-            /* REVISI pola manuver: 80 frame/4s, maju-mundur (lintasan tidak
-             * cukup untuk 1 arah terus 5s). Pola 1 dan 4 SENGAJA punya
-             * struktur sama (akselerasi lalu 0) - beda cuma magnitudo (30
-             * vs 50) - JANGAN digabung/dioptimasi, sesuai instruksi. */
             long tgtL, tgtR;
             switch(dcPattern){
                 case 1:
@@ -266,10 +204,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
             period_cnt = 0u;
             warmup     = 3u; /* discard first 3 iterations of this window */
 
-            /* SENTINEL: sesi klasifikasi baru mulai di sini juga - reset
-             * window+tangkap ax_baseline. Ini titik moving 0->1 yang SAMA
-             * dipakai instrumentasi PID_PERIOD di atas, jadi burst 5x IMU
-             * read di dalamnya otomatis ikut "tersaring" oleh warmup=3. */
+            // starting section sentinel classification - reset window + get the ax_baseline. 
             sentinelBeginSession();
         }
 
@@ -313,16 +248,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
              * its internal "input" and stored it in PrevInput - read it back
              * rather than re-deriving encoder deltas ourselves (single
              * source of truth, and free - no extra encoder reads needed).
-             *
-             * SENTINEL: dulu blok ini (dan pembacaan sensor di bawah) cuma
-             * jalan kalau dataCollectActive - sekarang jalan tiap kali
-             * moving==1 (LOG_TEST/MOTOR_SPEEDS/DATA_COLLECT, bukan cuma
-             * 'd'), karena classifier butuh curL/curR/ax/gz "online" tiap
-             * frame selama robot bergerak, bukan cuma saat run 'd' formal.
-             * Ini beban I2C tambahan yang PERMANEN di semua mode driving,
-             * bukan cuma 'd' - PID_PERIOD (di atas) tetap jadi pengaman
-             * umum kalau ini bikin periode lewat 50ms, karena dia mengukur
-             * di SEMUA kondisi moving==1, tidak cuma saat 'd'. */
+             */
             long uffL = computeFeedforward(&leftPID);
             long uffR = computeFeedforward(&rightPID);
             long pwmL = uffL + leftPID.output;
@@ -330,28 +256,11 @@ LOCAL void pidTask(INT stacd, void *exinf){
             if(pwmL > MAX_PWM) pwmL = MAX_PWM; else if(pwmL < -MAX_PWM) pwmL = -MAX_PWM;
             if(pwmR > MAX_PWM) pwmR = MAX_PWM; else if(pwmR < -MAX_PWM) pwmR = -MAX_PWM;
 
-            /* MASALAH 1 fix: readINA219()/readMPU6050() now report HAL
-             * status (previously void - a failure was invisible). Retry
-             * ONCE on failure - cheap (one extra I2C burst, DC_TIMING shows
-             * tens of ms of margin in a 50ms frame). */
-            /* REVISI: desimasi baca sensor (opsi 3) DIBATALKAN - root cause
-             * ReadByte timeout diperbaiki di akarnya lewat UART RX interrupt-
-             * driven (uartRxIsrPush(), lihat uart_bridge.c/stm32h5xx_it.c),
-             * bukan lagi dengan mengurangi kerja pidTask. comTask tidak lagi
-             * bergantung pada scheduling CPU untuk menangkap byte - ISR
-             * menangkapnya kapan pun tiba, terlepas dari pidTask sedang
-             * blocking I2C berapa lama pun. Baca sensor kembali TIAP frame
-             * selama moving, sama seperti sebelum opsi 3 - classifier dapat
-             * data segar terus, termasuk saat teleop. */
             HAL_StatusTypeDef r1 = readINA219(&ina1); if(r1 != HAL_OK) r1 = readINA219(&ina1);
             HAL_StatusTypeDef r2 = readINA219(&ina2); if(r2 != HAL_OK) r2 = readINA219(&ina2);
             HAL_StatusTypeDef r3 = readMPU6050(&imu); if(r3 != HAL_OK) r3 = readMPU6050(&imu);
 
             if(dataCollectActive){
-                /* Fail-count HANYA dihitung selama run 'd' sedang aktif -
-                 * digeser dari blok sensor-read di atas (sekarang unconditional)
-                 * supaya angka di DC_TIMING tidak tercemar kegagalan dari
-                 * LOG_TEST/MOTOR_SPEEDS yang kebetulan terjadi di antara dua run 'd'. */
                 if(r1 != HAL_OK) dc_fail_ina1++;
                 if(r2 != HAL_OK) dc_fail_ina2++;
                 if(r3 != HAL_OK) dc_fail_imu++;
@@ -387,16 +296,12 @@ LOCAL void pidTask(INT stacd, void *exinf){
 
                 dc_frame++;
                 if(dc_frame >= 80u){
-                    /* REVISI: 80 frame (4s @ 50ms) - dulu 100/5s, diperpendek
-                     * karena lintasan tidak cukup untuk 1 arah terus 5s. */
                     uint32_t cpm = pidProbeCycPerMs;
                     uint32_t meanWork = (uint32_t)(dc_work_sum / (dc_work_cnt ? dc_work_cnt : 1u));
                     uint32_t wMinMs = dc_work_min / cpm, wMinFr = ((dc_work_min % cpm) * 1000u) / cpm;
                     uint32_t wMaxMs = dc_work_max / cpm, wMaxFr = ((dc_work_max % cpm) * 1000u) / cpm;
                     uint32_t wMeanMs = meanWork / cpm,   wMeanFr = ((meanWork % cpm) * 1000u) / cpm;
 
-                    /* MASALAH 1: hitung kegagalan baca dilaporkan di sini -
-                     * bukti angka kalau regresi ini kambuh, bukan tebakan lagi. */
                     static char dcRpt[240];
                     snprintf(dcRpt, sizeof(dcRpt),
                         "DC_TIMING,run_id=%ld,n=%lu,min_ms=%lu.%03lu,max_ms=%lu.%03lu,mean_ms=%lu.%03lu,ina1_fail=%lu,ina2_fail=%lu,imu_fail=%lu\r\n",
@@ -406,18 +311,13 @@ LOCAL void pidTask(INT stacd, void *exinf){
                         (unsigned long)wMeanMs, (unsigned long)wMeanFr,
                         (unsigned long)dc_fail_ina1, (unsigned long)dc_fail_ina2, (unsigned long)dc_fail_imu);
 
-                    /* Motor 0 FIRST, then flush - matches the fix's required
-                     * order. Every writeCom() from here on is OUTSIDE the timed
-                     * per-frame section (moving is already 0, dataCollectActive
-                     * already cleared below), so none of this can distort the
-                     * next run's frame timing either. */
                     setMotorSpeeds(0, 0);
                     moving = 0;
                     resetAllPID();
                     dataCollectActive = 0;
 
                     writeCom(&com_pi, dcRpt);
-                    writeCom(&com_pi, dcConfigBuf); /* TAMBAHAN: sebelum header, seperti diminta */
+                    writeCom(&com_pi, dcConfigBuf); 
                     writeCom(&com_pi, dcHeaderBuf);
                     for(uint32_t i = 0; i < 80u; i++){
                         writeCom(&com_pi, dcBuf[i]);
@@ -425,10 +325,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
                 }
             }
 
-            /* SENTINEL: push frame ini ke ring buffer classifier - pakai
-             * NILAI YANG SAMA (pwmL/pwmR/curL/curR/ax/ay/gz) yang barusan
-             * dihitung/dibaca di atas, tidak baca ulang sensor. Jalan tiap
-             * frame SELAMA moving==1 (bukan cuma saat dataCollectActive). */
+            // sentinel push this frame to ring buffer classifier , use the same value (pwmL/pwmR/curL/curR/ax/ay/gz) while calculate before, not reread
             sentinelPushFrame(leftPID.TargetTicksPerFrame, rightPID.TargetTicksPerFrame,
                                pwmL, pwmR,
                                leftPID.PrevInput, rightPID.PrevInput,
@@ -445,18 +342,10 @@ LOCAL void pidTask(INT stacd, void *exinf){
 
 LOCAL void comTask(INT stacd, void *exinf){
     while(1){
-        readCom(&com_pi); //this is for robot
-        // readCom(&debug); // this is for debug [just use stm only]
+        readCom(&com_pi); //this is for robot communication
     }
 }
 
-/* SENTINEL classifier: task terpisah, prioritas lebih rendah dari pidTask
- * (lihat ctsk_sentinel_task di atas). Poll sentinelInferenceDue() tiap
- * 50ms (sama dengan periode frame pidTask) - kalau siap, panggil
- * sentinelRunInference() yang membangun 84 fitur + panggil
- * sentinel_rf50x10() (kerja berat: 3256 byte stack, ~ms - lihat CLASSIFY_STATUS
- * utk angka aktual). Ini SENGAJA di luar pidTask supaya kerja berat itu
- * tidak pernah mendorong periode pidTask lewat 50ms. */
 LOCAL void sentinelTask(INT stacd, void *exinf){
     while(1){
         if(sentinelInferenceDue()){
@@ -468,7 +357,7 @@ LOCAL void sentinelTask(INT stacd, void *exinf){
 
 /* Fase 1 feedforward calib: STATIC_SWEEP ('s') worker.
  * Plain function, not a task - called from inside logTest()'s loop so no
- * new task is created. OPEN LOOP MURNI: bypasses doPID/updatePID/resetPID
+ * new task is created.PURE OPEN LOOP: bypasses doPID/updatePID/resetPID
  * entirely, writes PWM straight to setMotorSpeed() and reads enc1/enc2
  * directly (leftPID/rightPID are never touched). moving is forced to 0 for
  * the whole run so pidTask cannot also drive the motors concurrently. */
@@ -523,11 +412,6 @@ LOCAL void runStaticSweep(void){
         long deltaTicks        = (long)encEnd - (long)encStart;
         long ticksPerFrameX100 = (deltaTicks * 100L) / measureFrames;
 
-        /* KOREKSI: shunt_raw dibaca LANGSUNG lewat I2C terpisah di sini, BUKAN
-         * diturunkan dari targetIna->shunt_uV (itu sudah lewat readINA219() -
-         * kalau bug-nya ada di dalam readINA219() sendiri, menurunkan dari
-         * situ akan mewarisi bug yang sama dan tidak membuktikan apa-apa).
-         * Duplikasi pembacaan ini disengaja - jalurnya independen. */
         int16_t shuntRawIndependent = readShuntRawIndependent(targetIna);
 
         char line[128];
@@ -542,6 +426,7 @@ LOCAL void runStaticSweep(void){
     sweepActive = 0;
 }
 
+//this function for PID and Feedforward tuning, getting the data for tuning parameter
 LOCAL void logTest(INT stacd, void *exinf){
     while(1){
         if(logActive){
@@ -569,19 +454,12 @@ LOCAL void logTest(INT stacd, void *exinf){
                 if(loutFinal > MAX_PWM) loutFinal = MAX_PWM; else if(loutFinal < -MAX_PWM) loutFinal = -MAX_PWM;
                 if(routFinal > MAX_PWM) routFinal = MAX_PWM; else if(routFinal < -MAX_PWM) routFinal = -MAX_PWM;
 
-                /* FIX (masalah 1): dulu cetak logTargetL/logTargetR (beku sejak
-                 * 'g' diterima) - MOTOR_SPEEDS ('m') TIDAK menjaga logActive
-                 * (beda dari LOG_TEST/PID_PROBE/STATIC_SWEEP yang eksplisit
-                 * menolak saat dataCollectActive), jadi 'm' yang dikirim di
-                 * tengah 'g' BERHASIL mengubah leftPID/rightPID.TargetTicksPerFrame
-                 * secara live (motor beneran berubah) tapi kolom CSV tidak
-                 * pernah ikut berubah. Cetak nilai live-nya sekarang. */
                 snprintf(line, sizeof(line), "%lu,%ld,%ld,%ld,%ld,%ld,%ld,%ld,%ld\r\n",
                          (unsigned long)elapsed,
                          leftPID.TargetTicksPerFrame, rightPID.TargetTicksPerFrame,
                          (long)enc1.counterVal, (long)enc2.counterVal,
                          loutFinal, routFinal, uffL, uffR);
-                if(!logSilent){ /* Fase 1: same path either way, only the UART write is toggled */
+                if(!logSilent){ 
                     writeCom(&com_pi, line);
                 }
                 tk_dly_tsk(33);
@@ -624,15 +502,9 @@ EXPORT INT usermain(void)
     initMotorController(&motorRight);
     initMpu6050(&imu); // needed so DATA_COLLECT's per-frame readMPU6050() gets real data, not a sleeping chip
 
-    /* FIX RX starvation (ReadByte timeout di ros2_control): arm penerimaan
-     * interrupt-driven pertama kali - lihat uart_bridge.c/stm32h5xx_it.c.
-     * Dipanggil sebelum comTask start supaya tidak ada jendela di mana
-     * comTask jalan tapi belum ada RX yang di-arm sama sekali. huart1 sudah
-     * pasti siap di titik ini (MX_USART1_UART_Init() jalan di main() sebelum
-     * kernel start/usermain() dipanggil - lihat inittask.c). */
+    // using RX starvation (ReadByte timeout di ros2_control): first interrupt-driven ,check uart_bridge.c/stm32h5xx_it.c
     uartRxStart();
 
-    // /* Buat & Jalankan Task */
     pid_task_id = tk_cre_tsk(&ctsk_pid_task);
     tk_sta_tsk(pid_task_id, 0);
 
