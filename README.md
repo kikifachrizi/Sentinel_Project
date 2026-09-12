@@ -92,7 +92,7 @@
 
 ### Introduction
 hallo, my name is rifqy fachrizi, called kiki. Sentinel-Project repository is my research project about RTOS and emebedded system, here i learned how to use RTOS on STM32, especially using uT-kernel 3.0 and combined with TinyML.
-my research based on my experience, and i have many AMR project so why i dont use my platform for implementation this method? and i'll do it. on my AMR , i just enhanced the controller system using stm32-nucleo-h533re from arduino nano. and i'm using 
+my research based on my experience, and i have many AMR project so why i dont use my platform for implementation this method? and i'll do it. on my AMR , i just enhanced the controller system using stm32-nucleo-h533re from arduino nano. the idea is simple, robot knowing where it's surface is at, robot will classify and with the hysteresis robot will apply the match gain with the surfaces
 
 #### Problem 
 AMR didnt know the surface character, like textured surface, normal or slippery. the matter of slippery surface for AMR is, sometime the wheel will slip, so from that problem this friction-classification is made.
