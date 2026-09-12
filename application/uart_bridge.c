@@ -18,20 +18,20 @@ long lastMotorCommand = AUTO_STOP_INTERVAL;
 
 EXPORT void vcpMonitor(const char *label,const char *msg){
     char out[220];
-    snprintf(out, sizeof(out), "[%s] %s\r\n",label,msg); //this the one who pile the data through buffer
-    HAL_UART_Transmit(debug.huart, (uint8_t*)out, strlen(out), 300); // this the one who sent to VCP
+    snprintf(out, sizeof(out), "[%s] %s\r\n",label,msg);
+    HAL_UART_Transmit(debug.huart, (uint8_t*)out, strlen(out), 300);
 }
 
-/* FIX RX starvation - lihat catatan panjang di uart_bridge.h. Ring buffer
- * single-producer (ISR, uartRxIsrPush())/single-consumer (comTask, readCom())
- * - aman tanpa mutex: ISR cuma tulis s_rxHead, task cuma tulis s_rxTail,
- * masing-masing cuma BACA index milik pihak lain untuk cek kosong/penuh.
- * Semua index uint8_t (store/load 1 instruksi, atomik terhadap ISR di
- * Cortex-M33 - tidak ada baca-ubah-tulis lintas ISR/task). */
+/* RX ring buffer: single-producer (ISR, uartRxIsrPush()) / single-consumer
+ * (comTask, readCom()) - safe without a mutex since the ISR only ever writes
+ * s_rxHead and the task only ever writes s_rxTail, each only reading the
+ * other's index. All indices are uint8_t (single-instruction store/load,
+ * atomic against the ISR on Cortex-M33). Interrupt-driven RX avoids losing
+ * bytes to overrun when pidTask (higher priority) holds the CPU for a few ms. */
 static volatile uint8_t s_rxRing[UART_RX_RING_SIZE];
 static volatile uint8_t s_rxHead;
 static volatile uint8_t s_rxTail;
-static volatile uint8_t s_rxByteIt; /* landing byte utk HAL_UART_Receive_IT() - com_pi/huart1 saja */
+static volatile uint8_t s_rxByteIt; /* landing byte for HAL_UART_Receive_IT() - com_pi/huart1 only */
 
 EXPORT void uartRxStart(void){
     HAL_UART_Receive_IT(com_pi.huart, (uint8_t*)&s_rxByteIt, 1);
@@ -39,21 +39,18 @@ EXPORT void uartRxStart(void){
 
 EXPORT void uartRxIsrPush(void){
     uint8_t next = (uint8_t)((s_rxHead + 1u) % UART_RX_RING_SIZE);
-    if (next != s_rxTail) { /* buffer tidak penuh - kalau penuh, byte ini didrop (jarang, 64 byte cukup) */
+    if (next != s_rxTail) { /* buffer full -> byte dropped (rare, 64 bytes is enough) */
         s_rxRing[s_rxHead] = s_rxByteIt;
         s_rxHead = next;
     }
-    HAL_UART_Receive_IT(com_pi.huart, (uint8_t*)&s_rxByteIt, 1); /* re-arm SELALU, walau buffer penuh */
+    HAL_UART_Receive_IT(com_pi.huart, (uint8_t*)&s_rxByteIt, 1); /* always re-arm, even if buffer was full */
 }
 
 EXPORT void readCom(UartBridge *com){
-    if (s_rxTail == s_rxHead) return; /* non-blocking: belum ada byte baru */
+    if (s_rxTail == s_rxHead) return; /* non-blocking: no new byte yet */
     com->rx_byte = s_rxRing[s_rxTail];
     s_rxTail = (uint8_t)((s_rxTail + 1u) % UART_RX_RING_SIZE);
 
-    /* Logika di bawah ini TIDAK diubah - persis sama seperti versi polling
-     * sebelumnya, cuma sumber com->rx_byte yang berubah (ring buffer,
-     * bukan HAL_UART_Receive() langsung). */
     if (com->rx_byte == '\r' || com->rx_byte == '\n') {
         com->rxBuf[com->rxIndex] = '\0'; //closed the string
         if(com->rxIndex > 0){//this line tell buffer not empty
@@ -69,7 +66,7 @@ EXPORT void readCom(UartBridge *com){
 
 
 EXPORT void writeCom(UartBridge *com, const char *msg){
-    HAL_UART_Transmit(com->huart, (uint8_t*)msg, strlen(msg), 300); 
+    HAL_UART_Transmit(com->huart, (uint8_t*)msg, strlen(msg), 300);
 }
 
 EXPORT void parseCommand(UartBridge *com){

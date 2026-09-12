@@ -1,12 +1,8 @@
 #ifndef SENTINEL_MODEL_H
 #define SENTINEL_MODEL_H
 
-/* DIKONFIRMASI (feature_names.txt sekarang ada di workspace, 84 baris):
- * spec awal minta 83, tapi model sebenarnya butuh 84 (index 0..83) - 16
- * kanal x 5 statistik (mean/std/min/max/valid) + 4 fitur ekstra
- * (corr_pvL, corr_pvR, tgt_abs, is_rev) = 84. Sebelumnya ini cuma diduga
- * dari grep index tertinggi di sentinel_model.c ("input[83]") - sekarang
- * dikonfirmasi langsung cocok dengan feature_names.txt baris 1-84. */
+/* 16 channels x 5 stats (mean/std/min/max/valid) + 4 extra features
+ * (corr_pvL, corr_pvR, tgt_abs, is_rev) = 84. Matches feature_names.txt. */
 #define SENTINEL_N_FEATURES 84
 #define SENTINEL_N_CLASSES  4
 

@@ -9,6 +9,9 @@
 #include "lib/sentinel_features.h"
 #include <stdio.h>
 
+/* Dispatches one parsed command (com->cmd/argv1/argv2/rxBuf) to its handler
+ * and always replies over the same UartBridge - unknown/malformed commands
+ * still get a response so the host never blocks waiting on a timeout. */
 EXPORT void runCommand(UartBridge *com){
     switch(com->cmd){
         case MOTOR_RAW_PWM:
@@ -38,22 +41,13 @@ EXPORT void runCommand(UartBridge *com){
             writeCom(com, "OK\r\n");
             break;
         case UPDATE_PID: {
-            /* FORMAT FIX: diffdrive_arduino (arduino_comms.hpp set_pid_values(),
-             * dipanggil sekali di on_activate() plugin) mengirim
-             * "u Kp:Kd:Ki:Ko\r" - urutan Kp,Kd,Ki,Ko. Sebelumnya di-parse
-             * sebagai Kp,Ki,Kd,Ko di sini - Ki dan Kd TERTUKAR setiap plugin
-             * push PID value, membatalkan asumsi Ki=0 permanen yang dipakai
-             * SENTINEL gain scheduling. Diverifikasi langsung dari source
-             * joshnewans/diffdrive_arduino branch humble. */
+            /* Wire format from diffdrive_arduino: "u Kp:Kd:Ki:Ko\r" */
             int p, d, i, o;
             if(sscanf(com->argv1, "%d:%d:%d:%d", &p,&d,&i,&o) == 4){
                 leftPID.Kp = p; leftPID.Kd = d; leftPID.Ki = i; leftPID.Ko = o;
                 rightPID.Kp = p; rightPID.Kd = d; rightPID.Ki = i; rightPID.Ko = o;
                 writeCom(com, "OK\r\n");
             } else {
-                /* FIX: dulu tidak ada balasan sama sekali kalau parsing gagal -
-                 * plugin's send_msg() blocking ReadLine() sampai timeout_ms
-                 * penuh (ReadByte timeout) untuk command yang malformed. */
                 writeCom(com, "ERR args\r\n");
             }
             break;
@@ -86,7 +80,7 @@ EXPORT void runCommand(UartBridge *com){
             writeCom(com, "OK\r\n");
             break;
         }
-        
+
         case GET_BAUDRATE: {
             char reply[16];
             snprintf(reply, sizeof(reply), "%lu\r\n", com->huart->Init.BaudRate);
@@ -94,11 +88,9 @@ EXPORT void runCommand(UartBridge *com){
             break;
         }
         case LOG_TEST:
-            /* dataCollectActive is consumed by pidTask, NOT logTest, so it's
-             * not naturally mutually exclusive like sweepActive/imuDiagActive
-             * are (those live in logTest's own if/else-if chain) - both would
-             * write leftPID/rightPID.TargetTicksPerFrame from different tasks
-             * at once. Guarded explicitly here. */
+            /* dataCollectActive is consumed by pidTask, not logTest, so it
+             * needs its own explicit guard here (both would drive PID targets
+             * at once otherwise). */
             if(dataCollectActive){ writeCom(com, "ERR busy\r\n"); break; }
             logTargetL = com->arg1;
             logTargetR = com->arg2;
@@ -107,8 +99,8 @@ EXPORT void runCommand(UartBridge *com){
             writeCom(com, "OK\r\n");
             break;
         case PID_PROBE:
-            /* Fase 1: identical 10s run as LOG_TEST, but logTest skips writeCom() */
-            if(dataCollectActive){ writeCom(com, "ERR busy\r\n"); break; } /* see LOG_TEST comment */
+            /* Same 10s run as LOG_TEST, but logTest skips writeCom(). */
+            if(dataCollectActive){ writeCom(com, "ERR busy\r\n"); break; }
             logTargetL = com->arg1;
             logTargetR = com->arg2;
             logSilent = 1; /* streaming CSV OFF */
@@ -116,10 +108,9 @@ EXPORT void runCommand(UartBridge *com){
             writeCom(com, "OK\r\n");
             break;
         case STATIC_SWEEP: {
-            /* Fase 1 feedforward calib: "s <motor_id> <arah> <pwm_start> <pwm_step> <pwm_end> <hold_ms>"
-             * 6 numeric args - more than argv1/argv2 (parseCommand only keeps 2),
-             * so parsed straight off com->rxBuf here instead of touching the
-             * shared parser. */
+            /* Feedforward calib: "s <motor_id> <arah> <pwm_start> <pwm_step> <pwm_end> <hold_ms>" -
+             * 6 numeric args, more than the shared parser keeps, so parsed
+             * straight off com->rxBuf. */
             if(sweepActive || imuDiagActive || dataCollectActive){ writeCom(com, "ERR busy\r\n"); break; }
 
             int motorId, dir, pwmStart, pwmStep, pwmEnd, holdMs;
@@ -145,29 +136,23 @@ EXPORT void runCommand(UartBridge *com){
             break;
         }
         case INA_DIAG:
-            /* Diagnostik mentah (probe/ACK, register hex 0x00-0x05, tiap
-             * return I2C) untuk KEDUA sensor - ditulis balik lewat writeCom()
-             * ke com yang sama tempat 'j' masuk, supaya kelihatan di
-             * terminal yang sama (bukan tm_printf/USART2 - lihat sensors.c). */
+            /* Raw register/I2C diagnostic for both sensors, echoed back on
+             * the same port 'j' came in on (see diagINA219() in sensors.c). */
             diagINA219(&ina1, com);
             diagINA219(&ina2, com);
             writeCom(com, "OK\r\n");
             break;
         case IMU_DIAG:
-            /* "Motor TIDAK boleh bergerak selama command ini" - jadi ditolak
-             * kalau motor sedang digerakkan lewat LOG_TEST/PID_PROBE (moving=1)
-             * atau STATIC_SWEEP; sebaliknya 'o'/'m'/'s' ditolak selama
-             * imuDiagActive (lihat guard di atas). Dijalankan di logTest task
-             * (bukan di sini/comTask) karena blocking ~10s - lihat diagIMU(). */
+            /* Motors must stay still for this command, so it's rejected while
+             * moving (LOG_TEST/PID_PROBE/STATIC_SWEEP) and vice versa. Runs in
+             * logTest task, not here, since it blocks ~10s. */
             if(sweepActive || logActive || imuDiagActive || dataCollectActive){ writeCom(com, "ERR busy\r\n"); break; }
             imuDiagActive = 1; /* picked up by logTest task's loop */
             writeCom(com, "OK\r\n");
             break;
         case DATA_COLLECT: {
             /* SENTINEL: "d <pattern 1..5> <surface_class 0..3> <run_id>" - 3
-             * numeric args, parsed straight off com->rxBuf like STATIC_SWEEP
-             * (shared parser only keeps 2 args). run_id is recorded as-is,
-             * no range check per spec. */
+             * numeric args, parsed straight off com->rxBuf like STATIC_SWEEP. */
             if(sweepActive || logActive || imuDiagActive || dataCollectActive){ writeCom(com, "ERR busy\r\n"); break; }
 
             int pattern, surface;
@@ -185,10 +170,8 @@ EXPORT void runCommand(UartBridge *com){
             break;
         }
         case CLASSIFY_STATUS: {
-            /* SENTINEL: kelas hasil voting mayoritas + 5 histori inferensi
-             * terakhir + waktu bangun-fitur/inferensi (DWT, us) - lihat
-             * sentinelGetStatus() di sentinel_features.c. -1 = belum ada
-             * hasil (window belum penuh / belum pernah moving=1). */
+            /* SENTINEL: majority-vote class + last 5 inference history + feature/
+             * inference timing (DWT, us). -1 = no result yet. */
             SentinelStatus st;
             sentinelGetStatus(&st);
             char reply[220];
@@ -216,14 +199,6 @@ EXPORT void runCommand(UartBridge *com){
             break;
         }
         default:
-            /* FIX (opsi 4, ReadByte timeout di ros2_control): dulu com->cmd
-             * yang tidak cocok case manapun (mis. huruf command rusak akibat
-             * UART overrun saat pidTask menahan comTask - lihat diskusi RX
-             * starvation) DIAM TOTAL, tidak ada balasan - plugin nunggu penuh
-             * sampai timeout_ms. Sekarang selalu ada balasan, apapun cmd-nya,
-             * supaya host tidak pernah menunggu buta - membantu resync lebih
-             * cepat, tidak memperbaiki akar penyebab byte-loss itu sendiri
-             * (lihat SENTINEL_SENSOR_DECIMATION di app_main.c untuk itu). */
             writeCom(com, "ERR unknown\r\n");
             break;
     }

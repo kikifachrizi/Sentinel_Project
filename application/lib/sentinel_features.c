@@ -6,39 +6,21 @@
 #include "stm32h5xx_hal.h"
 #include "sentinel_features.h"
 #include "diff_controller.h" /* leftPID/rightPID.u_db_fwd/kv_num_fwd/u_db_rev/kv_num_rev */
-#include "uart_bridge.h" /* extern huart2 - CLASSIFY auto-push via VCP, lihat catatan di titik pemakaian */
+#include "uart_bridge.h" /* extern huart2 - CLASSIFY auto-push via VCP */
 
 /* ==========================================================================
- * Ring buffer mentah + fitur turunan per-frame. Semua static (.bss), tidak
- * ada yang di stack pidTask.
+ * Raw ring buffer + per-frame derived features for the SENTINEL surface
+ * classifier. All static (.bss), none of it lives on pidTask's stack.
  *
- * DIVERIFIKASI terhadap feature_names.txt + preprocess_v2.py (sekarang ada
- * di workspace) - ini bukan lagi interpretasi/tebakan, tapi hasil cocokkan
- * baris-per-baris dengan referensi Python:
+ * Feature order matches feature_names.txt / preprocess_v2.py exactly:
+ * channel-major (mean,std,min,max,valid per channel from buildFeatureVector()),
+ * then corr_pvL, corr_pvR, tgt_abs, is_rev - 84 features total.
  *
- * 1. "sgn" DIKONFIRMASI satu nilai (dari tgtL SAJA: np.sign(tgtL), 0->+1),
- *    dipakai untuk residL, residR, slipL, DAN slipR - BUKAN per sisi.
- *    (Sesi sebelumnya saya pakai sgnL/sgnR terpisah - itu SALAH, sudah
- *    diperbaiki di sini.)
- * 2. "db" di kv_eff<S> dikonfirmasi searah tgtS (u_ff_pred juga begitu,
- *    beda dari sgn resid yang cuma pakai tgtL) - sudah benar sebelumnya.
- * 3. ax_baseline DIKONFIRMASI BUKAN dari histori sebelum moving=1 - Python
- *    hitung dari rata-rata 5 BARIS PERTAMA window/sesi itu sendiri
- *    (`s.iloc[:5].mean()`, di-broadcast konstan ke semua baris grup lewat
- *    .transform()). Online (streaming) tidak bisa tahu rata-rata 5 sampel
- *    pertama SEBELUM sampel ke-5 itu sendiri tiba (offline py itu batch,
- *    boleh "menengok ke depan"; firmware ini kausal/real-time) - jadi
- *    dipakai pendekatan rata-rata BERJALAN dari sampel ke-1 s/d ke-5,
- *    lalu DIBEKUKAN persis di rata-rata 5 sampel itu (sama dengan offline
- *    MULAI sampel ke-5). Sampel ke 1-4 pakai rata-rata parsial (mendekati,
- *    bukan identik dengan offline) - satu-satunya penyimpangan yang tersisa
- *    dari referensi, dan cuma menyentuh ~4 frame pertama tiap sesi (0.2s
- *    dari total sesi yang biasanya jauh lebih panjang). Sekaligus
- *    menghapus burst-read IMU sebelum moving=1 dari revisi sebelumnya
- *    (tidak perlu lagi, sekalian hilangkan beban I2C ekstra di rising edge).
- * 4. Urutan 84 fitur di buildFeatureVector() DIKONFIRMASI cocok persis
- *    dengan feature_names.txt (channel-major: mean,std,min,max,valid per
- *    dari 16 kanal di AGG python, lalu corr_pvL,corr_pvR,tgt_abs,is_rev).
+ * ax_baseline is a running average of this session's first 5 samples,
+ * frozen after the 5th (an online approximation of the offline reference,
+ * which averages the first 5 rows of the whole window in one batch pass -
+ * not causally available in real time). Only the first ~4 frames per
+ * session (0.2s) differ slightly from the offline reference.
  * ========================================================================== */
 
 typedef struct {
@@ -52,27 +34,27 @@ typedef struct {
     double cur_per_velL[SENTINEL_WINDOW]; uint8_t cur_per_velL_ok[SENTINEL_WINDOW];
     double cur_per_velR[SENTINEL_WINDOW]; uint8_t cur_per_velR_ok[SENTINEL_WINDOW];
     double cur_asym[SENTINEL_WINDOW];
-    double slipL[SENTINEL_WINDOW]; /* selalu valid (Python fillna(0) di diff pertama, bukan exclude) */
+    double slipL[SENTINEL_WINDOW]; /* always valid (diff's first sample = 0, not excluded) */
     double slipR[SENTINEL_WINDOW];
     double a_body[SENTINEL_WINDOW];
     double gz_dps[SENTINEL_WINDOW];
     double ay[SENTINEL_WINDOW];
-    /* mentah, dibutuhkan utk corr_pv dan tgt_abs/is_rev */
+    /* raw, needed for corr_pv and tgt_abs/is_rev */
     double pwmL[SENTINEL_WINDOW], pwmR[SENTINEL_WINDOW];
     double velL[SENTINEL_WINDOW], velR[SENTINEL_WINDOW];
     double tgtL[SENTINEL_WINDOW];
 } SentinelWindow;
 
 static SentinelWindow s_win;
-static uint32_t s_count;       /* jumlah entry terisi (maks SENTINEL_WINDOW) */
-static uint32_t s_head;        /* index tempat entry BERIKUTNYA ditulis (circular) */
-static uint32_t s_pushCounter; /* increment tiap sentinelPushFrame(), untuk gate "tiap 10 frame" */
+static uint32_t s_count;       /* entries filled so far (max SENTINEL_WINDOW) */
+static uint32_t s_head;        /* index where the NEXT entry is written (circular) */
+static uint32_t s_pushCounter; /* increments each sentinelPushFrame(), gates "every 10 frames" */
 
 static long   s_prevVelL, s_prevVelR;
 static uint8_t s_havePrev;
 
-/* ax_baseline: rata-rata berjalan dari sampel ke-1..5 sesi ini, beku
- * setelah sampel ke-5 (lihat catatan #3 di atas). */
+/* ax_baseline: running average of this session's samples 1..5, frozen after
+ * sample 5 (see file header note above). */
 static double   s_axBaselineSum;
 static uint32_t s_axBaselineCount;
 
@@ -80,11 +62,9 @@ static int      s_votedClass = -1;
 static int      s_voteHistory[SENTINEL_VOTE_N];
 static uint32_t s_inferCount;
 
-/* GAIN SCHEDULING: Kp/Kd per kelas (Ki=0, Ko=50 TETAP untuk semua kelas -
- * TIDAK ADA di tabel ini, tidak pernah disentuh applyGain()). Angka
- * TEXTURED/BANNER sengaja sama dengan NORMAL (belum ada bukti eksperimen
- * yang membedakan - lihat docs/SENTINEL_project_context.md); LOADED diukur
- * terpisah. */
+/* GAIN SCHEDULING: Kp/Kd per class (Ki=0, Ko=50 stay fixed for every class,
+ * never touched by applyGain()). TEXTURED/BANNER intentionally match NORMAL
+ * (no experimental evidence yet distinguishes them); LOADED was measured separately. */
 static const GainSet SENTINEL_GAINS[SENTINEL_N_CLASSES] = {
     {70, 110}, /* 0: NORMAL */
     {70, 110}, /* 1: TEXTURED */
@@ -92,25 +72,19 @@ static const GainSet SENTINEL_GAINS[SENTINEL_N_CLASSES] = {
     {85, 150}, /* 3: LOADED */
 };
 
-/* Hysteresis KEDUA, di atas 5-vote majority yang sudah ada (s_votedClass):
- * gain baru diterapkan hanya kalau s_votedClass beda dari kelas gain yang
- * SEDANG AKTIF selama SENTINEL_GAIN_HYSTERESIS_N keputusan BERTURUT-TURUT
- * (5 x 0.5s/keputusan = 2.5s) - bukan cuma sekali beda. s_currentGainClass
- * mulai di NORMAL, cocok dengan Kp/Kd default leftPID/rightPID di
- * diff_controller.c (70/110) - tidak ada lonjakan gain di boot. */
+/* Second hysteresis layer on top of the 5-vote majority (s_votedClass): a new
+ * gain is applied only after the voted class differs from the currently
+ * active gain class for SENTINEL_GAIN_HYSTERESIS_N consecutive decisions
+ * (5 x 0.5s = 2.5s), not just once. Starts at NORMAL, matching leftPID/
+ * rightPID's boot defaults (70/110) - no gain jump at startup. */
 #define SENTINEL_GAIN_HYSTERESIS_N 5
 static int s_currentGainClass = SENTINEL_CLASS_NORMAL;
 static int s_gainHysteresisCount;
 
-/* Ganti Kp/Kd SAJA - Ki/Ko/Iterm/output/state lain TIDAK disentuh. Untuk
- * velocity-form PI dengan Ki=0 permanen, mengganti Kp/Kd tidak membuat
- * diskontinuitas pada state yang tersimpan (pid->output, akumulator) -
- * cuma mengubah besar increment SATU frame berikutnya, self-correcting
- * lewat feedback loop normal sesudahnya. Iterm SENGAJA tidak dipakai untuk
- * "menyerap lonjakan": karena Ki=0 permanen, pid->Iterm tidak pernah
- * berubah sendiri lagi (doPID() cuma += Ki*Perror) - nilai apa pun yang
- * ditulis ke situ akan menempel PERMANEN dan ikut ke setiap frame
- * berikutnya (bias konstan yang salah), bukan transfer sekali pakai. */
+/* Only Kp/Kd change - Ki/Ko/Iterm/output and other state are untouched. With
+ * Ki=0 permanent, the velocity-form PI has no discontinuity when Kp/Kd
+ * change: it only scales the next frame's increment, self-correcting via the
+ * normal feedback loop afterward. */
 static void sentinelApplyGain(int klass){
     const GainSet *g = &SENTINEL_GAINS[klass];
     leftPID.Kp  = rightPID.Kp  = g->Kp;
@@ -122,16 +96,15 @@ static const char *KLASS_NAME[SENTINEL_N_CLASSES] = {"NORMAL", "TEXTURED", "BANN
 static uint32_t s_featMin = 0xFFFFFFFFu, s_featMax = 0u; static uint64_t s_featSum; static uint32_t s_featCnt;
 static uint32_t s_modelMin = 0xFFFFFFFFu, s_modelMax = 0u; static uint64_t s_modelSum; static uint32_t s_modelCnt;
 
-/* Feedforward diprediksi ULANG di sini dengan ffScalePct DIPAKSA 100 (bukan
- * nilai runtime global) - PERSIS u_ff_pred() di preprocess_v2.py:
- * u = (db*KV_DEN + kv*mag)/KV_DEN = db + kv*mag/KV_DEN, lalu diberi tanda
- * sign(tgt). u_db/kv_num dibaca dari struct AKTIF (leftPID/rightPID). */
+/* Re-predicts feedforward with ffScalePct forced to 100 (not the runtime
+ * global), matching preprocess_v2.py's u_ff_pred() exactly - u_db/kv_num are
+ * read from the active PID struct. */
 static double sentinelFeedforwardPred(long tgt, long db_fwd, long kv_fwd, long db_rev, long kv_rev){
     if (tgt == 0) return 0.0;
     double mag = (tgt > 0) ? (double)tgt : (double)(-tgt);
     double db  = (tgt > 0) ? (double)db_fwd : (double)db_rev;
     double kv  = (tgt > 0) ? (double)kv_fwd : (double)kv_rev;
-    double u = db + kv * mag / 100.0; /* KV_DEN=100, ffScalePct=100 tetap -> faktor skala jadi 1 */
+    double u = db + kv * mag / 100.0; /* KV_DEN=100, ffScalePct=100 -> scale factor is 1 */
     return (tgt < 0) ? -u : u;
 }
 
@@ -150,9 +123,8 @@ EXPORT void sentinelPushFrame(long tgtL, long tgtR, long pwmL, long pwmR,
 {
     uint32_t idx = s_head;
 
-    /* KOREKSI: satu sgn (dari tgtL saja), dipakai utk KEDUA sisi - lihat
-     * preprocess_v2.py: sgn = np.sign(df.tgtL).replace(0, 1), dipakai untuk
-     * resid{L,R} dan slip{L,R} keduanya, BUKAN sgnL/sgnR terpisah. */
+    /* One sign (from tgtL only) is shared by residL, residR, slipL and slipR -
+     * not a per-side sign, per preprocess_v2.py. */
     long sgn = (tgtL > 0) ? 1L : ((tgtL < 0) ? -1L : 1L);
 
     double uffL = sentinelFeedforwardPred(tgtL, leftPID.u_db_fwd,  leftPID.kv_num_fwd,  leftPID.u_db_rev,  leftPID.kv_num_rev);
@@ -208,18 +180,18 @@ EXPORT void sentinelPushFrame(long tgtL, long tgtR, long pwmL, long pwmR,
 
     s_win.cur_asym[idx] = (double)curL - (double)curR;
 
-    /* KOREKSI ax_baseline: rata-rata berjalan sampel 1..5 sesi ini, beku
-     * setelah sampel ke-5 - lihat catatan #3 di atas file ini. */
+    /* ax_baseline: running average of samples 1..5 this session, frozen
+     * after sample 5 - see file header note. */
     if (s_axBaselineCount < 5u){
         s_axBaselineSum += (double)ax;
         s_axBaselineCount++;
     }
-    double axBaseline = s_axBaselineSum / (double)s_axBaselineCount; /* count>=1 terjamin (baris di atas jalan dulu) */
+    double axBaseline = s_axBaselineSum / (double)s_axBaselineCount; /* count>=1 guaranteed by the line above */
     double a_body = -((double)ax - axBaseline) / 16384.0 * 9.81;
     s_win.a_body[idx] = a_body;
 
-    /* KOREKSI slip: TIDAK PERNAH "invalid" - diff frame pertama sesi = 0
-     * (persis .diff().fillna(0) di Python), bukan dikecualikan dari agregasi. */
+    /* slip is never "invalid" - first frame of a session diffs to 0
+     * (matches .diff().fillna(0)), not excluded from aggregation. */
     double aL, aR;
     if (s_havePrev){
         aL = ((double)velL - (double)s_prevVelL) * 0.268;
@@ -249,11 +221,10 @@ EXPORT uint8_t sentinelInferenceDue(void){
            ((s_pushCounter % SENTINEL_INFER_EVERY) == 0u);
 }
 
-/* mean/std/min/max/valid dari sample yang VALID saja (ok==NULL berarti semua
- * valid - dipakai utk residL/R, resid_sum, track_err, cur_asym, slipL/R,
- * a_body, gz_dps, ay: semuanya TIDAK PERNAH NaN di preprocess_v2.py).
- * valid = n_valid / SENTINEL_WINDOW persis seperti Python (v/WINDOW, BUKAN
- * dibagi s_count). */
+/* mean/std/min/max/valid over valid samples only (ok==NULL means every
+ * sample is valid - used for channels that are never NaN in preprocess_v2.py).
+ * valid = n_valid / SENTINEL_WINDOW, matching the Python reference exactly
+ * (divided by WINDOW, not by s_count). */
 static void aggStat(const double *arr, const uint8_t *ok, uint32_t count, uint32_t head,
                      double *mean, double *std, double *min, double *max, double *valid)
 {
@@ -277,7 +248,7 @@ static void aggStat(const double *arr, const uint8_t *ok, uint32_t count, uint32
     }
     double m = sum / (double)n;
     double var = (sumsq / (double)n) - (m * m);
-    if (var < 0.0) var = 0.0; /* guard pembulatan floating point */
+    if (var < 0.0) var = 0.0; /* floating-point rounding guard */
     *mean  = m;
     *std   = sqrt(var);
     *min   = mn;
@@ -300,11 +271,11 @@ static double pearsonCorr(const double *x, const double *y, uint32_t count, uint
         sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
     }
     double stdx = sqrt(sxx / (double)count), stdy = sqrt(syy / (double)count);
-    if (stdx < 1e-9 || stdy < 1e-9) return 0.0; /* persis threshold Python */
+    if (stdx < 1e-9 || stdy < 1e-9) return 0.0; /* matches the Python threshold */
     return sxy / (sqrt(sxx) * sqrt(syy));
 }
 
-/* Urutan DIKONFIRMASI cocok feature_names.txt - lihat catatan #4 di atas file ini. */
+/* Feature order matches feature_names.txt - see file header note. */
 static void buildFeatureVector(double *input /* [SENTINEL_N_FEATURES] */){
     int k = 0;
     double mean, std, mn, mx, valid;
@@ -324,8 +295,8 @@ static void buildFeatureVector(double *input /* [SENTINEL_N_FEATURES] */){
     SENTINEL_AGG(cur_per_velL,  s_win.cur_per_velL_ok)
     SENTINEL_AGG(cur_per_velR,  s_win.cur_per_velR_ok)
     SENTINEL_AGG(cur_asym,      NULL)
-    SENTINEL_AGG(slipL,         NULL) /* KOREKSI: dulu s_win.slipL_ok, sekarang selalu valid */
-    SENTINEL_AGG(slipR,         NULL) /* KOREKSI: dulu s_win.slipR_ok, sekarang selalu valid */
+    SENTINEL_AGG(slipL,         NULL)
+    SENTINEL_AGG(slipR,         NULL)
     SENTINEL_AGG(a_body,        NULL)
     SENTINEL_AGG(gz_dps,        NULL)
     SENTINEL_AGG(ay,            NULL)
@@ -345,7 +316,7 @@ static void buildFeatureVector(double *input /* [SENTINEL_N_FEATURES] */){
     input[k++] = (s_count > 0u) ? (sumAbs / (double)s_count) : 0.0;                 /* tgt_abs */
     input[k++] = (s_count > 0u) ? ((double)revCount / (double)s_count) : 0.0;       /* is_rev */
 
-    /* k harus == SENTINEL_N_FEATURES (84) di titik ini - lihat sentinel_model.h */
+    /* k must equal SENTINEL_N_FEATURES (84) here - see sentinel_model.h */
 }
 
 EXPORT void sentinelRunInference(void){
@@ -383,16 +354,13 @@ EXPORT void sentinelRunInference(void){
         if (counts[c] == maxCount){ numAtMax++; winner = c; }
     }
     if (numAtMax == 1) s_votedClass = winner;
-    /* kalau seri: s_votedClass TIDAK diubah - hysteresis alami, sesuai spec */
+    /* tie: s_votedClass left unchanged - natural hysteresis, per spec */
 
-    /* GAIN SCHEDULING: dipanggil HANYA dari sini (sentinelRunInference(),
-     * yang hanya pernah dipanggil dari sentinelTask - TIDAK PERNAH dari
-     * pidTask). s_votedClass == -1 (belum ada hasil voting sama sekali,
-     * window belum penuh) sengaja diabaikan - jangan pernah index
-     * SENTINEL_GAINS[-1]. Assignment int/float leftPID.Kp/Kd di
-     * sentinelApplyGain() tanpa mutex - aman: sentinelTask prioritas lebih
-     * rendah dari pidTask (lihat app_main.c), dan tiap store 32-bit
-     * (int->float atau int) atomik terhadap preemption di Cortex-M33. */
+    /* GAIN SCHEDULING: called only from here (sentinelTask, never pidTask).
+     * s_votedClass == -1 (no vote yet / window not full) is deliberately
+     * skipped - never index SENTINEL_GAINS[-1]. No mutex needed: sentinelTask
+     * runs at lower priority than pidTask, and each store here is a single
+     * atomic 32-bit write. */
     if (s_votedClass >= 0){
         if (s_votedClass != s_currentGainClass){
             s_gainHysteresisCount++;
@@ -406,23 +374,12 @@ EXPORT void sentinelRunInference(void){
         }
     }
 
-    /* CLASSIFY auto-push lewat huart2/VCP (BUKAN com_pi/huart1 - itu jalur
-     * eksklusif protokol e/m/u ros2_control, sudah dibahas panjang kenapa
-     * tidak boleh disentuh). CATATAN: huart2 SEBENARNYA bukan "tidak dipakai
-     * task lain" seperti asumsi awal - vcpMonitor() (dipanggil readCom() di
-     * comTask, TIAP command 'e'/'m' yang diterima) juga transmit ke huart2.
-     * HAL_UART_Transmit() sama-sama tidak dijaga mutex di sini seperti di
-     * writeCom() - race HAL_BUSY yang sama secara teknis ADA. Bedanya dengan
-     * huart1: konsekuensinya cuma baris log/CLASSIFY yang sesekali
-     * hilang/tumpang tindih di kanal debug - tidak memengaruhi data
-     * encoder/PID yang dipakai ros2_control untuk kendali robot (itu
-     * sepenuhnya di huart1, tidak disentuh sama sekali di sini). Diterima
-     * sebagai trade-off sesuai arahan eksplisit. */
+    /* CLASSIFY auto-push over huart2/VCP (debug channel only - never huart1,
+     * which is the exclusive ros2_control protocol link). */
     if (s_votedClass >= 0){
         char buf[48];
-        /* (int) WAJIB - leftPID.Kp/Kd itu float, di-promote ke double di
-         * varargs (8 byte) - %d cuma konsumsi 4 byte, tanpa cast argumen
-         * sesudahnya bakal geser (persis bug PING di commands.c). */
+        /* (int) cast required: leftPID.Kp/Kd are float, promoted to double in
+         * varargs (8 bytes) - %d only consumes 4 bytes without the cast. */
         snprintf(buf, sizeof(buf), "CLASSIFY,%d,%s,Kp=%d,Kd=%d\r\n",
             s_votedClass, KLASS_NAME[s_votedClass], (int)leftPID.Kp, (int)leftPID.Kd);
         HAL_UART_Transmit(&huart2, (uint8_t*)buf, strlen(buf), 50);

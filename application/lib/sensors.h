@@ -42,7 +42,7 @@ typedef struct {
     uint8_t muxChannel;
     const char *label;
     int32_t bus_mV, shunt_uV, current_mA, power_mW;
-    int32_t current_raw;        /* last raw CURRENT register (0x04), sign-extended, NO offset/scale applied - for diagnostics (REGRESI report) */
+    int32_t current_raw;        /* last raw CURRENT register (0x04), sign-extended, no offset/scale applied - for diagnostics */
     int32_t current_offset_raw; /* zero-current bias in RAW register units (NOT mA - see current_mA derivation in readINA219()), auto-measured once per sensor in initINA219() while motors are guaranteed off */
 } INASensor;
 

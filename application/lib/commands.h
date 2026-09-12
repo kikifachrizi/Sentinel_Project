@@ -4,7 +4,7 @@
 
 
 #define GET_BAUDRATE   'b'
-#define CLASSIFY_STATUS 'c' /* SENTINEL: kelas hasil voting + 5 histori inferensi + waktu fitur/model, lihat sentinel_features.h */
+#define CLASSIFY_STATUS 'c' /* SENTINEL: voted class + last 5 inference history + feature/model timing, see sentinel_features.h */
 #define DATA_COLLECT   'd' /* SENTINEL: reuses 'd' - DIGITAL_READ has no case to collide with */
 #define READ_ENCODERS  'e'
 #define FF_CONFIG      'f' /* feedforward: "f 0" off (A/B test), "f <pct>" set ffScalePct, clamp 0..150 */

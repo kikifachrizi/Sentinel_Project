@@ -1,9 +1,8 @@
-/* Golden test vectors untuk verifikasi sentinel_rf50x10() di C.
- * Dihasilkan dari windows_v2.csv + model Python yang sama dengan
- * yang diekspor m2cgen. Urutan fitur = feature_names.txt.
- * Pakai: panggil sentinel_rf50x10(golden_input[i], out) lalu
- * bandingkan out[] dengan golden_expect[i] (toleransi 1e-6 untuk
- * double, 1e-3 untuk float). argmax HARUS sama persis. */
+/* Golden test vectors for verifying sentinel_rf50x10() in C. Generated from
+ * windows_v2.csv + the same Python model exported by m2cgen. Feature order
+ * matches feature_names.txt. Usage: call sentinel_rf50x10(golden_input[i], out)
+ * and compare out[] against golden_expect[i] (tolerance 1e-6 for double,
+ * 1e-3 for float); argmax must match exactly. */
 
 #define GOLDEN_N_CASES 4
 #define GOLDEN_N_FEATURES 84

@@ -23,25 +23,23 @@ volatile uint8_t logActive = 0;
 volatile uint8_t logSilent = 0;
 long logTargetL = 0, logTargetR = 0;
 
-/* Fase 1 feedforward calib: STATIC_SWEEP ('s') state. Params are set by
- * runCommand() (commands.c) and consumed once by logTest's task loop -
- * see runStaticSweep() below. */
+/* STATIC_SWEEP ('s') state: set by runCommand() (commands.c), consumed once
+ * by logTest's task loop - see runStaticSweep() below. */
 volatile uint8_t sweepActive = 0;
 int sweepMotorId = 0, sweepDir = 1, sweepPwmStart = 0, sweepPwmStep = 1, sweepPwmEnd = 0, sweepHoldMs = 0;
 
 /* IMU_DIAG ('k'): flag consumed by logTest task's loop (no new task), see diagIMU() in sensors.c. */
 volatile uint8_t imuDiagActive = 0;
 
-/* SENTINEL DATA_COLLECT ('d'): consumed INSIDE pidTask (see pidTask() below),
- * NOT logTest - a CSV row must be emitted per ACTUAL doPID() execution. */
+/* SENTINEL DATA_COLLECT ('d'): consumed inside pidTask (see pidTask() below),
+ * not logTest - a CSV row must be emitted per actual doPID() execution. */
 volatile uint8_t dataCollectActive = 0;
 int  dcPattern = 1;
 int  dcSurface = 0;
 long dcRunId   = 0;
 
-/* Fase 1 instrumentation: DWT cycle counter is enabled once at startup
- * (usermain). pidProbeCycPerMs converts CYCCNT deltas to ms and is set
- * from SystemCoreClock at the same time - never touched inside a loop. */
+/* DWT cycle counter is enabled once at startup (usermain). pidProbeCycPerMs
+ * converts CYCCNT deltas to ms from SystemCoreClock at the same time. */
 static uint32_t pidProbeCycPerMs = 1;
 
 LOCAL void logTest(INT stacd, void *exinf);
@@ -53,9 +51,9 @@ LOCAL T_CTSK ctsk_log_test = {
     .tskatr  = TA_HLNG | TA_RNG3,
 };
 
-LOCAL void pidTask(INT stacd, void *exinf);  // fungsi eksekusi task
-LOCAL ID   pid_task_id;                         // nomor Task ID
-LOCAL T_CTSK ctsk_pid_task = {                     // informasi pembuatan task
+LOCAL void pidTask(INT stacd, void *exinf);  // task function
+LOCAL ID   pid_task_id;                      // task ID
+LOCAL T_CTSK ctsk_pid_task = {               // task creation info
     .itskpri  = 10,
     .stksz    = 1024,
     .task     = pidTask,
@@ -101,7 +99,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
 
     static char dcHeaderBuf[192];
     static char dcConfigBuf[256];
-    static char dcBuf[100][200]; 
+    static char dcBuf[100][200];
 
     last_cyc    = DWT->CYCCNT;
     period_min  = 0xFFFFFFFFu;
@@ -138,7 +136,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
             resetAllPID();
             tk_get_tim(&dc_startTime);
 
-            // its just buffer for debugging the data collecting for tinyML
+            // buffered CSV header/config lines for tinyML data collection, sent once the run ends
             snprintf(dcConfigBuf, sizeof(dcConfigBuf),
                 "#config,Kp=%d,Ki=%d,Kd=%d,Ko=%d,ffScalePct=%ld,loopHz=20,"
                 "Ldb_f=%ld,Lkv_f=%ld,Ldb_r=%ld,Lkv_r=%ld,"
@@ -148,14 +146,12 @@ LOCAL void pidTask(INT stacd, void *exinf){
                 leftPID.u_db_fwd, leftPID.kv_num_fwd, leftPID.u_db_rev, leftPID.kv_num_rev,
                 rightPID.u_db_fwd, rightPID.kv_num_fwd, rightPID.u_db_rev, rightPID.kv_num_rev);
 
-            /* Buffered, NOT sent now - see FIX note above. */
             snprintf(dcHeaderBuf, sizeof(dcHeaderBuf),
                 "#run_id,surface,pattern,t_ms,tgtL,tgtR,pwmL,pwmR,encL,encR,velL,velR,curL,curR,curRawL,curRawR,bus_mV,ax,ay,az,gx,gy,gz\r\n");
         }
 
         if(dataCollectActive){
-            /* Set THIS frame's target BEFORE updatePID() reads it below -
-             * pure sequencing, does not touch doPID/updatePID/computeFeedforward. */
+            /* Set this frame's target before updatePID() reads it below. */
             long tgtL, tgtR;
             switch(dcPattern){
                 case 1:
@@ -183,8 +179,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
             leftPID.TargetTicksPerFrame  = tgtL;
             rightPID.TargetTicksPerFrame = tgtR;
 
-            /* Timing budget starts here - "doPID + IMU + 2x INA219 + UART"
-             * per the brief, so doPID (right below) is INSIDE the window. */
+            /* Timing budget window: doPID + IMU + 2x INA219 + UART. */
             dcT0 = DWT->CYCCNT;
         }
 
@@ -204,7 +199,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
             period_cnt = 0u;
             warmup     = 3u; /* discard first 3 iterations of this window */
 
-            // starting section sentinel classification - reset window + get the ax_baseline. 
+            // starting section sentinel classification - reset window + get the ax_baseline.
             sentinelBeginSession();
         }
 
@@ -242,13 +237,9 @@ LOCAL void pidTask(INT stacd, void *exinf){
         }
 
         if(moving){
-            /* pwmL/pwmR = PWM FINAL (u_ff + akumulator PI), same recipe as
-             * logTest's CSV - computeFeedforward()/doPID() itself untouched.
-             * velL/velR = ticks this frame: doPID() already computed this as
-             * its internal "input" and stored it in PrevInput - read it back
-             * rather than re-deriving encoder deltas ourselves (single
-             * source of truth, and free - no extra encoder reads needed).
-             */
+            /* pwmL/pwmR = final PWM (u_ff + PI accumulator), same recipe as
+             * logTest's CSV. velL/velR = ticks this frame, read back from
+             * doPID()'s PrevInput rather than re-derived. */
             long uffL = computeFeedforward(&leftPID);
             long uffR = computeFeedforward(&rightPID);
             long pwmL = uffL + leftPID.output;
@@ -269,8 +260,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
                 tk_get_tim(&dcNow);
                 unsigned long t_ms = (unsigned long)(dcNow.lo - dc_startTime.lo);
 
-                /* Buffered, NOT sent now - see FIX note above. dc_frame is still
-                 * 0-based here (incremented below), so this indexes 0..79 exactly. */
+                /* Buffered row, sent once the run ends (see dcBuf flush below). */
                 snprintf(dcBuf[dc_frame], sizeof(dcBuf[dc_frame]),
                     "%ld,%d,%d,%lu,%ld,%ld,%ld,%ld,%ld,%ld,%d,%d,%ld,%ld,%ld,%ld,%ld,%d,%d,%d,%d,%d,%d\r\n",
                     dcRunId, dcSurface, dcPattern, t_ms,
@@ -283,10 +273,9 @@ LOCAL void pidTask(INT stacd, void *exinf){
                     (long)ina1.bus_mV,
                     imu.ax, imu.ay, imu.az, imu.gx, imu.gy, imu.gz);
 
-                /* Timing budget check (item 1): doPID+IMU+2xINA219 (+snprintf,
-                 * no UART now), all inside [dcT0 .. now]. Accumulate silently,
-                 * report once at the end of the run - same discipline as
-                 * PID_PERIOD above. */
+                /* Timing budget check: doPID+IMU+2xINA219 (+snprintf), all
+                 * inside [dcT0 .. now]. Accumulated silently, reported once
+                 * at the end of the run. */
                 uint32_t dcT1 = DWT->CYCCNT;
                 uint32_t dcWork = dcT1 - dcT0;
                 if(dcWork < dc_work_min) dc_work_min = dcWork;
@@ -317,7 +306,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
                     dataCollectActive = 0;
 
                     writeCom(&com_pi, dcRpt);
-                    writeCom(&com_pi, dcConfigBuf); 
+                    writeCom(&com_pi, dcConfigBuf);
                     writeCom(&com_pi, dcHeaderBuf);
                     for(uint32_t i = 0; i < 80u; i++){
                         writeCom(&com_pi, dcBuf[i]);
@@ -325,7 +314,7 @@ LOCAL void pidTask(INT stacd, void *exinf){
                 }
             }
 
-            // sentinel push this frame to ring buffer classifier , use the same value (pwmL/pwmR/curL/curR/ax/ay/gz) while calculate before, not reread
+            // push this frame to the SENTINEL classifier's ring buffer, reusing values already computed above
             sentinelPushFrame(leftPID.TargetTicksPerFrame, rightPID.TargetTicksPerFrame,
                                pwmL, pwmR,
                                leftPID.PrevInput, rightPID.PrevInput,
@@ -355,12 +344,11 @@ LOCAL void sentinelTask(INT stacd, void *exinf){
     }
 }
 
-/* Fase 1 feedforward calib: STATIC_SWEEP ('s') worker.
- * Plain function, not a task - called from inside logTest()'s loop so no
- * new task is created.PURE OPEN LOOP: bypasses doPID/updatePID/resetPID
- * entirely, writes PWM straight to setMotorSpeed() and reads enc1/enc2
- * directly (leftPID/rightPID are never touched). moving is forced to 0 for
- * the whole run so pidTask cannot also drive the motors concurrently. */
+/* STATIC_SWEEP ('s') worker: plain function (not a task), called from
+ * logTest()'s loop. Pure open loop - bypasses doPID/updatePID/resetPID
+ * entirely, writes PWM straight to setMotorSpeed() and reads encoders
+ * directly. moving stays 0 for the whole run so pidTask can't also drive
+ * the motors concurrently. */
 LOCAL void runStaticSweep(void){
     EncoderState    *targetEnc    = (sweepMotorId == 0) ? &enc1      : &enc2;
     MotorController *targetMotor  = (sweepMotorId == 0) ? &motorLeft : &motorRight;
@@ -375,7 +363,7 @@ LOCAL void runStaticSweep(void){
         setMotorSpeed(targetMotor, sweepDir * pwm);
 
         /* PID frame = 50ms (verified via DWT, see PID_PERIOD report). Counting
-         * loop iterations (not dividing hold_ms) makes "jumlah frame" exact. */
+         * loop iterations (not dividing hold_ms) makes "number of frames" exact. */
         int totalFrames = sweepHoldMs / 50;
         if(totalFrames < 2) totalFrames = 2; /* need >=1 frame in each half */
         int transientFrames = totalFrames / 2;
@@ -396,8 +384,7 @@ LOCAL void runStaticSweep(void){
         int32_t encEnd = targetEnc->counterVal;
 
         if(pwm == sweepPwmStart){
-            /* One-off diagnostic: how long readINA219() actually takes on
-             * this hardware (4x HAL_I2C_Mem_Read + 1 mux select). */
+            /* One-off diagnostic: how long readINA219() actually takes on this hardware. */
             uint32_t t0 = DWT->CYCCNT;
             readINA219(targetIna);
             uint32_t t1 = DWT->CYCCNT;
@@ -443,9 +430,8 @@ LOCAL void logTest(INT stacd, void *exinf){
                 UW elapsed = now.lo - startTime.lo;
                 if(elapsed >= 10000) break;
 
-                /* Lout/Rout must stay the FINAL PWM actually sent to the motor
-                 * (comparable with older runs) - pid->output is now the PI
-                 * accumulator ONLY, so it's recomputed here via the same
+                /* Lout/Rout must stay the final PWM actually sent to the motor
+                 * (comparable across runs) - recomputed here via the same
                  * computeFeedforward()+clamp doPID() uses, not read raw. */
                 long uffL = computeFeedforward(&leftPID);
                 long uffR = computeFeedforward(&rightPID);
@@ -459,12 +445,12 @@ LOCAL void logTest(INT stacd, void *exinf){
                          leftPID.TargetTicksPerFrame, rightPID.TargetTicksPerFrame,
                          (long)enc1.counterVal, (long)enc2.counterVal,
                          loutFinal, routFinal, uffL, uffR);
-                if(!logSilent){ 
+                if(!logSilent){
                     writeCom(&com_pi, line);
                 }
                 tk_dly_tsk(33);
             }
-            moving = 0; 
+            moving = 0;
             leftPID.TargetTicksPerFrame = 0;
             rightPID.TargetTicksPerFrame = 0;
             logActive = 0;
@@ -487,23 +473,22 @@ EXPORT INT usermain(void)
 {
     tm_putstring((UB*)"Start User-main program.\n");
 
-    /* Fase 1 instrumentation: enable DWT cycle counter once at startup. */
+    /* Enable DWT cycle counter once at startup, used for all timing instrumentation. */
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
     DWT->CYCCNT = 0;
     DWT->CTRL  |= DWT_CTRL_CYCCNTENA_Msk;
     pidProbeCycPerMs = SystemCoreClock / 1000u;
 
-    initSensors(); //init semaphore on imu and ina reading - needed so STATIC_SWEEP's readINA219() is arbitrated
+    initSensors(); //init semaphore on imu and ina reading
     initEncoder(&enc1);
     initEncoder(&enc2);
-    initINA219(&ina1); // needed so STATIC_SWEEP reports real bus_mV/current_mA (else uncalibrated/stale)
+    initINA219(&ina1);
     initINA219(&ina2);
     initMotorController(&motorLeft);
     initMotorController(&motorRight);
-    initMpu6050(&imu); // needed so DATA_COLLECT's per-frame readMPU6050() gets real data, not a sleeping chip
+    initMpu6050(&imu);
 
-    // using RX starvation (ReadByte timeout di ros2_control): first interrupt-driven ,check uart_bridge.c/stm32h5xx_it.c
-    uartRxStart();
+    uartRxStart(); // arm interrupt-driven UART RX, see uart_bridge.c
 
     pid_task_id = tk_cre_tsk(&ctsk_pid_task);
     tk_sta_tsk(pid_task_id, 0);
