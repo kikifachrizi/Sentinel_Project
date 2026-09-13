@@ -101,7 +101,7 @@ AMR didnt know the surface character, like textured surface, normal or slippery.
 ![system](/images/system_overview.png)
 
 #### How to Login Raspi
-[github](https://github.com/kikifachrizi/Sentinel_Project/blob/main/docs/raspi_setup.md)
+[How to Login Raspi , come and see this guide](https://github.com/kikifachrizi/Sentinel_Project/blob/main/docs/raspi_setup.md)
 
 ### Demo 
 <table border="0" cellspacing="0" cellpadding="0">
